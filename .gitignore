@@ -1,0 +1,12 @@
+node_modules/
+output/
+report/
+.cache/
+.DS_Store
+
+.env
+.env.*
+secrets/
+
+.claude/settings.local.json
+CLAUDE.local.md

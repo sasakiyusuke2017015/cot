@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question.schema.json",
+  "title": "Question",
+  "type": "object",
+  "required": ["level", "purpose", "learning_item", "stem", "correct", "wrongs", "explanation"],
+  "additionalProperties": false,
+  "properties": {
+    "level": { "type": "string", "enum": ["lv0", "lv1"] },
+    "purpose": { "type": "string", "enum": ["check", "cert"] },
+    "type": { "type": "string", "enum": ["knowledge", "judgment", "scenario", "prompt"] },
+    "difficulty": { "type": "string", "enum": ["basic", "intermediate", "practical"] },
+    "learning_item": { "type": "string", "minLength": 1 },
+    "stem": { "type": "string", "minLength": 1 },
+    "correct": { "type": "string", "minLength": 1 },
+    "wrongs": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "explanation": { "type": "string", "minLength": 1 },
+    "keywords": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "source_refs": { "type": "array", "items": { "type": "string" } }
+  }
+}

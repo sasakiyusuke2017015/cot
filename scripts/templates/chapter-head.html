@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__TITLE__</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+  .prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+  .prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+  .prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+  .prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+  .prose ul li { margin-bottom:0.5rem; color:#374151; }
+  .prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+  .prose ol li { margin-bottom:0.5rem; color:#374151; }
+  .kv-box { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+  .warn-box { background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+  .tip-box  { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+  .ex-box { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+  .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+  .chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
+  .chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+  @media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
