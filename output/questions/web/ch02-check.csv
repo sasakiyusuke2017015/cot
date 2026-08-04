@@ -1,0 +1,3 @@
+問題番号,学習項目,問題文,正答1,誤答1,誤答2,誤答3,解説,関連キーワード
+3,CSS,class属性が「card」の要素を選ぶCSSセレクタはどれか。,.card,#card,card(),@card,classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。,CSS・セレクタ・class
+4,CSS,子要素を横一列に並べたいとき親要素に指定するCSSはどれか。,display: flex;,color: red;,font-size: 2rem;,content: row;,「${正答1}」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。,CSS・Flexbox・レイアウト

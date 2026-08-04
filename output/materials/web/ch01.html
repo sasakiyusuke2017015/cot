@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第1章 - HTML</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
+.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  { term: 'HTML', desc: 'Webページの構造（骨組み）を記述する言語' },
+  { term: 'タグ', desc: '要素の始まりと終わりを示す目印。<p>〜</p> のように書く' },
+  { term: '要素', desc: 'タグで挟まれたページの構成単位。見出し・段落など' },
+  { term: '属性', desc: '要素に追加する情報。href や src など' },
+  { term: '開発者ツール', desc: 'ブラウザ内蔵の解析ツール。右クリック→検証で開く' },
+];
+
+const QUIZ = [
+  { q: 'HTMLの役割として最も適切なのはどれ？', options: ['ページの構造（骨組み）を記述する', 'ページの見た目を装飾する', 'ページに動きをつける', 'データベースを操作する'], answer: 0, explain: '構造はHTML・見た目はCSS・動きはJavaScriptと役割が分かれています。' },
+  { q: 'ページ内で最上位の見出しを表すタグはどれ？', options: ['h1', 'p', 'div', 'span'], answer: 0, explain: 'h1〜h6が見出しタグで、h1が最上位です。pは段落、div/spanは意味を持たない入れ物です。' },
+];
+
+function KeywordsPanel({ keywords }) {
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <p className="font-bold">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第1章 / 全9章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
+            <span className="tag bg-white/20 text-white">第1章 · 知識</span>
+            <h1 className="text-2xl font-bold mt-2">🏗️ HTML</h1>
+            <p className="text-blue-100 mt-1">ページの骨組みを作る</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、基本のタグでページの骨組みを作れるようになる。
+                  </div>
+                  <h3>HTMLとは何か</h3>
+                  <p>HTML（HyperText Markup Language）は、Webページの<strong>構造（骨組み）</strong>を記述する言語です。「ここは見出し」「ここは段落」「ここはリスト」と、内容に意味を与えていきます。色や配置などの見た目は次章のCSSが担当します。</p>
+                  <h3>要素とタグ</h3>
+                  <p>HTMLは「要素」の積み重ねでできています。要素は開始タグと終了タグで内容を挟んで書きます。</p>
+                  <div className="code-block">{`<h1>今日の献立</h1>
+<p>今日はカレーを作ります。</p>
+<ul>
+  <li>じゃがいも</li>
+  <li>にんじん</li>
+  <li>玉ねぎ</li>
+</ul>
+<a href="https://example.com">レシピを見る</a>`}</div>
+                  <h3>まず覚えるタグ</h3>
+                  <ul>
+                    <li><strong>h1〜h6</strong> … 見出し（h1が最上位）</li>
+                    <li><strong>p</strong> … 段落</li>
+                    <li><strong>ul / ol / li</strong> … リスト（黒丸 / 番号つき）</li>
+                    <li><strong>a</strong> … リンク（href属性で行き先を指定）</li>
+                    <li><strong>img</strong> … 画像（src属性でファイルを指定）</li>
+                    <li><strong>div / span</strong> … 意味を持たないグループ化の入れ物</li>
+                  </ul>
+                  <div className="tip-box">
+                    <strong>💡 コツ:</strong> ブラウザで右クリック →「検証」（開発者ツール）を開くと、どんなページもHTMLの構造を見られます。好きなサイトの骨組みを覗いてみるのが一番の教材です。
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 演習</p>
+                    <p>自己紹介ページを作ってみましょう。名前（h1）・趣味のリスト（ul）・好きなサイトへのリンク（a）を入れて、ブラウザで開いて確認します。</p>
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <div className="chk-item">HTMLの役割は「構造」だと説明できる</div>
+                  <div className="chk-item">開始タグ・終了タグ・属性の書き方が分かる</div>
+                  <div className="chk-item">開発者ツールで他のページの構造を見たことがある</div>
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="flex justify-between mt-8 no-print">
+            <span></span>
+            <a href="ch02.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第2章 CSS →</a>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第2章 - CSS</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
+.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  { term: 'CSS', desc: 'HTMLに見た目（色・大きさ・配置）を与える言語' },
+  { term: 'セレクタ', desc: 'スタイルを当てる対象を選ぶ書き方。.card や h1 など' },
+  { term: 'ボックスモデル', desc: 'content→padding→border→margin の4層構造' },
+  { term: 'Flexbox', desc: '要素を柔軟に並べるレイアウト機能。display:flex' },
+  { term: '開発者ツール', desc: '要素のボックスモデルを色付きで確認できる' },
+];
+
+const QUIZ = [
+  { q: 'class属性が「card」の要素を選ぶCSSセレクタはどれ？', options: ['.card', '#card', 'card()', '@card'], answer: 0, explain: 'classはドット（.card）・idはシャープ（#card）で選びます。' },
+  { q: '子要素を横一列に並べたいとき、親要素に指定するのはどれ？', options: ['display: flex;', 'color: red;', 'font-size: 2rem;', 'content: row;'], answer: 0, explain: 'display:flex を親に指定すると子要素が横に並び、gapやjustify-contentで整えられます。' },
+];
+
+function KeywordsPanel({ keywords }) {
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <p className="font-bold">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第2章 / 全9章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
+            <span className="tag bg-white/20 text-white">第2章 · 知識</span>
+            <h1 className="text-2xl font-bold mt-2">🎨 CSS</h1>
+            <p className="text-blue-100 mt-1">見た目とレイアウトを整える</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、Flexboxで簡単なレイアウトを組めるようになる。
+                  </div>
+                  <h3>CSSとは何か</h3>
+                  <p>CSS（Cascading Style Sheets）は、HTMLで作った骨組みに<strong>見た目（色・大きさ・配置）</strong>を与える言語です。「どの要素に」「どんなスタイルを」の2つをセットで書きます。</p>
+                  <div className="code-block">{`/* セレクタ { プロパティ: 値; } */
+h1 {
+  color: #1e3a8a;
+  font-size: 2rem;
+}
+.card {          /* class="card" の要素に当たる */
+  padding: 16px;
+  border-radius: 8px;
+}`}</div>
+                  <h3>セレクタの基本</h3>
+                  <ul>
+                    <li><strong>h1</strong> … タグ名で選ぶ</li>
+                    <li><strong>.card</strong> … class属性で選ぶ（先頭にドット）。最もよく使う</li>
+                    <li><strong>#header</strong> … id属性で選ぶ（先頭にシャープ）</li>
+                  </ul>
+                  <h3>ボックスモデル</h3>
+                  <p>すべての要素は箱（ボックス）として描画されます。内側から <strong>content → padding → border → margin</strong> の層になっていて、レイアウト崩れの原因の大半はここの理解不足です。</p>
+                  <h3>Flexboxで並べる</h3>
+                  <div className="code-block">{`.row {
+  display: flex;        /* 子要素を横に並べる */
+  gap: 12px;            /* 要素間の隙間 */
+  justify-content: center;  /* 水平方向の揃え */
+  align-items: center;      /* 垂直方向の揃え */
+}`}</div>
+                  <div className="tip-box">
+                    <strong>💡 コツ:</strong> 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 演習</p>
+                    <p>前章の自己紹介ページにCSSを当ててみましょう。見出しに色を付け、カード風の枠（padding + border-radius + 影）を作り、Flexboxで2枚並べます。</p>
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <div className="chk-item">セレクタとプロパティの書き方が分かる</div>
+                  <div className="chk-item">ボックスモデルの4層を言える</div>
+                  <div className="chk-item">display:flex で要素を横に並べられる</div>
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="flex justify-between mt-8 no-print">
+            <a href="ch01.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第1章 HTML</a>
+            <a href="ch03.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第3章 JavaScript →</a>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

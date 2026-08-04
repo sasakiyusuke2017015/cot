@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web開発の虎の巻 — 新人エンジニア育成ガイド</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, "Yu Gothic UI", sans-serif; }
+    .step-arrow::after { content: "▼"; display: block; text-align: center; color: #f59e0b; font-size: 0.7rem; margin: 0.15rem 0; }
+    .step-arrow:last-child::after { content: none; }
+  </style>
+</head>
+<body class="bg-amber-50 text-slate-800">
+
+  <!-- ヘッダー -->
+  <header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+    <div class="max-w-4xl mx-auto px-6 py-10">
+      <p class="text-amber-100 text-sm tracking-widest mb-2">🐯 WEB DEVELOPMENT PLAYBOOK</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-3">Web開発の虎の巻</h1>
+      <p class="text-amber-50 leading-relaxed">
+        リモート・2人・1日1時間で、Web開発を教えるためのガイド。<br class="hidden md:block" />
+        ゴールは文法を覚えさせることではなく、<strong class="text-white">自分で調べて・考えて・修正できるエンジニア</strong>に育てること。
+      </p>
+      <div class="flex flex-wrap gap-2 mt-4 text-sm">
+        <span class="bg-white/20 rounded-full px-3 py-1">👥 生徒2人</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">🏠 リモート</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">⏰ 1日1時間</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">📚 かじった程度からスタート</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">🗓 目安 4〜6か月</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-6 py-10 space-y-12">
+
+    <!-- 基本理念 -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">0. 基本理念</h2>
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="leading-relaxed mb-4">
+          重要なのは「知識量」ではなく<strong>「問題解決能力」</strong>への移行。実務では検索・AI・ドキュメントを見ながら開発するため、
+          文法暗記よりも次のサイクルを体で覚えることを最優先にする。
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-2 text-center font-semibold">
+          <span class="bg-red-100 text-red-800 rounded-lg px-4 py-2">エラー文を読む</span>
+          <span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">原因の仮説を立てる</span>
+          <span class="text-amber-500">→</span>
+          <span class="bg-sky-100 text-sky-800 rounded-lg px-4 py-2">調査する</span>
+          <span class="text-amber-500">→</span>
+          <span class="bg-emerald-100 text-emerald-800 rounded-lg px-4 py-2">修正する</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ロードマップ -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">1. 学習ロードマップ（認証は対象外）</h2>
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="max-w-md mx-auto">
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">1</span><div><strong>HTML</strong><span class="text-sm text-slate-500 ml-2">ページの骨組み</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">2</span><div><strong>CSS</strong><span class="text-sm text-slate-500 ml-2">見た目・レイアウト</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">3</span><div><strong>JavaScript</strong><span class="text-sm text-slate-500 ml-2">動きをつける</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-amber-50 border border-amber-300 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">4</span><div><strong>Git</strong><span class="text-sm text-slate-500 ml-2">clone / add / commit / push / pull だけでOK</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">5</span><div><strong>TypeScript</strong><span class="text-sm text-slate-500 ml-2">型のあるJS</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">6</span><div><strong>React</strong><span class="text-sm text-slate-500 ml-2">画面を部品で作る</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">7</span><div><strong>Node.js</strong><span class="text-sm text-slate-500 ml-2">簡単なAPIを作る</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">8</span><div><strong>SQL（DB）</strong><span class="text-sm text-slate-500 ml-2">データの保存先</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">9</span><div><strong>ORM</strong><span class="text-sm text-slate-500 ml-2">コードからDBを扱う</span></div></div></div>
+          <div class="step-arrow"><div class="flex items-center gap-3 bg-emerald-50 border border-emerald-300 rounded-lg px-4 py-2"><span class="w-7 h-7 shrink-0 rounded-full bg-emerald-500 text-white text-sm font-bold flex items-center justify-center">10</span><div><strong>デプロイ</strong><span class="text-sm text-slate-500 ml-2">GitHubへPush → 公開</span></div></div></div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 mt-6 text-sm">
+          <div class="bg-amber-50 border-l-4 border-amber-400 rounded p-4">
+            <p class="font-bold mb-1">💡 GitをTSより前に</p>
+            <p>実際の開発では早い段階からGitを使う習慣をつけたほうが自然。branch や rebase は後回しでよい。</p>
+          </div>
+          <div class="bg-amber-50 border-l-4 border-amber-400 rounded p-4">
+            <p class="font-bold mb-1">💡 React → API → DB の順</p>
+            <p>画面が作れるようになってから学ぶと「APIがDBとの橋渡しをしている」役割を理解しやすい。</p>
+          </div>
+          <div class="bg-amber-50 border-l-4 border-amber-400 rounded p-4">
+            <p class="font-bold mb-1">💡 最後はデプロイ</p>
+            <p>公開まで経験すると「自分でWebサービスを作った」という実感が得られる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1時間の使い方 -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">2. 1日1時間の使い方</h2>
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex w-full h-12 rounded-lg overflow-hidden text-white text-xs md:text-sm font-bold text-center">
+          <div class="bg-sky-500 flex items-center justify-center" style="width:16.7%">10分</div>
+          <div class="bg-amber-500 flex items-center justify-center" style="width:25%">15分</div>
+          <div class="bg-emerald-500 flex items-center justify-center" style="width:50%">30分</div>
+          <div class="bg-violet-500 flex items-center justify-center" style="width:8.3%">5分</div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm">
+          <div><p class="font-bold text-sky-600">復習・質疑応答</p><p>前回の内容を確認し、疑問を解消する。</p></div>
+          <div><p class="font-bold text-amber-600">新しい内容の解説</p><p>今日のテーマを短く伝える。講義は最小限。</p></div>
+          <div><p class="font-bold text-emerald-600">手を動かす演習</p><p>時間の半分は必ず実践。ここが本体。</p></div>
+          <div><p class="font-bold text-violet-600">振り返りと宿題</p><p>できたことを確認し、次回までの課題を出す。</p></div>
+        </div>
+        <p class="mt-4 text-sm bg-red-50 border-l-4 border-red-400 rounded p-3">
+          ⚠️ 1日1時間だと<strong>3日止まるだけで流れが切れる</strong>。小さな目標・できたことの確認・難しすぎない課題で継続を最優先に。
+        </p>
+      </div>
+    </section>
+
+    <!-- 教師の役割 -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">3. 教師（メンター）の役割</h2>
+      <p class="mb-4 text-sm text-slate-600">この条件での教師は「講師」ではなく<strong>メンター兼コードレビュアー</strong>。知識を教えるのではなく、学習を設計・継続させる。</p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-amber-500">
+          <p class="font-bold mb-2">① 学習の道筋を作る <span class="text-xs bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 ml-1">最重要</span></p>
+          <p class="text-sm">何をどの順番で学ぶかを設計し、迷わず進めるロードマップを示す。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-red-400">
+          <p class="font-bold mb-2">② エラー解決の考え方を教える</p>
+          <p class="text-sm">答えを教えるのではなく「エラーを読む → 原因を予想 → どこを調べるか → 仮説を検証」を身につけさせる。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-sky-400">
+          <p class="font-bold mb-2">③ コードレビュー</p>
+          <p class="text-sm">毎回レビューするだけで成長速度が変わる。見るのは <strong>命名 / 可読性 / 重複 / 責務の分離 / バグになりそうな箇所</strong>。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-emerald-400">
+          <p class="font-bold mb-2">④ モチベーション管理</p>
+          <p class="text-sm">小さな目標を設定し、できたことを確認する。難しすぎる課題は出さない。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-violet-400 md:col-span-2">
+          <p class="font-bold mb-2">⑤ 「なぜ？」を問いかける</p>
+          <p class="text-sm">「なぜこの書き方にした？」「他の方法は？」「もし100件データがあったら？」——考えさせる質問で理解を深める。</p>
+        </div>
+      </div>
+      <div class="mt-4 bg-slate-100 rounded-xl p-5 text-sm">
+        <p class="font-bold mb-2">🚫 教師がやらなくていいこと（書籍・動画・AIで代替できる）</p>
+        <p>文法を延々と講義する ／ スライドを読むだけ ／ 完成したコードを配る ／ すべて答えを教える</p>
+      </div>
+    </section>
+
+    <!-- 質問の仕方 -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">4. 質問のルール「30分ルール」</h2>
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="mb-3 text-sm">「分からなかったら聞いて」では質問する力が育たない。代わりにこう教える。</p>
+        <blockquote class="border-l-4 border-amber-500 bg-amber-50 rounded p-4 font-semibold">
+          30分調べて、「分かったこと」「試したこと」「仮説」を持って聞く。
+        </blockquote>
+        <p class="mt-3 text-sm text-slate-600">質問が具体的になり、調べる力・整理する力が同時に育つ。</p>
+      </div>
+    </section>
+
+    <!-- 育成ステップ -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">5. 育成の3ステップ</h2>
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl shadow p-5">
+          <p class="font-bold text-lg mb-1">STEP 1｜基礎理解 <span class="text-sm font-normal text-slate-500">（1〜2週間）— コードが読める状態にする</span></p>
+          <ul class="text-sm list-disc list-inside space-y-1">
+            <li>開発環境構築: VS Code / Git / ターミナル操作</li>
+            <li>プログラミング基礎: 変数 / 条件分岐 / 繰り返し / 関数 / 配列 / クラス</li>
+            <li>デバッグ方法: エラー文を読む / ログを見る</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5">
+          <p class="font-bold text-lg mb-1">STEP 2｜小さい成果物を作る <span class="text-sm font-normal text-slate-500">（2〜4週間）— 開発感覚をつける</span></p>
+          <div class="grid md:grid-cols-2 gap-3 text-sm mt-2">
+            <div class="bg-emerald-50 rounded p-3"><p class="font-bold text-emerald-700 mb-1">初級</p>TODOアプリ / 電卓 / CSV集計ツール / 簡単なWeb API</div>
+            <div class="bg-sky-50 rounded p-3"><p class="font-bold text-sky-700 mb-1">中級</p>ログイン機能 / DB CRUD / ファイルアップロード / 外部API連携</div>
+          </div>
+          <p class="text-sm mt-3">完成度より<strong>「なぜこの設計にしたのか」を説明できること</strong>を重視する。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5">
+          <p class="font-bold text-lg mb-1">STEP 3｜実務形式へ移行 <span class="text-sm font-normal text-slate-500">— チーム開発を経験する</span></p>
+          <ul class="text-sm list-disc list-inside space-y-1 mb-3">
+            <li>Git: branch / commit / pull request / merge</li>
+            <li>コードレビュー: 命名 / 重複 / 責務分離 / エラー処理 / セキュリティ</li>
+          </ul>
+          <div class="flex flex-wrap items-center gap-1 text-sm font-semibold">
+            <span class="bg-slate-100 rounded px-3 py-1">仕様確認</span><span class="text-amber-500">→</span>
+            <span class="bg-slate-100 rounded px-3 py-1">設計</span><span class="text-amber-500">→</span>
+            <span class="bg-slate-100 rounded px-3 py-1">実装</span><span class="text-amber-500">→</span>
+            <span class="bg-slate-100 rounded px-3 py-1">テスト</span><span class="text-amber-500">→</span>
+            <span class="bg-slate-100 rounded px-3 py-1">レビュー</span><span class="text-amber-500">→</span>
+            <span class="bg-slate-100 rounded px-3 py-1">リリース</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- アンチパターン -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">6. やってはいけないこと</h2>
+      <div class="grid md:grid-cols-3 gap-4 text-sm">
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-red-500">
+          <p class="font-bold mb-2">❌ 最初から大きなシステム</p>
+          <p>新人は全体像が見えず混乱する。小さく作って積み上げる。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-red-500">
+          <p class="font-bold mb-2">❌ 「分からなかったら聞いて」</p>
+          <p>質問方法が育たない。→ <strong>30分ルール</strong>（セクション4）を教える。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-t-4 border-red-500">
+          <p class="font-bold mb-2">❌ 文法暗記中心</p>
+          <p>実務では検索・AI・ドキュメントを見る。知識量より問題解決能力。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 伸びる新人 -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">7. 伸びる人・伸びにくい人</h2>
+      <div class="grid md:grid-cols-2 gap-4 text-sm">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+          <p class="font-bold text-emerald-700 mb-2">🌱 伸びる新人</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>エラーを怖がらない</li>
+            <li>仮説を立てる</li>
+            <li>調べた内容を整理できる</li>
+            <li>質問が具体的</li>
+            <li>他人のコードを読む努力をする</li>
+          </ul>
+        </div>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-5">
+          <p class="font-bold text-red-700 mb-2">🥀 伸びにくい新人</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>答えを待つ</li>
+            <li>動けばOKで済ませる</li>
+            <li>なぜ動くか説明できない</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 毎回のサイクル -->
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">8. 毎回まわすサイクル</h2>
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-center">
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">ゴールを明確にする</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">学ぶ内容を整理する</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">詰まったときの考え方を示す</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">レビューで改善点を伝える</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">次回までの宿題を設定する</span>
+        </div>
+        <p class="mt-4 text-sm text-center text-slate-600">このサイクルを回せれば、限られた時間でも着実に力が伸びる。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-xs text-slate-400 pb-8">
+    Web開発の虎の巻 — 1日1時間・2人・リモートのためのメンタリングガイド
+  </footer>
+
+</body>
+</html>
