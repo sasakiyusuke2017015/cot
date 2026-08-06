@@ -6,16 +6,18 @@
 
 新人向け Web 開発教育の教材。全 9 章。
 
-**📖 [講師用ガイドを開く](output/toranomaki.html)** — 章一覧・章別カンペ・進め方
-（GitHub Pages を有効にしていれば、スマホのブラウザからそのまま読めます）
+**📖 [講師用ガイドを開く](https://sasakiyusuke2017015.github.io/cot/)** — 章一覧・章別カンペ・進め方
+
+スマホのブラウザでそのまま読めます（GitHub Pages で公開）。
+push すれば数分で反映されるので、生成 → push → スマホで確認、という流れでレビューできます。
 
 | 章 | テーマ | 章 | テーマ |
 |----|--------|----|--------|
-| 1 | [HTML](output/materials/web/ch01.html) | 6 | [React](output/materials/web/ch06.html) |
-| 2 | [CSS](output/materials/web/ch02.html) | 7 | [API](output/materials/web/ch07.html) |
-| 3 | [JavaScript](output/materials/web/ch03.html) | 8 | [DB](output/materials/web/ch08.html) |
-| 4 | [Git](output/materials/web/ch04.html) | 9 | [デプロイ](output/materials/web/ch09.html) |
-| 5 | [TypeScript](output/materials/web/ch05.html) | | |
+| 1 | [HTML](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch01.html) | 6 | [React](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch06.html) |
+| 2 | [CSS](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch02.html) | 7 | [API](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch07.html) |
+| 3 | [JavaScript](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch03.html) | 8 | [DB](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch08.html) |
+| 4 | [Git](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch04.html) | 9 | [デプロイ](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch09.html) |
+| 5 | [TypeScript](https://sasakiyusuke2017015.github.io/cot/output/materials/web/ch05.html) | | |
 
 ## 使い方
 
@@ -41,6 +43,11 @@ npm run preview         # ローカルサーバで確認（スマホ用に QR �
 問題 YAML は CSV と HTML 内クイズの**共通ソース**なので、1 か所直せば両方に反映される。
 
 ### スマホで確認する
+
+**公開版を見る**（push 済みの内容）
+[https://sasakiyusuke2017015.github.io/cot/](https://sasakiyusuke2017015.github.io/cot/) を開くだけ。
+
+**push 前の手元の内容を見る**
 
 ```bash
 npm run preview
