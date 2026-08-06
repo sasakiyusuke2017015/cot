@@ -1,6 +1,6 @@
 id: 4
 level: web
-type: user
+type: vcs
 icon: "🌿"
 title: Git
 subtitle: コードの履歴を管理する

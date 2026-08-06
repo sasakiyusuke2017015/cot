@@ -32,6 +32,18 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
 @media print { .no-print { display:none; } }
 </style>
 </head>
@@ -152,7 +164,7 @@ function Page() {
       <div className="max-w-7xl mx-auto w-full flex-1">
         <main className="flex-1 p-6 min-w-0">
           <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
-            <span className="tag bg-white/20 text-white">第2章 · 知識</span>
+            <span className="tag bg-white/20 text-white">第2章 · フロントエンド</span>
             <h1 className="text-2xl font-bold mt-2">🎨 CSS</h1>
             <p className="text-blue-100 mt-1">見た目とレイアウトを整える</p>
           </div>
@@ -193,14 +205,35 @@ h1 {
                   <div className="tip-box">
                     <strong>💡 コツ:</strong> 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。
                   </div>
-                  <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>前章の自己紹介ページにCSSを当ててみましょう。見出しに色を付け、カード風の枠（padding + border-radius + 影）を作り、Flexboxで2枚並べます。</p>
+                  <h3>CSSファイルを分ける</h3>
+                  <p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにして読み込む</strong>のが基本です。こう書きます。</p>
+                  <div className="code-block">{`<!-- profile.html の <head> の中 -->
+<link rel="stylesheet" href="style.css">`}</div>
+                  <div className="kv-box">
+                    <strong>📌 なぜ分けるのか:</strong> 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると、その恩恵がはっきりします。<strong>1つのCSSファイルを複数のページで使い回せる</strong>ので、サイト全体の見た目を1か所で変えられます。逆にHTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: プロフィールカード（第2段階 — 見た目を整える）</p>
+                    <p className="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。HTMLファイルは構造だけ、見た目は全部CSSファイル、という分担を体験するのが狙いです。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>`style.css` を作り、profile.html から link で読み込む</li>
+                      <li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li>
+                      <li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li>
+                      <li>Flexbox を使って、リストの項目を横並びのタグ風にする</li>
+                      <li><strong>HTMLファイルには style 属性を1つも書かない</strong></li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">style.css を削除すると、見た目だけが消えて内容は残る</div>
+                      <div className="chk-item">HTMLに style="..." が1つも書かれていない</div>
+                      <div className="chk-item">開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる</div>
+                    <p className="assign-hint">💡 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。</p>
                   </div>
                   <h3>チェックリスト</h3>
                   <div className="chk-item">セレクタとプロパティの書き方が分かる</div>
                   <div className="chk-item">ボックスモデルの4層を言える</div>
                   <div className="chk-item">display:flex で要素を横に並べられる</div>
+                  <div className="chk-item">CSSを別ファイルに分ける理由を説明できる</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>

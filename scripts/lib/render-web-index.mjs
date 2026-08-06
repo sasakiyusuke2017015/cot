@@ -28,6 +28,25 @@ function pad2(n) {
   return String(n).padStart(2, '0')
 }
 
+/** 学習の「壁」ごとの4ブロック + 発展。ロードマップはこの単位で区切って見せる。 */
+const TAG = {
+  frontend: { label: 'フロントエンド', cls: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' },
+  vcs: { label: 'バージョン管理', cls: 'bg-orange-100 text-orange-700', dot: 'bg-orange-500' },
+  backend: { label: 'バックエンド', cls: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
+  release: { label: '公開', cls: 'bg-rose-100 text-rose-700', dot: 'bg-rose-500' },
+  advanced: { label: '発展', cls: 'bg-violet-100 text-violet-700', dot: 'bg-violet-500' },
+}
+
+/** 各ブロックの見出し。壁を越える意味を一言で示す。 */
+const BLOCK_INTRO = {
+  frontend: { title: 'フロントエンド', lead: 'ブラウザの中で動くものを作る。ここまでで「動くWebページ」が自力で作れる。' },
+  vcs: { title: 'バージョン管理', lead: '1人 → 2人の壁。履歴を残し、2人で1つのものを作る。ここでオセロを完成させる。' },
+  backend: { title: 'バックエンド', lead: 'ブラウザ → サーバの壁。別の言語でサーバを書き、データを保存できるようにする。' },
+  release: { title: '公開', lead: '手元 → 世界の壁。作ったものを誰でも使える場所に置く。' },
+  advanced: { title: '発展', lead: '必修の外。動くものができた後で、より良くするための道具。' },
+}
+const BLOCK_ORDER = ['frontend', 'vcs', 'backend', 'release', 'advanced']
+
 /** セクション見出しの番号。0 を渡すと番号なし（受講者用は通し番号を振らない）。 */
 function num(n) {
   return n ? `${n}. ` : ''
@@ -39,45 +58,62 @@ function num(n) {
  */
 function renderRoadmap(chapters, { teacher }) {
   const totalSessions = chapters.reduce((s, c) => s + (c.teaching?.sessions ?? 0), 0)
-  const cards = chapters
-    .map((c) => {
-      const isCore = c.type === 'core'
-      const tagCls = isCore ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
-      const t = c.teaching ?? {}
-      const sessions =
-        teacher && t.sessions ? `<span class="text-xs text-slate-400 shrink-0">${t.sessions}コマ</span>` : ''
-      const goal =
-        teacher && t.goal
-          ? `<p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> ${inline(t.goal)}</p>`
-          : ''
-      return `        <a href="materials/web/ch${pad2(c.id)}.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">${c.id}</span>
-            <span class="text-lg">${c.icon ?? ''}</span>
-            <span class="font-bold flex-1 truncate">${inline(c.title)}</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold ${tagCls}">${isCore ? '知識' : '実践'}</span>
-            ${sessions}
-          </div>
-          <p class="text-sm text-slate-500${goal ? ' mb-2' : ''}">${inline(c.subtitle)}</p>
-          ${goal}
-        </a>`
-    })
-    .join('\n')
+
+  const card = (c) => {
+    const tag = TAG[c.type] ?? TAG.frontend
+    const t = c.teaching ?? {}
+    const sessions =
+      teacher && t.sessions ? `<span class="text-xs text-slate-400 shrink-0">${t.sessions}コマ</span>` : ''
+    const goal =
+      teacher && t.goal
+        ? `<p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> ${inline(t.goal)}</p>`
+        : ''
+    return `          <a href="materials/web/ch${pad2(c.id)}.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full ${tag.dot} text-white text-sm font-bold flex items-center justify-center">${c.id}</span>
+              <span class="text-lg">${c.icon ?? ''}</span>
+              <span class="font-bold flex-1 truncate">${inline(c.title)}</span>
+              ${sessions}
+            </div>
+            <p class="text-sm text-slate-500${goal ? ' mb-2' : ''}">${inline(c.subtitle)}</p>
+            ${goal}
+          </a>`
+  }
+
+  // 学習の「壁」ごとにグループ化して並べる
+  const groups = BLOCK_ORDER.map((type) => {
+    const members = chapters.filter((c) => c.type === type)
+    if (members.length === 0) return ''
+    const meta = BLOCK_INTRO[type]
+    const tag = TAG[type]
+    const range = `${members[0].id}〜${members.at(-1).id}章`
+    const groupSessions = members.reduce((s, c) => s + (c.teaching?.sessions ?? 0), 0)
+    return `      <div class="mb-7">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full ${tag.dot}"></span>
+          <h3 class="font-bold text-lg">${meta.title}</h3>
+          <span class="text-xs text-slate-400">${members.length === 1 ? members[0].id + '章' : range}</span>
+          ${teacher && groupSessions ? `<span class="text-xs text-slate-400">・${groupSessions}コマ</span>` : ''}
+        </div>
+        <p class="text-sm text-slate-600 mb-3">${inline(meta.lead)}</p>
+        <div class="grid md:grid-cols-2 gap-3">
+${members.map(card).join('\n')}
+        </div>
+      </div>`
+  }).filter(Boolean)
 
   const heading = teacher ? `学習ロードマップ（全${chapters.length}章）` : `学習ロードマップ`
   const note = teacher
-    ? 'カードをクリックすると受講者向けの教材ページが開きます。認証は対象外。'
-    : 'この順に進めます。カードをクリックすると教材が開きます。'
+    ? 'カードをクリックすると受講者向けの教材ページが開きます。ブロックの切れ目が学習の「壁」です。'
+    : 'この順に進めます。ブロックごとに、越える壁が変わります。'
 
   return `    <section>
       <div class="flex items-baseline justify-between mb-4">
         <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">${teacher ? '1. ' : ''}${heading}</h2>
         ${teacher && totalSessions ? `<span class="text-sm text-slate-500">想定 計${totalSessions}コマ（1コマ=1時間）</span>` : ''}
       </div>
-      <p class="text-sm text-slate-600 mb-4">${note}</p>
-      <div class="grid md:grid-cols-2 gap-3">
-${cards}
-      </div>
+      <p class="text-sm text-slate-600 mb-5">${note}</p>
+${groups.join('\n')}
     </section>`
 }
 

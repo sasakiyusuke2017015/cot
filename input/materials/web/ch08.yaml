@@ -1,6 +1,6 @@
 id: 8
 level: web
-type: core
+type: backend
 icon: "🗄️"
 title: DB
 subtitle: データの保存先を知る

@@ -57,6 +57,45 @@ function renderCode(b) {
   return `${P}<div className="code-block">{\`${code}\`}</div>`
 }
 
+/**
+ * 課題ブロック。章の総仕上げとして「何を作るか」を提示する。
+ * title / goal / steps[] / done[]（完成の条件） / hint
+ */
+function renderAssignment(b) {
+  const steps = (b.steps ?? [])
+    .map((s, i) => `${P}    <li>${inline(s)}</li>`)
+    .join('\n')
+  const done = (b.done ?? [])
+    .map((s) => `${P}    <div className="chk-item">${inline(s)}</div>`)
+    .join('\n')
+  return `${P}<div className="assign-box">
+${P}  <p className="assign-title">🛠 課題: ${inline(b.title)}</p>
+${P}  ${b.goal ? `<p className="assign-goal">${inline(b.goal)}</p>` : ''}
+${steps ? `${P}  <p className="assign-h">作るもの</p>\n${P}  <ol className="assign-steps">\n${steps}\n${P}  </ol>` : ''}
+${done ? `${P}  <p className="assign-h">できたと言える条件</p>\n${done}` : ''}
+${P}  ${b.hint ? `<p className="assign-hint">💡 ${inline(b.hint)}</p>` : ''}
+${P}</div>`
+}
+
+/** 表。headers[] と rows[][]。機能分解やスケジュールに使う。 */
+function renderTable(b) {
+  const head = (b.headers ?? []).map((h) => `<th className="tbl-th">${inline(h)}</th>`).join('')
+  const rows = (b.rows ?? [])
+    .map(
+      (r) =>
+        `${P}      <tr>${r.map((c) => `<td className="tbl-td">${inline(c)}</td>`).join('')}</tr>`,
+    )
+    .join('\n')
+  return `${P}<div className="tbl-wrap">
+${P}  <table className="tbl">
+${P}    <thead><tr>${head}</tr></thead>
+${P}    <tbody>
+${rows}
+${P}    </tbody>
+${P}  </table>
+${P}</div>`
+}
+
 const RENDERERS = {
   h3: renderH3,
   paragraph: renderParagraph,
@@ -68,6 +107,8 @@ const RENDERERS = {
   'ex-box': renderExBox,
   checklist: renderChecklist,
   code: renderCode,
+  assignment: renderAssignment,
+  table: renderTable,
 }
 
 export function renderWebBlocks(blocks) {

@@ -1,6 +1,6 @@
 id: 2
 level: web
-type: core
+type: frontend
 icon: "🎨"
 title: CSS
 subtitle: 見た目とレイアウトを整える
@@ -65,11 +65,34 @@ content_blocks:
   - kind: tip-box
     title: "💡 コツ:"
     text: 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。
-  - kind: ex-box
-    title: 演習
-    text: 前章の自己紹介ページにCSSを当ててみましょう。見出しに色を付け、カード風の枠（padding + border-radius + 影）を作り、Flexboxで2枚並べます。
+  - kind: h3
+    text: CSSファイルを分ける
+  - kind: paragraph
+    text: CSSはHTMLの中に直接書くこともできますが、**別ファイルにして読み込む**のが基本です。こう書きます。
+  - kind: code
+    text: |
+      <!-- profile.html の <head> の中 -->
+      <link rel="stylesheet" href="style.css">
+  - kind: kv-box
+    title: "📌 なぜ分けるのか:"
+    text: 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると、その恩恵がはっきりします。**1つのCSSファイルを複数のページで使い回せる**ので、サイト全体の見た目を1か所で変えられます。逆にHTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。
+  - kind: assignment
+    title: プロフィールカード（第2段階 — 見た目を整える）
+    goal: 第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。HTMLファイルは構造だけ、見た目は全部CSSファイル、という分担を体験するのが狙いです。
+    steps:
+      - "`style.css` を作り、profile.html から link で読み込む"
+      - カード風の見た目にする（背景色・padding・border-radius・box-shadow）
+      - 名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する
+      - Flexbox を使って、リストの項目を横並びのタグ風にする
+      - "**HTMLファイルには style 属性を1つも書かない**"
+    done:
+      - style.css を削除すると、見た目だけが消えて内容は残る
+      - HTMLに style="..." が1つも書かれていない
+      - 開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる
+    hint: 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。
   - kind: checklist
     items:
       - セレクタとプロパティの書き方が分かる
       - ボックスモデルの4層を言える
       - display:flex で要素を横に並べられる
+      - CSSを別ファイルに分ける理由を説明できる

@@ -32,6 +32,18 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
 @media print { .no-print { display:none; } }
 </style>
 </head>
@@ -152,7 +164,7 @@ function Page() {
       <div className="max-w-7xl mx-auto w-full flex-1">
         <main className="flex-1 p-6 min-w-0">
           <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
-            <span className="tag bg-white/20 text-white">第1章 · 知識</span>
+            <span className="tag bg-white/20 text-white">第1章 · フロントエンド</span>
             <h1 className="text-2xl font-bold mt-2">🏗️ HTML</h1>
             <p className="text-blue-100 mt-1">ページの骨組みを作る</p>
           </div>
@@ -188,14 +200,31 @@ function Page() {
                   <div className="tip-box">
                     <strong>💡 コツ:</strong> ブラウザで右クリック →「検証」（開発者ツール）を開くと、どんなページもHTMLの構造を見られます。好きなサイトの骨組みを覗いてみるのが一番の教材です。
                   </div>
-                  <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>自己紹介ページを作ってみましょう。名前（h1）・趣味のリスト（ul）・好きなサイトへのリンク（a）を入れて、ブラウザで開いて確認します。</p>
+                  <h3>なぜ「構造」と「見た目」を分けるのか</h3>
+                  <p>HTMLには文字を大きくしたり色を付けたりするタグも一応あります。ですが今はほとんど使いません。<strong>構造と見た目を混ぜると、後から変更するのが地獄になる</strong>からです。</p>
+                  <p>たとえば「見出しの色を全部変えたい」とき、構造と見た目が分かれていればCSSの1行を直すだけで済みます。混ざっていると、全ページの全見出しを手で直すことになります。この分離の恩恵は次章で実感できます。</p>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: プロフィールカード（第1段階）</p>
+                    <p className="assign-goal">自分のプロフィールカードをHTMLだけで作ります。この課題は第2章・第3章で育てていくので、消さずに取っておいてください。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>`profile.html` というファイルを作る</li>
+                      <li>名前を h1、肩書き（学習中のことなど）を p で書く</li>
+                      <li>「できること」を ul のリストで3つ以上書く</li>
+                      <li>好きなサイトへのリンクを a で貼る</li>
+                      <li>ブラウザで開いて表示を確認する</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">ブラウザで開くと内容が表示される</div>
+                      <div className="chk-item">開発者ツールで見たとき、意図した入れ子になっている</div>
+                      <div className="chk-item">なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）</div>
+                    <p className="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。</p>
                   </div>
                   <h3>チェックリスト</h3>
                   <div className="chk-item">HTMLの役割は「構造」だと説明できる</div>
                   <div className="chk-item">開始タグ・終了タグ・属性の書き方が分かる</div>
                   <div className="chk-item">開発者ツールで他のページの構造を見たことがある</div>
+                  <div className="chk-item">profile.html を作ってブラウザで表示できた</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>

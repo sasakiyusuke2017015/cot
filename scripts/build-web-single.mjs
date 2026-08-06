@@ -24,7 +24,7 @@ const OUT_TEACHER = path.join(ROOT, 'output', 'all-teacher.html')
 // 従来の名前は講師用として維持
 const OUT_LEGACY = path.join(ROOT, 'output', 'toranomaki-all.html')
 
-const TYPE_LABEL = { core: '知識', user: '実践' }
+const TYPE_LABEL = { core: '基礎', user: '実践', advanced: '発展' }
 
 function pad2(n) {
   return String(n).padStart(2, '0')
@@ -81,6 +81,24 @@ const BLOCK = {
     `<h3>${inline(b.title ?? 'チェックリスト')}</h3>` +
     (b.items ?? []).map((i) => `<div class="chk-item">${inline(i)}</div>`).join(''),
   code: (b) => `<pre class="code-block">${esc(String(b.text ?? '').replace(/\n$/, ''))}</pre>`,
+  assignment: (b) => {
+    const steps = (b.steps ?? []).map((s) => `<li>${inline(s)}</li>`).join('')
+    const done = (b.done ?? []).map((s) => `<div class="chk-item">${inline(s)}</div>`).join('')
+    return `<div class="assign-box">
+  <p class="assign-title">🛠 課題: ${inline(b.title)}</p>
+  ${b.goal ? `<p class="assign-goal">${inline(b.goal)}</p>` : ''}
+  ${steps ? `<p class="assign-h">作るもの</p><ol class="assign-steps">${steps}</ol>` : ''}
+  ${done ? `<p class="assign-h">できたと言える条件</p>${done}` : ''}
+  ${b.hint ? `<p class="assign-hint">💡 ${inline(b.hint)}</p>` : ''}
+</div>`
+  },
+  table: (b) => {
+    const head = (b.headers ?? []).map((h) => `<th class="tbl-th">${inline(h)}</th>`).join('')
+    const rows = (b.rows ?? [])
+      .map((r) => `<tr>${r.map((c) => `<td class="tbl-td">${inline(c)}</td>`).join('')}</tr>`)
+      .join('')
+    return `<div class="tbl-wrap"><table class="tbl"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`
+  },
 }
 
 function renderBlocks(blocks) {
@@ -201,6 +219,18 @@ header.top p { margin:0; opacity:.95; font-size:.9rem; }
 .chk-item::before { content:"☐"; color:#f97316; flex:none; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas,Monaco,monospace; font-size:.8rem;
   line-height:1.65; border-radius:8px; padding:12px 14px; overflow-x:auto; margin:1.1rem 0; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:10px; padding:14px 16px; margin:1.6rem 0; }
+.assign-title { font-weight:700; font-size:1rem; color:#92400e; margin:0 0 .4rem; }
+.assign-goal { color:#78350f; margin:0 0 .7rem; }
+.assign-h { font-weight:700; font-size:.82rem; color:#92400e; margin:.8rem 0 .3rem; }
+.assign-steps { list-style:decimal; padding-left:1.4rem; margin:0 0 .4rem; }
+.assign-steps li { margin-bottom:.3rem; color:#451a03; }
+.assign-hint { margin-top:.8rem; font-size:.83rem; color:#78350f; background:#fffbeb; border-radius:6px; padding:8px 10px; }
+.tbl-wrap { overflow-x:auto; margin:1.3rem 0; border:1px solid #e5e7eb; border-radius:8px; }
+.tbl { width:100%; border-collapse:collapse; font-size:.83rem; min-width:460px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:8px 10px; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:8px 10px; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
 .kw-panel { margin:16px; padding:12px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; }
 .kw-title { font-weight:700; font-size:.85rem; color:#1e3a8a; margin:0 0 8px; }
 .kw { font-size:.8rem; color:#64748b; margin-bottom:7px; }
@@ -231,6 +261,12 @@ details p { margin:.4rem 0; font-size:.88rem; }
   .quiz-opts li { border-color:#334155; }
   details { background:#0f172a; border-color:#334155; } summary { color:#cbd5e1; }
   .teaching { background:#422006; border-color:#a16207; } .teaching summary { color:#fcd34d; }
+  .assign-box { background:linear-gradient(135deg,#422006,#451a03); border-color:#b45309; }
+  .assign-title,.assign-h { color:#fcd34d; } .assign-goal { color:#fde68a; }
+  .assign-steps li { color:#fef3c7; }
+  .assign-hint { background:#292524; color:#fde68a; }
+  .tbl-wrap { border-color:#334155; } .tbl-td { border-color:#334155; color:#cbd5e1; }
+  .tbl tbody tr:nth-child(even) { background:#0f172a; }
 }
 @media print {
   .to-top,#toc { display:none; }

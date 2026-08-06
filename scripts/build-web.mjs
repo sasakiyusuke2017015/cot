@@ -36,10 +36,25 @@ const LEGACY_OUT = path.join(ROOT, 'output', 'toranomaki.html')
 const COURSE_IN = path.join(MATERIALS_IN, 'course.yaml')
 const HEAD_TPL = fs.readFileSync(path.join(ROOT, 'scripts', 'templates', 'web-chapter-head.html'), 'utf8')
 
-const TYPE_LABEL = { core: '知識', user: '実践' }
+// 学習の「壁」ごとに4ブロックへ色分けする。
+//   frontend … ブラウザの中だけで完結する（HTML/CSS/JS）
+//   vcs      … 1人 → 2人の壁（Git・共同開発）
+//   backend  … ブラウザ → サーバの壁（Python/SQL/API/DB）
+//   release  … 手元 → 世界の壁（デプロイ）
+//   advanced … 必修の外（TypeScript/React）
+const TYPE_LABEL = {
+  frontend: 'フロントエンド',
+  vcs: 'バージョン管理',
+  backend: 'バックエンド',
+  release: '公開',
+  advanced: '発展',
+}
 const GRADIENT = {
-  core: { card: 'from-blue-700 to-blue-500', sub: 'text-blue-100' },
-  user: { card: 'from-emerald-700 to-emerald-500', sub: 'text-emerald-100' },
+  frontend: { card: 'from-blue-700 to-blue-500', sub: 'text-blue-100' },
+  vcs: { card: 'from-orange-600 to-amber-500', sub: 'text-orange-100' },
+  backend: { card: 'from-emerald-700 to-emerald-500', sub: 'text-emerald-100' },
+  release: { card: 'from-rose-600 to-pink-500', sub: 'text-rose-100' },
+  advanced: { card: 'from-violet-700 to-violet-500', sub: 'text-violet-100' },
 }
 
 function pad2(n) {
@@ -106,7 +121,7 @@ function jsConst(name, value) {
 
 function buildChapterHtml(chapter, quiz, prev, next, total) {
   const typeLabel = TYPE_LABEL[chapter.type] ?? chapter.type
-  const g = GRADIENT[chapter.type] ?? GRADIENT.core
+  const g = GRADIENT[chapter.type] ?? GRADIENT.frontend
   const head = HEAD_TPL.replace('__TITLE__', `Web開発の虎の巻 第${chapter.id}章 - ${chapter.title}`)
   const body = renderWebBlocks(chapter.content_blocks)
 

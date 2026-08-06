@@ -1,6 +1,6 @@
 id: 3
 level: web
-type: core
+type: frontend
 icon: "⚡"
 title: JavaScript
 subtitle: ページに動きをつける
@@ -65,11 +65,37 @@ content_blocks:
   - kind: tip-box
     title: "💡 コツ:"
     text: 困ったらまず **console.log()** で変数の中身を表示して確認する癖をつけましょう。「思っていた値と違う」がバグの正体であることがほとんどです。
-  - kind: ex-box
-    title: 演習
-    text: カウンターを作ってみましょう。「+1」ボタンを押すと数字が増え、10を超えたら「よく頑張りました」と表示します。（変数・イベント・条件分岐の総合練習）
+  - kind: h3
+    text: JSファイルも分ける
+  - kind: paragraph
+    text: CSSと同じで、JavaScriptも別ファイルにします。`</body>` の直前で読み込むのが基本です。
+  - kind: code
+    text: |
+      <!-- profile.html の </body> の直前 -->
+      <script src="script.js"></script>
+  - kind: kv-box
+    title: "📌 3つの役割がそろった:"
+    text: これで **HTML（構造）・CSS（見た目）・JavaScript（動き）** の3ファイル構成になります。この分け方はWeb開発の基本形で、どんな大きなサイトも根っこは同じです。「どのファイルを直せばいいか」が明確になるのが最大の利点です。
+  - kind: assignment
+    title: プロフィールカード（第3段階 — 動かす）
+    goal: 第2章までのカードに動きをつけます。3つのファイルがそれぞれ何を担当しているかを、自分の言葉で説明できるようになるのが本当のゴールです。
+    steps:
+      - "`script.js` を作り、profile.html から読み込む"
+      - 「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする
+      - もう一度押すと隠れる（トグル）ようにする
+      - 「いいね」ボタンを作り、押すたびに数が増えるようにする
+      - 押した回数が10を超えたら、メッセージを変える
+    done:
+      - ボタンを押すと表示が変わる
+      - script.js を読み込まなくしても、ページ自体は壊れずに表示される
+      - "HTML・CSS・JS がそれぞれ何をしているか説明できる"
+    hint: 表示・非表示は CSS のクラスを付け外しする方法（classList.toggle）が定石です。JSから直接スタイルをいじるより、CSSに定義したクラスを切り替えるほうが後から変更しやすくなります。
+  - kind: tip-box
+    title: "💡 次章への橋渡し:"
+    text: ここまでで **HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態**になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。実はオセロは、ここまでの知識だけで作れます。
   - kind: checklist
     items:
       - const と let の使い分けが分かる
       - if / for / 関数 / 配列を組み合わせて書ける
       - エラーが出たらコンソールを読む習慣がある
+      - HTML / CSS / JS の3ファイル構成でページを作れた

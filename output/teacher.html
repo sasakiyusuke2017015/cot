@@ -37,107 +37,151 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
         <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">1. 学習ロードマップ（全9章）</h2>
         <span class="text-sm text-slate-500">想定 計39コマ（1コマ=1時間）</span>
       </div>
-      <p class="text-sm text-slate-600 mb-4">カードをクリックすると受講者向けの教材ページが開きます。認証は対象外。</p>
-      <div class="grid md:grid-cols-2 gap-3">
-        <a href="materials/web/ch01.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">1</span>
-            <span class="text-lg">🏗️</span>
-            <span class="font-bold flex-1 truncate">HTML</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
-            <span class="text-xs text-slate-400 shrink-0">2コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">ページの骨組みを作る</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。</p>
-        </a>
-        <a href="materials/web/ch02.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">2</span>
-            <span class="text-lg">🎨</span>
-            <span class="font-bold flex-1 truncate">CSS</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
-            <span class="text-xs text-slate-400 shrink-0">3コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">見た目とレイアウトを整える</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</p>
-        </a>
-        <a href="materials/web/ch03.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">3</span>
-            <span class="text-lg">⚡</span>
-            <span class="font-bold flex-1 truncate">JavaScript</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
-            <span class="text-xs text-slate-400 shrink-0">6コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">ページに動きをつける</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</p>
-        </a>
-        <a href="materials/web/ch04.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">4</span>
-            <span class="text-lg">🌿</span>
-            <span class="font-bold flex-1 truncate">Git</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
-            <span class="text-xs text-slate-400 shrink-0">2コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">コードの履歴を管理する</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。</p>
-        </a>
-        <a href="materials/web/ch05.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">5</span>
-            <span class="text-lg">🔷</span>
-            <span class="font-bold flex-1 truncate">TypeScript</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
-            <span class="text-xs text-slate-400 shrink-0">4コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">型でコードを安全にする</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。</p>
-        </a>
-        <a href="materials/web/ch06.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">6</span>
-            <span class="text-lg">⚛️</span>
-            <span class="font-bold flex-1 truncate">React</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
-            <span class="text-xs text-slate-400 shrink-0">8コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">画面を部品で組み立てる</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 「画面=stateの反映結果」の理解。TODOアプリを完成させる。</p>
-        </a>
-        <a href="materials/web/ch07.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">7</span>
-            <span class="text-lg">🔌</span>
-            <span class="font-bold flex-1 truncate">API</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
-            <span class="text-xs text-slate-400 shrink-0">6コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">データをやり取りする窓口</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。</p>
-        </a>
-        <a href="materials/web/ch08.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">8</span>
-            <span class="text-lg">🗄️</span>
-            <span class="font-bold flex-1 truncate">DB</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
-            <span class="text-xs text-slate-400 shrink-0">5コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">データの保存先を知る</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。</p>
-        </a>
-        <a href="materials/web/ch09.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">9</span>
-            <span class="text-lg">🚀</span>
-            <span class="font-bold flex-1 truncate">デプロイ</span>
-            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
-            <span class="text-xs text-slate-400 shrink-0">3コマ</span>
-          </div>
-          <p class="text-sm text-slate-500 mb-2">世界に公開する</p>
-          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。</p>
-        </a>
+      <p class="text-sm text-slate-600 mb-5">カードをクリックすると受講者向けの教材ページが開きます。ブロックの切れ目が学習の「壁」です。</p>
+      <div class="mb-7">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+          <h3 class="font-bold text-lg">フロントエンド</h3>
+          <span class="text-xs text-slate-400">1〜3章</span>
+          <span class="text-xs text-slate-400">・11コマ</span>
+        </div>
+        <p class="text-sm text-slate-600 mb-3">ブラウザの中で動くものを作る。ここまでで「動くWebページ」が自力で作れる。</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <a href="materials/web/ch01.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center">1</span>
+              <span class="text-lg">🏗️</span>
+              <span class="font-bold flex-1 truncate">HTML</span>
+              <span class="text-xs text-slate-400 shrink-0">2コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">ページの骨組みを作る</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。</p>
+          </a>
+          <a href="materials/web/ch02.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center">2</span>
+              <span class="text-lg">🎨</span>
+              <span class="font-bold flex-1 truncate">CSS</span>
+              <span class="text-xs text-slate-400 shrink-0">3コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">見た目とレイアウトを整える</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</p>
+          </a>
+          <a href="materials/web/ch03.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center">3</span>
+              <span class="text-lg">⚡</span>
+              <span class="font-bold flex-1 truncate">JavaScript</span>
+              <span class="text-xs text-slate-400 shrink-0">6コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">ページに動きをつける</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</p>
+          </a>
+        </div>
+      </div>
+      <div class="mb-7">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+          <h3 class="font-bold text-lg">バージョン管理</h3>
+          <span class="text-xs text-slate-400">4章</span>
+          <span class="text-xs text-slate-400">・2コマ</span>
+        </div>
+        <p class="text-sm text-slate-600 mb-3">1人 → 2人の壁。履歴を残し、2人で1つのものを作る。ここでオセロを完成させる。</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <a href="materials/web/ch04.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">4</span>
+              <span class="text-lg">🌿</span>
+              <span class="font-bold flex-1 truncate">Git</span>
+              <span class="text-xs text-slate-400 shrink-0">2コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">コードの履歴を管理する</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。</p>
+          </a>
+        </div>
+      </div>
+      <div class="mb-7">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <h3 class="font-bold text-lg">バックエンド</h3>
+          <span class="text-xs text-slate-400">7〜8章</span>
+          <span class="text-xs text-slate-400">・11コマ</span>
+        </div>
+        <p class="text-sm text-slate-600 mb-3">ブラウザ → サーバの壁。別の言語でサーバを書き、データを保存できるようにする。</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <a href="materials/web/ch07.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-emerald-500 text-white text-sm font-bold flex items-center justify-center">7</span>
+              <span class="text-lg">🔌</span>
+              <span class="font-bold flex-1 truncate">API</span>
+              <span class="text-xs text-slate-400 shrink-0">6コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">データをやり取りする窓口</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。</p>
+          </a>
+          <a href="materials/web/ch08.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-emerald-500 text-white text-sm font-bold flex items-center justify-center">8</span>
+              <span class="text-lg">🗄️</span>
+              <span class="font-bold flex-1 truncate">DB</span>
+              <span class="text-xs text-slate-400 shrink-0">5コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">データの保存先を知る</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。</p>
+          </a>
+        </div>
+      </div>
+      <div class="mb-7">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+          <h3 class="font-bold text-lg">公開</h3>
+          <span class="text-xs text-slate-400">9章</span>
+          <span class="text-xs text-slate-400">・3コマ</span>
+        </div>
+        <p class="text-sm text-slate-600 mb-3">手元 → 世界の壁。作ったものを誰でも使える場所に置く。</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <a href="materials/web/ch09.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-rose-500 text-white text-sm font-bold flex items-center justify-center">9</span>
+              <span class="text-lg">🚀</span>
+              <span class="font-bold flex-1 truncate">デプロイ</span>
+              <span class="text-xs text-slate-400 shrink-0">3コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">世界に公開する</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。</p>
+          </a>
+        </div>
+      </div>
+      <div class="mb-7">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-3 h-3 rounded-full bg-violet-500"></span>
+          <h3 class="font-bold text-lg">発展</h3>
+          <span class="text-xs text-slate-400">5〜6章</span>
+          <span class="text-xs text-slate-400">・12コマ</span>
+        </div>
+        <p class="text-sm text-slate-600 mb-3">必修の外。動くものができた後で、より良くするための道具。</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <a href="materials/web/ch05.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-violet-500 text-white text-sm font-bold flex items-center justify-center">5</span>
+              <span class="text-lg">🔷</span>
+              <span class="font-bold flex-1 truncate">TypeScript</span>
+              <span class="text-xs text-slate-400 shrink-0">4コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">型でコードを安全にする</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。</p>
+          </a>
+          <a href="materials/web/ch06.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 shrink-0 rounded-full bg-violet-500 text-white text-sm font-bold flex items-center justify-center">6</span>
+              <span class="text-lg">⚛️</span>
+              <span class="font-bold flex-1 truncate">React</span>
+              <span class="text-xs text-slate-400 shrink-0">8コマ</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-2">画面を部品で組み立てる</p>
+            <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 「画面=stateの反映結果」の理解。TODOアプリを完成させる。</p>
+          </a>
+        </div>
       </div>
     </section>
 

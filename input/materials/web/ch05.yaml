@@ -1,6 +1,6 @@
 id: 5
 level: web
-type: core
+type: advanced
 icon: "🔷"
 title: TypeScript
 subtitle: 型でコードを安全にする

@@ -1,6 +1,6 @@
 id: 7
 level: web
-type: user
+type: backend
 icon: "🔌"
 title: API
 subtitle: データをやり取りする窓口

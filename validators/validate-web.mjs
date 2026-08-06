@@ -169,9 +169,12 @@ function validateHtml(file) {
   const jsx = scriptStart >= 0 ? html.slice(scriptStart) : ''
 
   // JSX 規約
-  if (/<[A-Za-z][^>]*\sclass=/.test(jsx)) err(rel, 'JSX 内で class= が使われています（className を使うこと）')
-  if (jsx.includes('<!--')) err(rel, 'JSX 内に HTML コメント <!-- --> があります')
-  if (/\son[a-z]+=/.test(jsx)) err(rel, 'JSX 内に小文字のイベント属性があります（onClick 等の camelCase にすること）')
+  // code-block のコード例（テンプレートリテラル）は JSX ではないので検査から外す。
+  // 教材が HTML/CSS/JS を扱う都合上、コード例に <!-- --> や class= が出るのは正しい。
+  const jsxOnly = stripTemplateLiterals(jsx)
+  if (/<[A-Za-z][^>]*\sclass=/.test(jsxOnly)) err(rel, 'JSX 内で class= が使われています（className を使うこと）')
+  if (jsxOnly.includes('<!--')) err(rel, 'JSX 内に HTML コメント <!-- --> があります')
+  if (/\son[a-z]+=/.test(jsxOnly)) err(rel, 'JSX 内に小文字のイベント属性があります（onClick 等の camelCase にすること）')
 
   // 埋め込み定数
   const keywords = extractJsonConst(html, 'KEYWORDS')
