@@ -6,6 +6,11 @@ title: API
 subtitle: データをやり取りする窓口
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 6
+  goal: フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。
+  watch: 通信が失敗したとき想像で直そうとする。必ずNetworkタブを開かせて事実を見せる。
+  ask: いまリクエストは飛んでる？何が返ってきた？
 keywords:
   - term: API
     desc: プログラム同士がデータをやり取りする窓口

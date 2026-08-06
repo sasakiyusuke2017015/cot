@@ -20,11 +20,15 @@ import yaml from 'js-yaml'
 import { ROOT, ensureDir } from './lib/paths.mjs'
 import { toCsv, QUESTION_HEADER } from './lib/csv.mjs'
 import { renderWebBlocks } from './lib/render-blocks-web.mjs'
+import { renderWebIndex } from './lib/render-web-index.mjs'
 
 const MATERIALS_IN = path.join(ROOT, 'input', 'materials', 'web')
 const QUESTIONS_IN = path.join(ROOT, 'input', 'questions', 'web')
 const MATERIALS_OUT = path.join(ROOT, 'output', 'materials', 'web')
 const QUESTIONS_OUT = path.join(ROOT, 'output', 'questions', 'web')
+// 講師用ハブは output/ 直下（materials/web/chNN.html への相対リンクが通る位置）
+const INDEX_OUT = path.join(ROOT, 'output', 'toranomaki.html')
+const COURSE_IN = path.join(MATERIALS_IN, 'course.yaml')
 const HEAD_TPL = fs.readFileSync(path.join(ROOT, 'scripts', 'templates', 'web-chapter-head.html'), 'utf8')
 
 const TYPE_LABEL = { core: '知識', user: '実践' }
@@ -174,8 +178,9 @@ function Page() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <p className="font-bold">🐯 Web開発の虎の巻</p>
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <a href="../../toranomaki.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
           <p className="text-sm text-blue-200">第${chapter.id}章 / 全${total}章</p>
         </div>
       </header>
@@ -267,6 +272,15 @@ function main() {
       fs.writeFileSync(csvFile, toCsv(rows, { bom: true }), 'utf8')
       console.log(`  ✓ ${path.relative(ROOT, csvFile)}  (${qs.length} 問)`)
     }
+  }
+
+  // 講師用ハブページ（章一覧・カンペは chNN.yaml から自動集約）
+  if (fs.existsSync(COURSE_IN)) {
+    const course = yaml.load(fs.readFileSync(COURSE_IN, 'utf8'))
+    fs.writeFileSync(INDEX_OUT, renderWebIndex(course, chapters), 'utf8')
+    console.log(`  ✓ ${path.relative(ROOT, INDEX_OUT)}  (講師用ハブ)`)
+  } else {
+    console.log('  － course.yaml が無いので講師用ハブはスキップ')
   }
 }
 

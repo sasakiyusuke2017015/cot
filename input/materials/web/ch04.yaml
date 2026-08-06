@@ -6,6 +6,11 @@ title: Git
 subtitle: コードの履歴を管理する
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 2
+  goal: 5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。
+  watch: branch や rebase を聞かれても後回しでよいと伝える。秘密情報のcommitだけは強く注意する。
+  ask: このcommitメッセージで、3か月後の自分に何をしたか伝わる？
 keywords:
   - term: リポジトリ
     desc: コードと履歴をまとめて管理する保管庫

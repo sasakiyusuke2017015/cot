@@ -6,6 +6,12 @@ title: HTML
 subtitle: ページの骨組みを作る
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+# 講師向け（index.html のカンペに出る。生徒向けHTMLには出ない）
+teaching:
+  sessions: 2
+  goal: タグで構造を書く感覚をつかませる。見た目の話はまだしない。
+  watch: 見た目を整えたがるので「それは次章」と切る。閉じタグ忘れは自分で気付かせる。
+  ask: なぜここは div ではなく h1 にした？
 keywords:
   - term: HTML
     desc: Webページの構造（骨組み）を記述する言語

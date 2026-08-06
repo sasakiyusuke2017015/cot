@@ -6,6 +6,11 @@ title: React
 subtitle: 画面を部品で組み立てる
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 8
+  goal: 「画面=stateの反映結果」の理解。TODOアプリを完成させる。
+  watch: DOMを直接触ろうとしたら止める。まず画面を部品に分解させてから書き始めさせる。
+  ask: この画面はどんな部品に分けられる？その部品に何を渡す？
 keywords:
   - term: コンポーネント
     desc: 画面を構成する再利用可能な部品

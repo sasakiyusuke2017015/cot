@@ -6,6 +6,11 @@ title: デプロイ
 subtitle: 世界に公開する
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 3
+  goal: 公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。
+  watch: 公開前に環境変数・秘密情報のチェックを一緒にやる。ここは講師が必ず確認する。
+  ask: このリポジトリ、いま公開して困るものは入ってない？
 keywords:
   - term: デプロイ
     desc: アプリを公開して誰でも使える状態にすること

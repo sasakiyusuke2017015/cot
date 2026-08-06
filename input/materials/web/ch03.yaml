@@ -6,6 +6,11 @@ title: JavaScript
 subtitle: ページに動きをつける
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 6
+  goal: エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。
+  watch: 詰まる人が一番多い。ここで30分ルールを本格的に運用開始する。答えを言わずコンソールを見せる。
+  ask: console.log を入れるならどこ？なぜそこ？
 keywords:
   - term: 変数
     desc: 値に名前を付けて保存する。const（再代入不可）と let

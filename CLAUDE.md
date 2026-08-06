@@ -56,14 +56,27 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 |-------|---------------------|----------------------|---------------------------|
 | `web` | Web開発の虎の巻     | `materials/web/`     | `chNN-check.csv`（章別）  |
 
-- 入力: `input/materials/web/chNN.yaml`・`input/questions/web/chNN.yaml`
-- ビルド: `npm run build:web` → `output/materials/web/chNN.html` + `output/questions/web/chNN-check.csv`
-- 検証: `npm run validate:web`
+- 入力: `input/materials/web/course.yaml`（コース設計）・`chNN.yaml`（章）・`input/questions/web/chNN.yaml`（問題）
+- ビルド: `npm run build:web` → 次の3種を生成
+  - `output/toranomaki.html` … **講師用ハブ**（章一覧・章別カンペ・進め方。ここが入口）
+  - `output/materials/web/chNN.html` … 生徒向けの章ページ
+  - `output/questions/web/chNN-check.csv` … 問題CSV
+- 検証: `npm run validate:web`（HTML/CSV の構造 + ハブのリンク整合）
 - 章構成（全 9 章・ロードマップ順）: HTML → CSS → JavaScript → Git → TypeScript → React → API → DB → デプロイ
 - **問題 YAML が唯一の元データ**。CSV と HTML 内の確認クイズの両方をそこから生成する（二重管理しない）
 - HTML クイズの選択肢は問題番号を種にした決定的シャッフル（再生成しても並びは変わらない）
 - 問題番号は章をまたいだ通し連番（ch01 の 1 問目が 1 番）
 - `--apply` は無い（`ai_edu` へは書き込まない）
+
+#### 講師用ハブ（`output/toranomaki.html`）
+
+生徒向けの章ページとは別に、**教える側のカンペ**を生成する。手書きファイルではないので直接編集しない。
+
+- コース全体の設計（1コマの時間配分・メンターの役割・30分ルール・育成3ステップ等）は `course.yaml` に書く
+- 章ごとのカンペは各 `chNN.yaml` の `teaching:` に書く。生徒向けHTMLには出力されない
+  - `sessions`（想定コマ数）/ `goal`（ねらい）/ `watch`（つまずき・見るところ）/ `ask`（投げかける質問）
+- 章一覧・総コマ数・カンペ表は `chNN.yaml` から**自動集約**される。章を足せばハブも自動で追随する
+- 章ページのヘッダから `← 目次` でハブに戻れる
 
 ## 重要ルール（ハードルール）
 
@@ -120,12 +133,14 @@ npm run preview           # 生成 HTML をブラウザで確認（ローカル�
 - `input/raw/` — 元資料（md/txt）。教材本文の根拠
 - `input/materials/lvN/chNN.yaml` — 章データ（lvN 種別・著者が書く）
 - `input/questions/lvN/check/`・`lvN/cert/` — 問題データ（lvN 種別・著者が書く YAML）
-- `input/materials/web/chNN.yaml` — 章データ（web 種別・虎の巻）
+- `input/materials/web/course.yaml` — コース全体の設計（web 種別・講師用ハブの元データ）
+- `input/materials/web/chNN.yaml` — 章データ（web 種別・虎の巻。`teaching:` に講師向けカンペ）
 - `input/questions/web/chNN.yaml` — 問題データ（web 種別・CSV と HTML クイズの共通ソース）
 - `scripts/build-materials.mjs`・`build-questions.mjs` — lvN 種別のビルダー
 - `scripts/build-web.mjs` — web 種別のビルダー（HTML + CSV を一括生成）
 - `scripts/lib/render-blocks.mjs` — lvN 用 content_blocks → JSX
 - `scripts/lib/render-blocks-web.mjs` — web 用 content_blocks → JSX（`code` ブロック対応）
+- `scripts/lib/render-web-index.mjs` — 講師用ハブ（toranomaki.html）の組み立て
 - `scripts/templates/` — HTML の head 部テンプレート（種別ごと）
 - `validators/validate-all.mjs` — lvN 種別の検証
 - `validators/validate-web.mjs` — web 種別の検証

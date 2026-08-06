@@ -6,6 +6,11 @@ title: DB
 subtitle: データの保存先を知る
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 5
+  goal: React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。
+  watch: いきなりORMに行きたがるが、まず生SQLを触らせる。SQLインジェクションは必ず触れる。
+  ask: もしデータが100万件あったら、このクエリはどうなる？
 keywords:
   - term: データベース（DB）
     desc: データを永続的に保存する場所

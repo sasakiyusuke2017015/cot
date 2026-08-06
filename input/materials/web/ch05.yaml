@@ -6,6 +6,11 @@ title: TypeScript
 subtitle: 型でコードを安全にする
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 4
+  goal: 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。
+  watch: 型エラーの文面に怯む。長いエラーも「何が」「どの型と」合わないかだけ読めばよいと教える。
+  ask: この関数、引数に何が来たら壊れる？
 keywords:
   - term: TypeScript
     desc: JavaScriptに型を追加した言語。JSに変換されて動く

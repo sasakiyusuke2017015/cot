@@ -16,6 +16,7 @@ import { QUESTION_HEADER } from '../scripts/lib/csv.mjs'
 
 const MATERIALS = path.join(ROOT, 'output', 'materials', 'web')
 const QUESTIONS = path.join(ROOT, 'output', 'questions', 'web')
+const INDEX = path.join(ROOT, 'output', 'toranomaki.html')
 
 const errors = []
 const warnings = []
@@ -225,6 +226,36 @@ function validateCsv(file) {
   return body
 }
 
+/** 講師用ハブ: 全章へのリンクが揃っているか・リンク先が実在するか。 */
+function validateIndex(chapterFiles) {
+  const rel = path.relative(ROOT, INDEX)
+  if (!fs.existsSync(INDEX)) {
+    err(rel, '講師用ハブが生成されていません')
+    return
+  }
+  const html = fs.readFileSync(INDEX, 'utf8')
+
+  const linked = new Set([...html.matchAll(/href="materials\/web\/(ch\d+\.html)"/g)].map((m) => m[1]))
+  for (const f of chapterFiles) {
+    if (!linked.has(f)) err(rel, `${f} へのリンクがありません（章を足したら再生成すること）`)
+  }
+  for (const l of linked) {
+    if (!fs.existsSync(path.join(MATERIALS, l))) err(rel, `リンク先が存在しません: materials/web/${l}`)
+  }
+  if (!/全\d+章/.test(html)) err(rel, '章数の表示が見つかりません')
+  const shown = Number(html.match(/全(\d+)章/)?.[1])
+  if (shown !== chapterFiles.length) {
+    err(rel, `見出しの章数 ${shown} が実際の ${chapterFiles.length} と違います`)
+  }
+  // 章ページ側からハブへ戻れること
+  for (const f of chapterFiles) {
+    const chHtml = fs.readFileSync(path.join(MATERIALS, f), 'utf8')
+    if (!chHtml.includes('href="../../toranomaki.html"')) {
+      err(`materials/web/${f}`, '講師用ハブへ戻るリンクがありません')
+    }
+  }
+}
+
 function main() {
   if (!fs.existsSync(MATERIALS)) {
     console.error('output/materials/web がありません。先に node scripts/build-web.mjs を実行してください。')
@@ -233,7 +264,9 @@ function main() {
   const htmlFiles = fs.readdirSync(MATERIALS).filter((f) => /^ch\d+\.html$/.test(f)).sort()
   const csvFiles = fs.readdirSync(QUESTIONS).filter((f) => /^ch\d+-check\.csv$/.test(f)).sort()
 
-  console.log(`[validate-web] HTML ${htmlFiles.length} 本 / CSV ${csvFiles.length} 本を検証`)
+  console.log(`[validate-web] 章HTML ${htmlFiles.length} 本 / CSV ${csvFiles.length} 本 / 講師用ハブ を検証`)
+
+  validateIndex(htmlFiles)
 
   const quizByChapter = new Map()
   for (const f of htmlFiles) {

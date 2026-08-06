@@ -6,6 +6,11 @@ title: CSS
 subtitle: 見た目とレイアウトを整える
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 3
+  goal: セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。
+  watch: レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。
+  ask: この余白は padding と margin どっちが正しい？
 keywords:
   - term: CSS
     desc: HTMLに見た目（色・大きさ・配置）を与える言語
