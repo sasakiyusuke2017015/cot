@@ -1,21 +1,21 @@
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 questions:
-  - learning_item: DB
-    stem: SQLのSELECT文が行うことはどれか。
-    correct: テーブルからデータを取得する
-    wrongs:
-      - テーブルにデータを追加する
-      - テーブルを削除する
-      - サーバーを再起動する
-    explanation: SELECTは取得・INSERTは追加・UPDATEは更新・DELETEは削除であり4つをまとめてCRUDと呼ぶ。
-    keywords: [SQL, SELECT, CRUD]
-  - learning_item: DB
+  - learning_item: DB連携
     stem: Webアプリの3層構成におけるAPIの位置づけはどれか。
-    correct: 画面（フロントエンド）とDBの橋渡しをする
+    correct: ブラウザとDBの橋渡しをする
     wrongs:
       - DBの中に保存されるデータの一種
       - 画面のデザインを決める層
       - インターネット回線そのもの
-    explanation: React（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。
+    explanation: ブラウザ（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。この絵が描ければ全体像を理解できたと言える。
     keywords: [DB, 3層構成, API]
+  - learning_item: DB連携
+    stem: SQLに値を埋め込むとき、プレースホルダ（? など）を使う理由はどれか。
+    correct: 文字列連結だとSQLインジェクションで乗っ取られる危険があるため
+    wrongs:
+      - 文字列連結よりも実行速度が速くなるため
+      - SQLの文字数制限を回避するため
+      - データベースの容量を節約するため
+    explanation: ユーザー入力を文字列連結でSQLに埋め込むと、入力次第で条件を無意味にされたりテーブルを削除されたりする。入力値は必ずプレースホルダで渡す。
+    keywords: [SQLインジェクション, プレースホルダ, セキュリティ]

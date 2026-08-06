@@ -66,12 +66,12 @@ const KEYWORDS = [
     "desc": "データ交換の標準的なテキスト形式"
   },
   {
-    "term": "fetch",
-    "desc": "JavaScriptからAPIを呼び出す関数"
+    "term": "FastAPI",
+    "desc": "PythonでAPIを作るライブラリ。自動でドキュメントも作る"
   },
   {
-    "term": "エンドポイント",
-    "desc": "APIの窓口となるURL。/api/todos など"
+    "term": "CORS",
+    "desc": "別のオリジンからの通信を許可する仕組み。最初に必ず詰まる"
   }
 ];
 
@@ -81,22 +81,22 @@ const QUIZ = [
     "options": [
       "CSSを自動生成する機能",
       "パソコンの電源を管理する仕組み",
-      "プログラム同士がデータをやり取りする窓口",
+      "ブラウザとサーバがデータをやり取りする窓口",
       "画像を圧縮する機能"
     ],
     "answer": 2,
-    "explain": "フロントエンドはAPIという窓口を通じてサーバーとデータをやり取りする。"
+    "explain": "ブラウザのJavaScriptからサーバのPython関数を直接呼ぶことはできない。間にHTTPとJSONを挟んでやり取りする窓口がAPIである。"
   },
   {
-    "q": "JSONの説明として正しいものはどれか。",
+    "q": "ブラウザから別のサーバへ通信したとき「CORS policy」というエラーが出た。この原因として正しいものはどれか。",
     "options": [
-      "データベース製品の名前",
-      "JavaScriptを高速化する機能",
-      "画像ファイルの形式",
-      "データをやり取りするためのテキスト形式"
+      "JSONの書き方が間違っている",
+      "インターネット回線が切断されている",
+      "サーバのプログラムに文法エラーがある",
+      "ブラウザが安全のため別オリジンへの通信を既定で止めている"
     ],
     "answer": 3,
-    "explain": "JSONはキーと値の組でデータを表すテキスト形式でありAPIのやり取りの標準として使われている。"
+    "explain": "CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。"
   }
 ];
 
@@ -157,7 +157,7 @@ function Page() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
           <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
-          <p className="text-sm text-blue-200">第7章 / 全9章</p>
+          <p className="text-sm text-blue-200">第7章 / 全11章</p>
         </div>
       </header>
 
@@ -166,7 +166,7 @@ function Page() {
           <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
             <span className="tag bg-white/20 text-white">第7章 · バックエンド</span>
             <h1 className="text-2xl font-bold mt-2">🔌 API</h1>
-            <p className="text-emerald-100 mt-1">データをやり取りする窓口</p>
+            <p className="text-emerald-100 mt-1">ブラウザとサーバをつなぐ</p>
           </div>
 
           <div className="flex gap-6 items-start">
@@ -174,52 +174,133 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> フロントエンドとサーバーがHTTPとJSONでやり取りする仕組みを理解し、fetchでAPIを呼び、簡単なAPIを自作できるようになる。
+                    <strong>🎯 この章のゴール:</strong> FastAPIでサーバを立て、<strong>オセロの画面から戦績を送って一覧を取得できる</strong>ようにする。ブラウザとサーバが別プログラムとして動いていることを、目で見て確認する。
                   </div>
-                  <h3>APIとは何か</h3>
-                  <p>API（Application Programming Interface）は、プログラム同士が<strong>データをやり取りする窓口</strong>です。Reactで作った画面（フロントエンド）は、APIを通じてサーバーからデータをもらい、サーバーにデータを送ります。</p>
-                  <div className="code-block">{`[ブラウザ / React]  ←── HTTP + JSON ──→  [サーバー / API]
+                  <h3>いま2つのプログラムがある</h3>
+                  <p>ここまでで、ブラウザで動くオセロ（HTML/CSS/JS）と、Pythonで書いたコード、そしてデータベースができました。これらは<strong>それぞれ別の場所で動く、別のプログラム</strong>です。</p>
+                  <div className="code-block">{`[ブラウザ]              [サーバ]
+HTML/CSS/JS      ？      Python + DB
+オセロの画面     ←→      戦績の保存先
 
-GET  /api/todos      … 一覧が欲しい
-POST /api/todos      … 新しく追加したい
-PUT  /api/todos/1    … 1番を更新したい
-DELETE /api/todos/1  … 1番を削除したい`}</div>
-                  <h3>JSONとfetch</h3>
-                  <p>やり取りするデータは<strong>JSON</strong>という形式で書きます。JavaScriptからAPIを呼ぶには fetch を使います。</p>
-                  <div className="code-block">{`// APIからデータを取得して表示する
-const res = await fetch('/api/todos');
-const todos = await res.json();
-// → [{ "id": 1, "title": "牛乳を買う", "done": false }, ...]
-
-// APIにデータを送る
-await fetch('/api/todos', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ title: '掃除をする' }),
-});`}</div>
-                  <h3>自分でAPIを作る（Node.js）</h3>
-                  <div className="code-block">{`import express from 'express';
-const app = express();
-app.use(express.json());
-
-const todos = [{ id: 1, title: '牛乳を買う', done: false }];
-
-app.get('/api/todos', (req, res) => {
-  res.json(todos);
-});
-
-app.listen(3000);`}</div>
+この「？」の部分をつなぐのが API`}</div>
+                  <p>ブラウザのJavaScriptから、サーバのPythonの関数を直接呼ぶことはできません。<strong>間にHTTPという約束事を挟んで、JSONという形式でデータをやり取りします</strong>。その窓口がAPIです。</p>
+                  <h3>窓口の作り方 — URLとメソッド</h3>
+                  <p>APIは「どのURLに」「どの方法で」アクセスするかで機能が決まります。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">メソッド</th><th className="tbl-th">URL</th><th className="tbl-th">やること</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">GET</td><td className="tbl-td">/api/games</td><td className="tbl-td">戦績の一覧を取得する</td></tr>
+                        <tr><td className="tbl-td">POST</td><td className="tbl-td">/api/games</td><td className="tbl-td">対戦結果を1件追加する</td></tr>
+                        <tr><td className="tbl-td">GET</td><td className="tbl-td">/api/games/3</td><td className="tbl-td">3番の対戦の詳細を取得する</td></tr>
+                        <tr><td className="tbl-td">DELETE</td><td className="tbl-td">/api/games/3</td><td className="tbl-td">3番の対戦を削除する</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
                   <div className="tip-box">
-                    <strong>💡 コツ:</strong> 開発者ツールの<strong>Networkタブ</strong>を開くと、ページが実際にどんなAPIを呼んでいるか全部見えます。うまく動かないときは「リクエストは飛んだか」「何が返ってきたか」をここで確認します。
+                    <strong>💡 前章とのつながり:</strong> この4つは、SQLで学んだ <strong>CRUD</strong>（INSERT / SELECT / UPDATE / DELETE）ときれいに対応します。APIは「外から使えるようにしたCRUD」だと考えると分かりやすくなります。
                   </div>
-                  <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>前章のTODOアプリを進化させましょう。TODOの一覧をAPI（自作のNode.jsサーバー）から取得し、追加もAPI経由にします。</p>
+                  <h3>FastAPIでサーバを書く</h3>
+                  <p>PythonでAPIを作るライブラリはいくつかありますが、ここでは <strong>FastAPI</strong> を使います。書く量が少なく、<strong>自動でAPIの説明ページを作ってくれる</strong>のが大きな利点です。</p>
+                  <div className="code-block">{`# main.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# 受け取るデータの形を決めておく
+class Game(BaseModel):
+    winner: str
+    black_count: int
+    white_count: int
+
+games = []   # ひとまずメモリに置く（次章でDBに移す）
+
+@app.get("/api/games")
+def list_games():
+    return games
+
+@app.post("/api/games")
+def add_game(game: Game):
+    games.append(game)
+    return {"ok": True, "count": len(games)}`}</div>
+                  <div className="code-block">{`uvicorn main:app --reload      # サーバを起動する
+# → http://127.0.0.1:8000 で動く`}</div>
+                  <div className="kv-box">
+                    <strong>📌 まずは /docs を開くこと:</strong> サーバを起動したら `http://127.0.0.1:8000/docs` を開いてください。<strong>FastAPIが自動で作ったAPIの操作画面</strong>が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に<strong>サーバだけで動作確認できます</strong>。切り分けができるので、詰まったときの強い味方になります。
+                  </div>
+                  <h3>ブラウザ側から呼ぶ</h3>
+                  <p>サーバが動いたら、オセロの画面から呼びます。JavaScriptの `fetch` を使います。</p>
+                  <div className="code-block">{`// 対戦が終わったら結果を送る
+async function saveResult(winner, black, white) {
+  const res = await fetch("http://127.0.0.1:8000/api/games", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      winner: winner,
+      black_count: black,
+      white_count: white,
+    }),
+  });
+  const data = await res.json();
+  console.log("保存しました", data);
+}
+
+// 戦績一覧を取ってくる
+async function loadHistory() {
+  const res = await fetch("http://127.0.0.1:8000/api/games");
+  const games = await res.json();
+  return games;
+}`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ ここで必ず CORS エラーが出ます:</strong> ブラウザは安全のため、<strong>別の場所にあるサーバへの通信を既定で止めます</strong>。コンソールに「CORS policy」というエラーが出たら、これです。バグではなくブラウザの正しい動作なので、サーバ側で「このオリジンからは許可する」と設定します。
+                  </div>
+                  <div className="code-block">{`# main.py に追記
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # 学習用。本番では実際のURLを指定する
+    allow_methods=["*"],
+    allow_headers=["*"],
+)`}</div>
+                  <h3>詰まったときの切り分け</h3>
+                  <p>うまく動かないとき、<strong>ブラウザ側とサーバ側のどちらで失敗しているか</strong>を先に切り分けます。想像で直そうとすると必ず遠回りになります。</p>
+                  <ol>
+                    <li>`/docs` でサーバ単体を試す → ここで失敗するならサーバ側の問題</li>
+                    <li>ブラウザの Network タブを開く → リクエストが飛んでいるか確認する</li>
+                    <li>飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）</li>
+                    <li>サーバを起動したターミナルを見る → Pythonのエラーが出ていないか</li>
+                  </ol>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロの戦績をサーバに送る</p>
+                    <p className="assign-goal">FastAPIでAPIを作り、オセロの画面から実際に呼びます。ブラウザとサーバという<strong>2つのプログラムが通信している</strong>ことを、自分の目で確認するのが狙いです。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>FastAPIを入れ、main.py を作ってサーバを起動する</li>
+                      <li>`/docs` を開き、画面から戦績を1件登録してみる</li>
+                      <li>GET /api/games と POST /api/games を作る</li>
+                      <li>オセロ側で、対戦が終わったら結果を自動でPOSTする</li>
+                      <li>「戦績一覧」ボタンを作り、GETした結果を画面に表示する</li>
+                      <li>CORSエラーを解決する</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">オセロで対戦を終えると、サーバにデータが届く</div>
+                      <div className="chk-item">一覧ボタンで過去の戦績が表示される</div>
+                      <div className="chk-item">Networkタブでリクエストとレスポンスの中身を説明できる</div>
+                      <div className="chk-item">サーバを止めると画面側でどうなるか確認した</div>
+                    <p className="assign-hint">💡 いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
+                  </div>
+                  <div className="warn-box">
+                    <strong>⚠️ まだデータは消えます:</strong> いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。<strong>サーバを再起動すると全部消えます</strong>。次章でDBに繋いで、本当に保存されるようにします。
                   </div>
                   <h3>チェックリスト</h3>
                   <div className="chk-item">GET / POST / PUT / DELETE の使い分けが分かる</div>
-                  <div className="chk-item">fetchでAPIを呼んで結果を画面に表示できる</div>
-                  <div className="chk-item">Networkタブで通信内容を確認できる</div>
+                  <div className="chk-item">FastAPIでエンドポイントを作れる</div>
+                  <div className="chk-item">/docs でサーバ単体の動作確認ができる</div>
+                  <div className="chk-item">fetchでAPIを呼んで結果を画面に出せる</div>
+                  <div className="chk-item">CORSエラーの原因を説明できる</div>
+                  <div className="chk-item">ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>
@@ -228,8 +309,8 @@ app.listen(3000);`}</div>
           </div>
 
           <div className="flex justify-between mt-8 no-print">
-            <a href="ch06.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第6章 React</a>
-            <a href="ch08.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第8章 DB →</a>
+            <a href="ch06.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第6章 SQL</a>
+            <a href="ch08.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第8章 DB連携 →</a>
           </div>
         </main>
       </div>

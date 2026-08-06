@@ -1,0 +1,86 @@
+id: 10
+level: web
+type: advanced
+icon: "🔷"
+title: TypeScript
+subtitle: 型でオセロを安全にする（発展）
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+teaching:
+  sessions: 4
+  goal: 完成したオセロを型付きに直させる。動くものがある状態なので型の効果が見えやすい。
+  watch: 型エラーの文面に怯む。長いエラーも「何が」「どの型と」合わないかだけ読めばよいと教える。
+  ask: この関数、引数に何が来たら壊れる？
+keywords:
+  - term: TypeScript
+    desc: JavaScriptに型を追加した言語。JSに変換されて動く
+  - term: 型注釈
+    desc: "変数や引数に「: number」のように型を書くこと"
+  - term: interface
+    desc: オブジェクト（データ）の形を定義する仕組み
+  - term: コンパイル
+    desc: TypeScriptをJavaScriptに変換すること
+  - term: 型エラー
+    desc: 型が合わないときにエディタが出す警告。実行前に気付ける
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。
+  - kind: h3
+    text: TypeScriptとは何か
+  - kind: paragraph
+    text: TypeScriptは、JavaScriptに**型**を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。
+  - kind: h3
+    text: 型注釈の基本
+  - kind: code
+    text: |
+      let count: number = 0;
+      let name: string = '田中';
+      let done: boolean = false;
+      let tags: string[] = ['html', 'css'];
+
+      function add(a: number, b: number): number {
+        return a + b;
+      }
+
+      add(1, 2);      // OK
+      add('1', '2');  // ← 実行する前にエラーで教えてくれる！
+  - kind: h3
+    text: interface — データの形を決める
+  - kind: code
+    text: |
+      interface User {
+        id: number;
+        name: string;
+        email: string;
+      }
+
+      function showUser(user: User) {
+        console.log(user.name);
+        console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
+      }
+  - kind: kv-box
+    title: "📌 なぜ型が大事か:"
+    text: JavaScriptだけだと、間違いは**実行して初めて**分かります。TypeScriptなら**書いた瞬間にエディタが教えてくれる**。バグ探しの時間が大幅に減り、あとで学ぶReactやAPI連携でも「データの形」が明確になります。
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。TypeScriptのエラー文は最初は長く感じますが「何が」「どの型と」合わないかが必ず書いてあります。
+  - kind: assignment
+    title: オセロをTypeScriptに書き換える
+    goal: 完成して動いているオセロを、TypeScriptで書き直します。**すでに動くものがある状態で型を入れる**ので、型のありがたみが分かりやすい題材です。
+    steps:
+      - TypeScriptを導入し、既存のJSファイルを .ts に変える
+      - 盤面・石の色・座標に型をつける
+      - 関数の引数と戻り値に型注釈を書く
+      - APIから受け取る戦績データの形を interface で定義する
+      - エディタが出す型エラーを1つずつ解消する
+    done:
+      - 型エラーが出ない状態でオセロが動く
+      - "「型を入れたことで見つかったバグ・書き間違い」を1つ以上挙げられる"
+      - 型があると何が楽になるか、自分の言葉で説明できる
+    hint: 石の色を string にすると "黒" でも "くろ" でも通ってしまいます。取りうる値が決まっているものは、それ専用の型を作れないか考えてみてください。
+  - kind: checklist
+    items:
+      - number / string / boolean / 配列の型注釈が書ける
+      - interfaceでデータの形を定義できる
+      - エディタの型エラーを読んで直せる

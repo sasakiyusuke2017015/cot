@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web開発の虎の巻 第5章 - TypeScript</title>
+<title>Web開発の虎の巻 第5章 - Python</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -54,49 +54,49 @@ const { useState } = React;
 
 const KEYWORDS = [
   {
-    "term": "TypeScript",
-    "desc": "JavaScriptに型を追加した言語。JSに変換されて動く"
+    "term": "Python",
+    "desc": "サーバ側でよく使われる言語。読みやすさを重視した文法"
   },
   {
-    "term": "型注釈",
-    "desc": "変数や引数に「: number」のように型を書くこと"
+    "term": "インデント",
+    "desc": "行頭の空白。Pythonではこれがブロックの範囲を決める"
   },
   {
-    "term": "interface",
-    "desc": "オブジェクト（データ）の形を定義する仕組み"
+    "term": "リスト / 辞書",
+    "desc": "JSの配列 / オブジェクトにあたるデータの入れ物"
   },
   {
-    "term": "コンパイル",
-    "desc": "TypeScriptをJavaScriptに変換すること"
+    "term": "仮想環境",
+    "desc": "プロジェクトごとにライブラリを分ける仕組み（venv）"
   },
   {
-    "term": "型エラー",
-    "desc": "型が合わないときにエディタが出す警告。実行前に気付ける"
+    "term": "pip",
+    "desc": "ライブラリを入れるコマンド。JSのnpmにあたる"
   }
 ];
 
 const QUIZ = [
   {
-    "q": "TypeScriptの説明として正しいものはどれか。",
+    "q": "Pythonで処理のまとまり（ブロック）を表すものはどれか。",
     "options": [
-      "JavaScriptに型を追加した言語でJavaScriptに変換されて動く",
-      "データベース専用の言語",
-      "HTMLの新しいバージョン",
-      "JavaScriptとは無関係の全く新しい言語"
+      "行頭のインデント（空白）",
+      "BEGIN と END",
+      "セミコロン ;",
+      "波括弧 { }"
     ],
     "answer": 0,
-    "explain": "TypeScriptはJavaScriptの上位互換でありコンパイルするとJavaScriptになるため既存の知識がそのまま活きる。"
+    "explain": "Pythonは「行頭のインデント（空白）」でブロックを表す。JavaScriptの波括弧にあたるものが無いため、インデントがずれると IndentationError になる。"
   },
   {
-    "q": "型注釈がある一番の利点はどれか。",
+    "q": "仮想環境（venv）を使う目的として正しいものはどれか。",
     "options": [
-      "デザインが自動で良くなる",
-      "サーバー代が安くなる",
-      "コードの実行速度が2倍になる",
-      "実行する前に間違いに気付ける"
+      "ソースコードを暗号化するため",
+      "複数の言語を同時に動かすため",
+      "プログラムの実行速度を上げるため",
+      "プロジェクトごとにライブラリを分けて管理するため"
     ],
     "answer": 3,
-    "explain": "型があるとエディタが書いた瞬間に間違いを指摘してくれるため実行して初めてバグに気付くことが減る。"
+    "explain": "仮想環境はプロジェクト専用のライブラリ置き場を作る仕組みで、別プロジェクトとの混在を防ぐ。venvフォルダは .gitignore に入れてcommitしない。"
   }
 ];
 
@@ -157,16 +157,16 @@ function Page() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
           <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
-          <p className="text-sm text-blue-200">第5章 / 全9章</p>
+          <p className="text-sm text-blue-200">第5章 / 全11章</p>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto w-full flex-1">
         <main className="flex-1 p-6 min-w-0">
-          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-violet-700 to-violet-500">
-            <span className="tag bg-white/20 text-white">第5章 · 発展</span>
-            <h1 className="text-2xl font-bold mt-2">🔷 TypeScript</h1>
-            <p className="text-violet-100 mt-1">型でコードを安全にする</p>
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
+            <span className="tag bg-white/20 text-white">第5章 · バックエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🐍 Python</h1>
+            <p className="text-emerald-100 mt-1">サーバ側の言語を覚える</p>
           </div>
 
           <div className="flex gap-6 items-start">
@@ -174,47 +174,117 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。
+                    <strong>🎯 この章のゴール:</strong> Pythonの基本文法を身につけ、<strong>JavaScriptで書ける処理をPythonでも書ける</strong>状態になる。次章以降でサーバを書くための土台を作る。
                   </div>
-                  <h3>TypeScriptとは何か</h3>
-                  <p>TypeScriptは、JavaScriptに<strong>型</strong>を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。</p>
-                  <h3>型注釈の基本</h3>
-                  <div className="code-block">{`let count: number = 0;
-let name: string = '田中';
-let done: boolean = false;
-let tags: string[] = ['html', 'css'];
-
-function add(a: number, b: number): number {
-  return a + b;
-}
-
-add(1, 2);      // OK
-add('1', '2');  // ← 実行する前にエラーで教えてくれる！`}</div>
-                  <h3>interface — データの形を決める</h3>
-                  <div className="code-block">{`interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-function showUser(user: User) {
-  console.log(user.name);
-  console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
-}`}</div>
+                  <h3>なぜここで別の言語を学ぶのか</h3>
+                  <p>ここまで作ったオセロは、<strong>すべてブラウザの中だけで動いています</strong>。ページを閉じれば対戦結果は消え、他の人と共有もできません。「戦績を保存する」「ユーザーを作る」には、ブラウザの外——<strong>サーバ</strong>が必要です。</p>
+                  <p>サーバを書く言語はいくつもあり、JavaScriptでも書けます。ここでPythonを選ぶのは、<strong>文法が読みやすく、Web以外（データ処理・AI）でも使える</strong>からです。1つ目の言語を覚えた後に2つ目を学ぶと、「言語が違っても考え方は同じ」だと分かります。これは大きな収穫です。</p>
                   <div className="kv-box">
-                    <strong>📌 なぜ型が大事か:</strong> JavaScriptだけだと、間違いは<strong>実行して初めて</strong>分かります。TypeScriptなら<strong>書いた瞬間にエディタが教えてくれる</strong>。バグ探しの時間が大幅に減り、あとで学ぶReactやAPI連携でも「データの形」が明確になります。
+                    <strong>📌 ここが最初の大きな壁:</strong> ブラウザの中（フロントエンド）とサーバ（バックエンド）は<strong>別の場所で動く別のプログラム</strong>です。この2つがどう繋がるかが分かると、Webアプリの全体像が見えます。焦らず進めてください。
+                  </div>
+                  <h3>JavaScriptと比べてみる</h3>
+                  <p>まずは同じ処理を並べます。似ている部分が多いことに気付くはずです。</p>
+                  <div className="code-block">{`// JavaScript
+const name = "田中";
+let count = 0;
+
+if (count > 10) {
+  console.log("多い");
+} else {
+  console.log("少ない");
+}
+
+const fruits = ["りんご", "みかん"];
+for (const f of fruits) {
+  console.log(f);
+}
+
+function greet(who) {
+  return "こんにちは、" + who;
+}`}</div>
+                  <div className="code-block">{`# Python
+name = "田中"
+count = 0
+
+if count > 10:
+    print("多い")
+else:
+    print("少ない")
+
+fruits = ["りんご", "みかん"]
+for f in fruits:
+    print(f)
+
+def greet(who):
+    return "こんにちは、" + who`}</div>
+                  <h3>決定的な違い — インデントがブロックを決める</h3>
+                  <p>JavaScriptは波括弧 `&#123; &#125;` で処理のまとまりを表しますが、<strong>Pythonは行頭の空白（インデント）でそれを表します</strong>。波括弧もセミコロンもありません。</p>
+                  <div className="code-block">{`def check(n):
+    if n > 0:
+        print("正の数")
+        print("この2行はif の中")
+    print("この行はif の外（関数の中）")
+print("この行は関数の外")`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 最初はここで必ず詰まる:</strong> インデントがずれると `IndentationError` というエラーになります。<strong>エラーが出たらまず行頭の空白を疑ってください</strong>。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。
+                  </div>
+                  <h3>リストと辞書</h3>
+                  <p>JSの配列がPythonでは<strong>リスト</strong>、JSのオブジェクトが<strong>辞書</strong>にあたります。オセロの盤面や戦績を扱うときに使います。</p>
+                  <div className="code-block">{`# リスト（JSの配列）
+scores = [10, 25, 8]
+scores.append(30)        # 追加（JSのpush）
+print(len(scores))       # 個数（JSのlength）
+
+# 辞書（JSのオブジェクト）
+player = {"name": "田中", "wins": 3}
+print(player["name"])    # 田中
+player["wins"] = 4       # 更新
+
+# 辞書のリスト（戦績データはこんな形になる）
+records = [
+    {"winner": "黒", "black": 38, "white": 26},
+    {"winner": "白", "black": 20, "white": 44},
+]
+for r in records:
+    print(r["winner"], r["black"], "-", r["white"])`}</div>
+                  <h3>環境を用意する</h3>
+                  <p>Pythonをインストールしたら、プロジェクトごとに<strong>仮想環境</strong>を作ります。これは「このプロジェクト専用のライブラリ置き場」で、別のプロジェクトと混ざらないようにする仕組みです。</p>
+                  <div className="code-block">{`python -m venv venv          # 仮想環境を作る（最初の1回だけ）
+
+# 有効化する（作業のたびに実行）
+venv\\Scripts\\activate        # Windows
+source venv/bin/activate     # Mac / Linux
+
+pip install fastapi          # ライブラリを入れる（次章で使う）
+pip list                     # 入っているものを確認`}</div>
+                  <div className="tip-box">
+                    <strong>💡 コツ:</strong> 仮想環境を有効にすると、プロンプトの先頭に `(venv)` と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。<strong>venvフォルダは .gitignore に入れて、commitしないこと。</strong>
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロのロジックをPythonで書き直す</p>
+                    <p className="assign-goal">すでにJavaScriptで動いているオセロの判定ロジックを、Pythonで書き直します。動くものを別の言語に移すことで、「言語の違い」と「考え方の共通部分」がはっきり分かります。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>仮想環境を作り、有効化する</li>
+                      <li>`othello.py` を作り、8×8の盤面をリストで表現する</li>
+                      <li>石を置いたとき裏返せるかを判定する関数を書く（JSから移植）</li>
+                      <li>盤面をコンソールに文字で表示する関数を書く</li>
+                      <li>実際に何手か打たせて、正しく裏返るか確認する</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">Pythonだけでオセロの盤面が動く（画面は文字表示でよい）</div>
+                      <div className="chk-item">JS版とPython版で、同じ手を打つと同じ結果になる</div>
+                      <div className="chk-item">「JSとPythonで書き方が違った点」を3つ挙げられる</div>
+                    <p className="assign-hint">💡 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。</p>
                   </div>
                   <div className="tip-box">
-                    <strong>💡 コツ:</strong> VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。TypeScriptのエラー文は最初は長く感じますが「何が」「どの型と」合わないかが必ず書いてあります。
-                  </div>
-                  <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>カウンターのコードをTypeScriptに書き換えてみましょう。さらに User interface を定義して、ユーザーの配列から名前一覧を表示する関数を書きます。</p>
+                    <strong>💡 次章への橋渡し:</strong> Pythonが書けるようになりました。ただ、いまのままではデータは実行中しか残りません。次章では<strong>データを保存する場所（データベース）</strong>と、それを操作するSQLを学びます。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">number / string / boolean / 配列の型注釈が書ける</div>
-                  <div className="chk-item">interfaceでデータの形を定義できる</div>
-                  <div className="chk-item">エディタの型エラーを読んで直せる</div>
+                  <div className="chk-item">インデントでブロックを表すことを理解した</div>
+                  <div className="chk-item">リストと辞書を使い分けられる</div>
+                  <div className="chk-item">仮想環境を作って有効化できる</div>
+                  <div className="chk-item">JSで書いた処理をPythonで書き直せた</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>
@@ -224,7 +294,7 @@ function showUser(user: User) {
 
           <div className="flex justify-between mt-8 no-print">
             <a href="ch04.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第4章 Git</a>
-            <a href="ch06.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第6章 React →</a>
+            <a href="ch06.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第6章 SQL →</a>
           </div>
         </main>
       </div>

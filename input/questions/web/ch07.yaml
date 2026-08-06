@@ -3,19 +3,19 @@ source_refs:
 questions:
   - learning_item: API
     stem: APIの役割として最も適切なものはどれか。
-    correct: プログラム同士がデータをやり取りする窓口
+    correct: ブラウザとサーバがデータをやり取りする窓口
     wrongs:
       - 画像を圧縮する機能
       - CSSを自動生成する機能
       - パソコンの電源を管理する仕組み
-    explanation: フロントエンドはAPIという窓口を通じてサーバーとデータをやり取りする。
+    explanation: ブラウザのJavaScriptからサーバのPython関数を直接呼ぶことはできない。間にHTTPとJSONを挟んでやり取りする窓口がAPIである。
     keywords: [API, HTTP, フロントエンド]
   - learning_item: API
-    stem: JSONの説明として正しいものはどれか。
-    correct: データをやり取りするためのテキスト形式
+    stem: ブラウザから別のサーバへ通信したとき「CORS policy」というエラーが出た。この原因として正しいものはどれか。
+    correct: ブラウザが安全のため別オリジンへの通信を既定で止めている
     wrongs:
-      - 画像ファイルの形式
-      - JavaScriptを高速化する機能
-      - データベース製品の名前
-    explanation: JSONはキーと値の組でデータを表すテキスト形式でありAPIのやり取りの標準として使われている。
-    keywords: [JSON, データ形式, API]
+      - サーバのプログラムに文法エラーがある
+      - インターネット回線が切断されている
+      - JSONの書き方が間違っている
+    explanation: CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。
+    keywords: [CORS, API, セキュリティ]

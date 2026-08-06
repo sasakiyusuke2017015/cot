@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web開発の虎の巻 第9章 - デプロイ</title>
+<title>Web開発の虎の巻 第11章 - React</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -54,49 +54,49 @@ const { useState } = React;
 
 const KEYWORDS = [
   {
-    "term": "デプロイ",
-    "desc": "アプリを公開して誰でも使える状態にすること"
+    "term": "コンポーネント",
+    "desc": "画面を構成する再利用可能な部品"
   },
   {
-    "term": "ホスティング",
-    "desc": "アプリを動かすサーバーを貸してくれるサービス"
+    "term": "JSX",
+    "desc": "HTMLに似た書き方でコンポーネントの見た目を書く記法"
   },
   {
-    "term": "Vercel / Netlify",
-    "desc": "GitHub連携でフロントを自動公開する定番サービス"
+    "term": "props",
+    "desc": "親から部品に渡すデータ。渡す値で表示が変わる"
   },
   {
-    "term": "環境変数",
-    "desc": "APIキーなど秘密の設定をコード外に置く仕組み"
+    "term": "state",
+    "desc": "部品が持つ状態。変わると画面が自動で再描画される"
   },
   {
-    "term": "自動デプロイ",
-    "desc": "pushのたびに最新版が自動で公開される仕組み"
+    "term": "useState",
+    "desc": "stateを作るReactの関数（フック）"
   }
 ];
 
 const QUIZ = [
   {
-    "q": "「デプロイ」の意味として正しいものはどれか。",
+    "q": "Reactの「コンポーネント」とは何か。",
     "options": [
-      "アプリを公開して誰でも使える状態にすること",
-      "デザインを修正すること",
-      "パソコンを初期化すること",
-      "コードを削除すること"
-    ],
-    "answer": 0,
-    "explain": "デプロイは作ったアプリをサーバーに配置して公開することであり学習の総仕上げにあたる。"
-  },
-  {
-    "q": "今どきの典型的なWebアプリ公開の流れはどれか。",
-    "options": [
-      "HTMLをメールで全員に送る",
-      "USBメモリでサーバー室に運ぶ",
-      "コードを印刷して郵送する",
-      "GitHubへpushするとホスティングサービスが自動で公開する"
+      "CSSのアニメーション機能",
+      "サーバーの設定ファイル",
+      "データベースのテーブル",
+      "画面を構成する再利用可能な部品"
     ],
     "answer": 3,
-    "explain": "VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。"
+    "explain": "Reactでは画面をコンポーネント（部品）に分割して作る。部品は再利用できpropsで渡すデータを変えれば表示も変わる。"
+  },
+  {
+    "q": "ReactのuseStateの役割はどれか。",
+    "options": [
+      "HTMLファイルを圧縮する",
+      "外部のCSSを読み込む",
+      "状態を保持し変更されると画面を再描画する",
+      "Gitのcommitを自動化する"
+    ],
+    "answer": 2,
+    "explain": "stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。"
   }
 ];
 
@@ -157,16 +157,16 @@ function Page() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
           <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
-          <p className="text-sm text-blue-200">第9章 / 全11章</p>
+          <p className="text-sm text-blue-200">第11章 / 全11章</p>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto w-full flex-1">
         <main className="flex-1 p-6 min-w-0">
-          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-rose-600 to-pink-500">
-            <span className="tag bg-white/20 text-white">第9章 · 公開</span>
-            <h1 className="text-2xl font-bold mt-2">🚀 デプロイ</h1>
-            <p className="text-rose-100 mt-1">世界に公開する</p>
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-violet-700 to-violet-500">
+            <span className="tag bg-white/20 text-white">第11章 · 発展</span>
+            <h1 className="text-2xl font-bold mt-2">⚛️ React</h1>
+            <p className="text-violet-100 mt-1">オセロを部品で組み直す（発展）</p>
           </div>
 
           <div className="flex gap-6 items-start">
@@ -174,52 +174,60 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> 自分の作ったWebアプリをインターネットに公開し、「自分でWebサービスを作った」を実感する。
+                    <strong>🎯 この章のゴール:</strong> コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。
                   </div>
-                  <h3>デプロイとは何か</h3>
-                  <p>デプロイとは、手元で動いているアプリを<strong>インターネット上のサーバーに配置して、誰でも使える状態にする</strong>ことです。ここまで学んだ全部の総仕上げです。</p>
-                  <div className="code-block">{`コードを書く
-   ↓
-GitHubへ push
-   ↓
-ホスティングサービスが自動でビルド・公開
-   ↓
-https://あなたのアプリ.vercel.app  ← 世界中からアクセスできる`}</div>
-                  <h3>今どきのデプロイはGit連携</h3>
-                  <p>VercelやNetlify、Render などのホスティングサービスは、<strong>GitHubのリポジトリを連携するだけ</strong>で、pushのたびに自動で最新版を公開してくれます。第4章で身につけたGitの習慣がここで直接活きます。</p>
-                  <ul>
-                    <li>フロントエンド（HTML/CSS/JS）… Vercel / Netlify などが定番</li>
-                    <li>API + DB … Render / Railway など、DBも一緒に提供するサービスが手軽</li>
-                  </ul>
-                  <div className="warn-box">
-                    <strong>⚠️ 公開前チェック:</strong> APIキーやパスワードを環境変数にしたか。誰でも触れる状態になるので、秘密情報がコードに残っていないか必ず確認します。
+                  <h3>Reactとは何か</h3>
+                  <p>Reactは、画面を<strong>コンポーネント（部品）</strong>として分割して組み立てるライブラリです。「ボタン」「カード」「一覧」を部品として作り、組み合わせて画面にします。部品は再利用できるので、大きなアプリでも整理された状態を保てます。</p>
+                  <h3>コンポーネントとJSX</h3>
+                  <div className="code-block">{`function Hello(props) {
+  return <h1>こんにちは、{props.name}さん</h1>;
+}
+
+function App() {
+  return (
+    <div>
+      <Hello name="田中" />
+      <Hello name="佐藤" />
+    </div>
+  );
+}`}</div>
+                  <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。</p>
+                  <h3>state — 画面が変わる仕組み</h3>
+                  <div className="code-block">{`function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      {count} 回押しました
+    </button>
+  );
+}`}</div>
+                  <div className="kv-box">
+                    <strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。
                   </div>
                   <div className="tip-box">
-                    <strong>💡 なぜデプロイが大事か:</strong> 公開URLを人に送って使ってもらえると、学習のモチベーションが一気に変わります。「動くものを世界に出した」経験が、次の学習の最大の燃料になります。
+                    <strong>💡 コツ:</strong> 迷ったら「この画面はどんな部品に分けられるか？」から考えます。ヘッダー・一覧・一覧の1行・ボタン…と分解してから作り始めると設計が楽になります。
                   </div>
                   <div className="assign-box">
-                    <p className="assign-title">🛠 課題: オセロを世界に公開する</p>
-                    <p className="assign-goal">2人で作ったオセロを、誰でも遊べる場所に置きます。<strong>公開URLを人に送って遊んでもらう</strong>ところまでが課題です。ここまでの全部の集大成になります。</p>
+                    <p className="assign-title">🛠 課題: オセロをReactで作り直す</p>
+                    <p className="assign-goal">素のJavaScriptで作ったオセロを、Reactのコンポーネントで組み直します。<strong>同じものを2通りの方法で作る</strong>ことで、Reactが何を楽にしてくれるのかがはっきり分かります。</p>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
-                      <li>フロントエンド（オセロの画面）をVercelかNetlifyにデプロイする</li>
-                      <li>API + DB を Render か Railway にデプロイする</li>
-                      <li>フロント側のAPI接続先を、ローカルのURLから公開URLに書き換える</li>
-                      <li>CORSの許可設定を、公開したフロントのURLに変更する</li>
-                      <li>公開URLで実際に対戦し、戦績が保存されることを確認する</li>
-                      <li>家族や友人にURLを送って遊んでもらう</li>
+                      <li>Reactのプロジェクトを作る（Vite が手軽）</li>
+                      <li>画面を部品に分解する（盤面・マス・石数表示・戦績一覧など）</li>
+                      <li>盤面の状態を state で持つ</li>
+                      <li>マスをクリックしたら state を更新し、画面が自動で変わることを確認する</li>
+                      <li>戦績一覧をAPIから取得して表示する</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">公開URLにアクセスして対戦できる</div>
-                      <div className="chk-item">対戦結果が保存され、再訪しても残っている</div>
-                      <div className="chk-item">自分以外の誰かに遊んでもらった</div>
-                      <div className="chk-item">APIキーやパスワードがコードに残っていないか確認した</div>
-                    <p className="assign-hint">💡 フロントとAPIは別々のサービスにデプロイすることになります。「フロントは動くがAPIに繋がらない」ときは、接続先URLとCORS設定の2つを疑ってください。第7章で学んだ切り分けがそのまま使えます。</p>
+                      <div className="chk-item">React版のオセロが動く</div>
+                      <div className="chk-item">「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる</div>
+                      <div className="chk-item">画面を部品に分けた理由を説明できる</div>
+                    <p className="assign-hint">💡 最初に盤面を1つのstateとして持つか、マスごとに持つかで悩むはずです。「画面 = stateの反映結果」という原則に立ち返って考えてみてください。</p>
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">デプロイの意味を説明できる</div>
-                  <div className="chk-item">push → 自動公開の流れを体験した</div>
-                  <div className="chk-item">公開URLを人に共有して使ってもらった</div>
+                  <div className="chk-item">コンポーネント・props・stateの役割を説明できる</div>
+                  <div className="chk-item">useStateで画面が変わるアプリを作れる</div>
+                  <div className="chk-item">画面を部品に分解してから作り始められる</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>
@@ -228,8 +236,8 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
           </div>
 
           <div className="flex justify-between mt-8 no-print">
-            <a href="ch08.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第8章 DB連携</a>
-            <a href="ch10.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第10章 TypeScript →</a>
+            <a href="ch10.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第10章 TypeScript</a>
+            <span className="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm">🎉 全章読破！おつかれさま</span>
           </div>
         </main>
       </div>

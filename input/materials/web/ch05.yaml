@@ -1,75 +1,156 @@
 id: 5
 level: web
-type: advanced
-icon: "🔷"
-title: TypeScript
-subtitle: 型でコードを安全にする
+type: backend
+icon: "🐍"
+title: Python
+subtitle: サーバ側の言語を覚える
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 teaching:
-  sessions: 4
-  goal: 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。
-  watch: 型エラーの文面に怯む。長いエラーも「何が」「どの型と」合わないかだけ読めばよいと教える。
-  ask: この関数、引数に何が来たら壊れる？
+  sessions: 6
+  goal: 「JSと似ているが別物」を体感させる。文法の暗記ではなく、JSで書けるものをPythonで書き直させるのが早い。
+  watch: インデントでブロックを表すのが最初の関門。エラーが出たら行頭の空白を疑わせる。JSの癖（セミコロン・波括弧）が出るのは自然なこと。
+  ask: 同じ処理をJSで書くとどうなる？どこが違う？
 keywords:
-  - term: TypeScript
-    desc: JavaScriptに型を追加した言語。JSに変換されて動く
-  - term: 型注釈
-    desc: "変数や引数に「: number」のように型を書くこと"
-  - term: interface
-    desc: オブジェクト（データ）の形を定義する仕組み
-  - term: コンパイル
-    desc: TypeScriptをJavaScriptに変換すること
-  - term: 型エラー
-    desc: 型が合わないときにエディタが出す警告。実行前に気付ける
+  - term: Python
+    desc: サーバ側でよく使われる言語。読みやすさを重視した文法
+  - term: インデント
+    desc: 行頭の空白。Pythonではこれがブロックの範囲を決める
+  - term: リスト / 辞書
+    desc: JSの配列 / オブジェクトにあたるデータの入れ物
+  - term: 仮想環境
+    desc: プロジェクトごとにライブラリを分ける仕組み（venv）
+  - term: pip
+    desc: ライブラリを入れるコマンド。JSのnpmにあたる
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。
+    text: Pythonの基本文法を身につけ、**JavaScriptで書ける処理をPythonでも書ける**状態になる。次章以降でサーバを書くための土台を作る。
   - kind: h3
-    text: TypeScriptとは何か
+    text: なぜここで別の言語を学ぶのか
   - kind: paragraph
-    text: TypeScriptは、JavaScriptに**型**を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。
-  - kind: h3
-    text: 型注釈の基本
-  - kind: code
-    text: |
-      let count: number = 0;
-      let name: string = '田中';
-      let done: boolean = false;
-      let tags: string[] = ['html', 'css'];
-
-      function add(a: number, b: number): number {
-        return a + b;
-      }
-
-      add(1, 2);      // OK
-      add('1', '2');  // ← 実行する前にエラーで教えてくれる！
-  - kind: h3
-    text: interface — データの形を決める
-  - kind: code
-    text: |
-      interface User {
-        id: number;
-        name: string;
-        email: string;
-      }
-
-      function showUser(user: User) {
-        console.log(user.name);
-        console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
-      }
+    text: ここまで作ったオセロは、**すべてブラウザの中だけで動いています**。ページを閉じれば対戦結果は消え、他の人と共有もできません。「戦績を保存する」「ユーザーを作る」には、ブラウザの外——**サーバ**が必要です。
+  - kind: paragraph
+    text: サーバを書く言語はいくつもあり、JavaScriptでも書けます。ここでPythonを選ぶのは、**文法が読みやすく、Web以外（データ処理・AI）でも使える**からです。1つ目の言語を覚えた後に2つ目を学ぶと、「言語が違っても考え方は同じ」だと分かります。これは大きな収穫です。
   - kind: kv-box
-    title: "📌 なぜ型が大事か:"
-    text: JavaScriptだけだと、間違いは**実行して初めて**分かります。TypeScriptなら**書いた瞬間にエディタが教えてくれる**。バグ探しの時間が大幅に減り、あとで学ぶReactやAPI連携でも「データの形」が明確になります。
+    title: "📌 ここが最初の大きな壁:"
+    text: ブラウザの中（フロントエンド）とサーバ（バックエンド）は**別の場所で動く別のプログラム**です。この2つがどう繋がるかが分かると、Webアプリの全体像が見えます。焦らず進めてください。
+  - kind: h3
+    text: JavaScriptと比べてみる
+  - kind: paragraph
+    text: まずは同じ処理を並べます。似ている部分が多いことに気付くはずです。
+  - kind: code
+    text: |
+      // JavaScript
+      const name = "田中";
+      let count = 0;
+
+      if (count > 10) {
+        console.log("多い");
+      } else {
+        console.log("少ない");
+      }
+
+      const fruits = ["りんご", "みかん"];
+      for (const f of fruits) {
+        console.log(f);
+      }
+
+      function greet(who) {
+        return "こんにちは、" + who;
+      }
+  - kind: code
+    text: |
+      # Python
+      name = "田中"
+      count = 0
+
+      if count > 10:
+          print("多い")
+      else:
+          print("少ない")
+
+      fruits = ["りんご", "みかん"]
+      for f in fruits:
+          print(f)
+
+      def greet(who):
+          return "こんにちは、" + who
+  - kind: h3
+    text: 決定的な違い — インデントがブロックを決める
+  - kind: paragraph
+    text: JavaScriptは波括弧 `{ }` で処理のまとまりを表しますが、**Pythonは行頭の空白（インデント）でそれを表します**。波括弧もセミコロンもありません。
+  - kind: code
+    text: |
+      def check(n):
+          if n > 0:
+              print("正の数")
+              print("この2行はif の中")
+          print("この行はif の外（関数の中）")
+      print("この行は関数の外")
+  - kind: warn-box
+    title: "⚠️ 最初はここで必ず詰まる:"
+    text: インデントがずれると `IndentationError` というエラーになります。**エラーが出たらまず行頭の空白を疑ってください**。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。
+  - kind: h3
+    text: リストと辞書
+  - kind: paragraph
+    text: JSの配列がPythonでは**リスト**、JSのオブジェクトが**辞書**にあたります。オセロの盤面や戦績を扱うときに使います。
+  - kind: code
+    text: |
+      # リスト（JSの配列）
+      scores = [10, 25, 8]
+      scores.append(30)        # 追加（JSのpush）
+      print(len(scores))       # 個数（JSのlength）
+
+      # 辞書（JSのオブジェクト）
+      player = {"name": "田中", "wins": 3}
+      print(player["name"])    # 田中
+      player["wins"] = 4       # 更新
+
+      # 辞書のリスト（戦績データはこんな形になる）
+      records = [
+          {"winner": "黒", "black": 38, "white": 26},
+          {"winner": "白", "black": 20, "white": 44},
+      ]
+      for r in records:
+          print(r["winner"], r["black"], "-", r["white"])
+  - kind: h3
+    text: 環境を用意する
+  - kind: paragraph
+    text: Pythonをインストールしたら、プロジェクトごとに**仮想環境**を作ります。これは「このプロジェクト専用のライブラリ置き場」で、別のプロジェクトと混ざらないようにする仕組みです。
+  - kind: code
+    text: |
+      python -m venv venv          # 仮想環境を作る（最初の1回だけ）
+
+      # 有効化する（作業のたびに実行）
+      venv\Scripts\activate        # Windows
+      source venv/bin/activate     # Mac / Linux
+
+      pip install fastapi          # ライブラリを入れる（次章で使う）
+      pip list                     # 入っているものを確認
   - kind: tip-box
     title: "💡 コツ:"
-    text: VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。TypeScriptのエラー文は最初は長く感じますが「何が」「どの型と」合わないかが必ず書いてあります。
-  - kind: ex-box
-    title: 演習
-    text: カウンターのコードをTypeScriptに書き換えてみましょう。さらに User interface を定義して、ユーザーの配列から名前一覧を表示する関数を書きます。
+    text: 仮想環境を有効にすると、プロンプトの先頭に `(venv)` と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。**venvフォルダは .gitignore に入れて、commitしないこと。**
+  - kind: assignment
+    title: オセロのロジックをPythonで書き直す
+    goal: すでにJavaScriptで動いているオセロの判定ロジックを、Pythonで書き直します。動くものを別の言語に移すことで、「言語の違い」と「考え方の共通部分」がはっきり分かります。
+    steps:
+      - 仮想環境を作り、有効化する
+      - "`othello.py` を作り、8×8の盤面をリストで表現する"
+      - 石を置いたとき裏返せるかを判定する関数を書く（JSから移植）
+      - 盤面をコンソールに文字で表示する関数を書く
+      - 実際に何手か打たせて、正しく裏返るか確認する
+    done:
+      - Pythonだけでオセロの盤面が動く（画面は文字表示でよい）
+      - JS版とPython版で、同じ手を打つと同じ結果になる
+      - "「JSとPythonで書き方が違った点」を3つ挙げられる"
+    hint: 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。
+  - kind: tip-box
+    title: "💡 次章への橋渡し:"
+    text: Pythonが書けるようになりました。ただ、いまのままではデータは実行中しか残りません。次章では**データを保存する場所（データベース）**と、それを操作するSQLを学びます。
   - kind: checklist
     items:
-      - number / string / boolean / 配列の型注釈が書ける
-      - interfaceでデータの形を定義できる
-      - エディタの型エラーを読んで直せる
+      - インデントでブロックを表すことを理解した
+      - リストと辞書を使い分けられる
+      - 仮想環境を作って有効化できる
+      - JSで書いた処理をPythonで書き直せた

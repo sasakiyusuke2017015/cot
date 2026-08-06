@@ -2,76 +2,158 @@ id: 8
 level: web
 type: backend
 icon: "🗄️"
-title: DB
-subtitle: データの保存先を知る
+title: DB連携
+subtitle: サーバからデータを保存する
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 teaching:
-  sessions: 5
-  goal: React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。
-  watch: いきなりORMに行きたがるが、まず生SQLを触らせる。SQLインジェクションは必ず触れる。
-  ask: もしデータが100万件あったら、このクエリはどうなる？
+  sessions: 6
+  goal: 「再起動しても消えない」を体験させる。3層（ブラウザ→API→DB）の絵を自分で描けるようにする。
+  watch: ORMから入りたがるが、まず生SQLで動かしてからORMに移らせる。SQLインジェクションは必ず実演して見せる（文字列連結の危険さは言葉だけでは伝わらない）。
+  ask: いまデータはどこにある？サーバを再起動したらどうなる？
 keywords:
-  - term: データベース（DB）
-    desc: データを永続的に保存する場所
-  - term: テーブル
-    desc: Excelの表のようにデータを行と列で管理する単位
-  - term: SQL
-    desc: DBを操作する言語。SELECT / INSERT / UPDATE / DELETE
-  - term: CRUD
-    desc: Create・Read・Update・Delete の4基本操作
+  - term: 3層構成
+    desc: ブラウザ → API → DB。Webアプリの基本形
+  - term: コネクション
+    desc: プログラムからDBへの接続
+  - term: プレースホルダ
+    desc: SQLに値を安全に埋め込む仕組み。? や %s で書く
+  - term: SQLインジェクション
+    desc: 入力値でSQLを改ざんされる攻撃。文字列連結が原因
   - term: ORM
-    desc: SQLをコードで書ける道具。型とDBがつながる
+    desc: SQLをコードとして書ける道具。型とDBがつながる
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: データベースの役割とSQLの基本4操作を理解し、「APIがアプリとDBの橋渡しをしている」全体像をつかむ。
+    text: 前章のAPIをDBに繋ぎ、**サーバを再起動しても戦績が残る**状態にする。Webアプリの3層構成を自分の言葉で説明できるようになる。
   - kind: h3
-    text: なぜデータベースが要るのか
+    text: 全体像がつながる
   - kind: paragraph
-    text: 前章のAPIは、データを変数（メモリ）に持っていたため、サーバーを再起動すると消えてしまいます。データを**永続的に保存する**場所がデータベース（DB）です。
+    text: ここまでに作ったものが、いよいよ1本につながります。
   - kind: code
     text: |
-      [React] ←→ [API / Node.js] ←→ [DB / PostgreSQLなど]
-       画面        橋渡し・入り口       データの保存先
+      [ブラウザ]          [サーバ]              [DB]
+      オセロの画面   →    FastAPI        →    games テーブル
+      HTML/CSS/JS   ←    Python         ←    players テーブル
+
+        fetch()          エンドポイント        SQL
   - kind: paragraph
-    text: この3層の絵が、Webアプリの基本形です。**APIがアプリとDBの橋渡し**をしている、と理解できればこの章の半分は達成です。
+    text: この3層の絵が描ければ、Webアプリの基本は理解できたと言えます。**APIがブラウザとDBの橋渡しをしている**——これがいちばん大事な理解です。
   - kind: h3
-    text: テーブルとSQL
+    text: PythonからDBに繋ぐ
   - kind: paragraph
-    text: リレーショナルDBでは、データをExcelのような**テーブル（表）**で管理します。操作にはSQLという言語を使います。
+    text: まずは生のSQLで動かします。SQLiteなら追加のインストールも要りません。
   - kind: code
     text: |
-      -- 取得（Read）
-      SELECT * FROM todos WHERE done = false;
+      # db.py
+      import sqlite3
 
-      -- 追加（Create）
-      INSERT INTO todos (title, done) VALUES ('牛乳を買う', false);
+      def get_conn():
+          conn = sqlite3.connect("othello.db")
+          conn.row_factory = sqlite3.Row   # 辞書のように使えるようにする
+          return conn
 
-      -- 更新（Update）
-      UPDATE todos SET done = true WHERE id = 1;
-
-      -- 削除（Delete）
-      DELETE FROM todos WHERE id = 1;
-  - kind: paragraph
-    text: この4操作をまとめて**CRUD**（Create / Read / Update / Delete）と呼びます。APIのGET / POST / PUT / DELETEときれいに対応します。
+      def init_db():
+          conn = get_conn()
+          conn.execute("""
+              CREATE TABLE IF NOT EXISTS games (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                winner      TEXT NOT NULL,
+                black_count INTEGER NOT NULL,
+                white_count INTEGER NOT NULL,
+                played_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              )
+          """)
+          conn.commit()
+          conn.close()
   - kind: h3
-    text: ORM — コードからDBを扱う
+    text: APIをDBに繋ぎ替える
+  - kind: paragraph
+    text: 前章では戦績をリスト（メモリ）に入れていました。そこをDBの読み書きに置き換えます。
   - kind: code
     text: |
-      // ORM（例: Prisma）を使うとSQLをコードで書ける
-      const todos = await prisma.todo.findMany({ where: { done: false } });
-      await prisma.todo.create({ data: { title: '牛乳を買う' } });
+      # main.py
+      @app.get("/api/games")
+      def list_games():
+          conn = get_conn()
+          rows = conn.execute(
+              "SELECT * FROM games ORDER BY played_at DESC"
+          ).fetchall()
+          conn.close()
+          return [dict(r) for r in rows]
+
+      @app.post("/api/games")
+      def add_game(game: Game):
+          conn = get_conn()
+          conn.execute(
+              "INSERT INTO games (winner, black_count, white_count) VALUES (?, ?, ?)",
+              (game.winner, game.black_count, game.white_count),   # ← 値は別で渡す
+          )
+          conn.commit()
+          conn.close()
+          return {"ok": True}
+  - kind: kv-box
+    title: "📌 ここが本章のハイライト:"
+    text: この状態で**サーバを再起動してから一覧を見てください**。データが残っているはずです。前章までは消えていました。この違いが「保存する」ということです。
+  - kind: h3
+    text: 絶対にやってはいけない書き方
   - kind: paragraph
-    text: ORMを使うとTypeScriptの型とDBがつながり、安全にデータを扱えます。まずはSQLで仕組みを理解してからORMに進むのがおすすめです。
+    text: 上のコードで、値を `?` で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、**入力次第でSQLを乗っ取られます**。
+  - kind: code
+    text: |
+      # ❌ 絶対にダメな書き方
+      name = 受け取った値
+      conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
+
+      # もし name に  ' OR '1'='1  が入ったら、実行されるSQLは
+      # SELECT * FROM players WHERE name = '' OR '1'='1'
+      # → 全件が返ってくる（条件が無意味になる）
+
+      # もっと悪いと  '; DROP TABLE games; --  で表ごと消される
+  - kind: code
+    text: |
+      # ⭕ 正しい書き方（プレースホルダを使う）
+      conn.execute("SELECT * FROM players WHERE name = ?", (name,))
   - kind: warn-box
-    title: "⚠️ 注意:"
-    text: ユーザーの入力をそのままSQL文字列に埋め込むと、SQLインジェクションという攻撃を受けます。必ずプレースホルダやORMを使いましょう。
-  - kind: ex-box
-    title: 演習
-    text: TODOアプリのデータをDBに保存しましょう。SQLiteやPostgreSQLにtodosテーブルを作り、APIの各エンドポイントをDB読み書きに置き換えます。再起動してもデータが残ることを確認します。
+    title: "⚠️ SQLインジェクション:"
+    text: これは**実際に起き続けている代表的な攻撃**です。「自分のアプリは小さいから大丈夫」ということはありません。**ユーザーからの入力をSQLに文字列連結しない**——これだけは例外なく守ってください。
+  - kind: h3
+    text: ORM — SQLをコードで書く
+  - kind: paragraph
+    text: 生SQLで仕組みが分かったら、**ORM**という道具に進めます。SQLをPythonのコードとして書けるようになり、プレースホルダも自動で使われるので安全です。
+  - kind: code
+    text: |
+      # SQLAlchemy を使った例
+      games = session.query(Game).order_by(Game.played_at.desc()).all()
+
+      session.add(Game(winner="黒", black_count=38, white_count=26))
+      session.commit()
+  - kind: tip-box
+    title: "💡 なぜ生SQLを先にやったか:"
+    text: ORMは便利ですが、**中で何が起きているか分からないまま使うと詰まったとき何もできません**。生SQLを知っていれば「ORMがどんなSQLを出しているか」を確認して原因を追えます。順番が大事です。
+  - kind: assignment
+    title: 戦績が消えないようにする
+    goal: 前章のAPIをDBに繋ぎます。**サーバを再起動してもデータが残る**ことを確認するのが、この章のいちばんの成果です。
+    steps:
+      - 第6章で設計したテーブルを、実際にDBに作る
+      - GET /api/games を DBのSELECTに置き換える
+      - POST /api/games を DBのINSERTに置き換える
+      - オセロで何回か対戦し、戦績を貯める
+      - "**サーバを再起動して、データが残っていることを確認する**"
+      - 余裕があれば、プレイヤー名も保存してJOINで一覧を出す
+    done:
+      - サーバを再起動しても戦績が消えない
+      - ブラウザ → API → DB の3層を自分で図に描いて説明できる
+      - なぜプレースホルダを使うのか説明できる
+      - 実際にDBファイルを開いて、中のデータを確認した
+    hint: うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。
+  - kind: tip-box
+    title: "💡 次章への橋渡し:"
+    text: これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを**誰でもアクセスできる場所に置きます**。
   - kind: checklist
     items:
-      - React → API → DB の3層の絵を描ける
-      - SELECT / INSERT / UPDATE / DELETE を書ける
-      - CRUDとHTTPメソッドの対応が分かる
+      - ブラウザ → API → DB の3層を説明できる
+      - PythonからDBに接続してSQLを実行できる
+      - サーバを再起動してもデータが残ることを確認した
+      - プレースホルダを使う理由を説明できる
+      - SQLインジェクションがどう起きるか説明できる

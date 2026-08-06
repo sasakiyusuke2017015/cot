@@ -72,6 +72,18 @@ const KEYWORDS = [
   {
     "term": ".gitignore",
     "desc": "履歴に含めないファイルを指定する設定"
+  },
+  {
+    "term": "コンフリクト",
+    "desc": "2人が同じ箇所を変更したとき起きる衝突。手で解決する"
+  },
+  {
+    "term": "Issue",
+    "desc": "GitHubの課題管理。やることを1件ずつ登録して進捗を共有する"
+  },
+  {
+    "term": "機能分解",
+    "desc": "大きな課題を、1日で終わる大きさの機能に割ること"
   }
 ];
 
@@ -157,7 +169,7 @@ function Page() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
           <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
-          <p className="text-sm text-blue-200">第4章 / 全9章</p>
+          <p className="text-sm text-blue-200">第4章 / 全11章</p>
         </div>
       </header>
 
@@ -166,7 +178,7 @@ function Page() {
           <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-orange-600 to-amber-500">
             <span className="tag bg-white/20 text-white">第4章 · バージョン管理</span>
             <h1 className="text-2xl font-bold mt-2">🌿 Git</h1>
-            <p className="text-orange-100 mt-1">コードの履歴を管理する</p>
+            <p className="text-orange-100 mt-1">履歴を残し、2人でオセロを作る</p>
           </div>
 
           <div className="flex gap-6 items-start">
@@ -174,7 +186,7 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> 「保存のたびに履歴が残る」感覚を身につけ、5つの基本コマンドで自分のコードをGitHubに置けるようになる。
+                    <strong>🎯 この章のゴール:</strong> 5つの基本コマンドでコードをGitHubに置けるようになり、<strong>2人で1つのリポジトリを共有してオセロを完成させる</strong>。技術より「進め方」を身につけるのが本当の目的。
                   </div>
                   <h3>なぜ今Gitを学ぶのか</h3>
                   <p>Gitはコードの<strong>変更履歴を記録する</strong>道具です。TypeScriptやReactより先に学ぶのは、実際の開発では<strong>早い段階からGitを使う習慣</strong>をつけたほうが自然だからです。ここから先の演習はすべてGitで履歴を残しながら進めます。</p>
@@ -192,13 +204,78 @@ git pull            # GitHubの最新を手元に取り込む`}</div>
                     <strong>⚠️ 注意:</strong> パスワードやAPIキーを書いたファイルをcommitしないこと。一度pushした履歴は簡単には消せません。秘密情報は .gitignore で除外します。
                   </div>
                   <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>GitHubにリポジトリを作り、前章までの自己紹介ページとカウンターをpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。</p>
+                    <p className="ex-title">✏️ 練習</p>
+                    <p>まず1人で慣れます。GitHubにリポジトリを作り、前章までのプロフィールカード（HTML・CSS・JSの3ファイル）をpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。</p>
+                  </div>
+                  <h3>ここからが本番 — 2人で1つのものを作る</h3>
+                  <p>ここまでは1人で作ってきました。ここからは<strong>2人で1つのリポジトリを共有して</strong>オセロを作ります。これがこのコース最大の山場であり、いちばん面白いところです。</p>
+                  <div className="kv-box">
+                    <strong>📌 なぜオセロなのか:</strong> オセロは<strong>HTML・CSS・JavaScriptだけで完成させられます</strong>。新しい技術を覚える必要がなく、ここまでの知識だけで「ちゃんと遊べるもの」が作れる。だから技術ではなく<strong>進め方</strong>に集中できます。
+                  </div>
+                  <h3>いきなり書き始めない — まず機能に分解する</h3>
+                  <p>「オセロを作ろう」と言われても、どこから手をつけるか分かりません。実務でも同じで、<strong>まず何が必要かを洗い出して、小さな単位に割る</strong>ところから始めます。これを機能分解と呼びます。</p>
+                  <p>2人で話し合って、オセロに必要な機能を挙げてください。以下は例です。<strong>この表を鵜呑みにせず、自分たちで考えることが課題の本体</strong>です。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">機能</th><th className="tbl-th">やること</th><th className="tbl-th">難しさ</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">盤面を表示する</td><td className="tbl-td">8×8のマス目をHTML/CSSで作る</td><td className="tbl-td">易</td></tr>
+                        <tr><td className="tbl-td">石を置く</td><td className="tbl-td">クリックしたマスに石を表示する</td><td className="tbl-td">易</td></tr>
+                        <tr><td className="tbl-td">手番を管理する</td><td className="tbl-td">黒→白→黒…と交互に切り替える</td><td className="tbl-td">易</td></tr>
+                        <tr><td className="tbl-td">裏返す判定</td><td className="tbl-td">8方向を調べ、挟んだ石を裏返す</td><td className="tbl-td">難</td></tr>
+                        <tr><td className="tbl-td">置ける場所の判定</td><td className="tbl-td">裏返せる場所にしか置けないようにする</td><td className="tbl-td">難</td></tr>
+                        <tr><td className="tbl-td">パス処理</td><td className="tbl-td">置ける場所が無いとき手番を飛ばす</td><td className="tbl-td">中</td></tr>
+                        <tr><td className="tbl-td">勝敗判定</td><td className="tbl-td">全マス埋まったら石を数えて勝敗を出す</td><td className="tbl-td">中</td></tr>
+                        <tr><td className="tbl-td">石数の表示</td><td className="tbl-td">現在の黒白の数を画面に出す</td><td className="tbl-td">易</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 分解のコツ:</strong> 「1つの機能 = 半日〜1日で終わる大きさ」を目安にします。大きすぎると進捗が見えず、小さすぎると管理が面倒になります。難しさも一緒に見積もっておくと、後の分担が楽になります。
+                  </div>
+                  <h3>分担と順番を決める</h3>
+                  <p>機能が並んだら、<strong>どれから作るか</strong>と<strong>誰がやるか</strong>を決めます。順番のコツは「まず動く最小限を作る」こと。裏返し判定のような難所から始めると、何も動かない期間が長くなって心が折れます。</p>
+                  <ol>
+                    <li><strong>第1週</strong>: 盤面表示 + 石を置く（クリックしたら石が出る。ルールは無視）</li>
+                    <li><strong>第2週</strong>: 手番の切り替え + 石数表示（交互に置けるようになる）</li>
+                    <li><strong>第3週</strong>: 裏返し判定（ここが山。8方向のロジック）</li>
+                    <li><strong>第4週</strong>: 置ける場所の制限 + パス + 勝敗判定（ゲームとして完成）</li>
+                  </ol>
+                  <div className="warn-box">
+                    <strong>⚠️ 同じファイルを2人で触ると衝突する:</strong> 2人が同時に同じ行を変更してpushすると、Gitが「どちらを採用すべきか分からない」と止まります（コンフリクト）。これは<strong>事故ではなく正常な動作</strong>です。慌てず、2人で画面を見ながらどちらを残すか決めれば直せます。分担するとき、なるべく担当ファイルを分けておくと衝突は減ります。
+                  </div>
+                  <h3>進捗を見える形にする</h3>
+                  <p>GitHubには <strong>Issues</strong>（課題の一覧）という機能があります。分解した機能を1つずつIssueとして登録すると、「今どれをやっているか」「どこまで終わったか」が2人で共有できます。終わったらIssueを閉じる。これだけで進捗管理になります。</p>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロを2人で作る</p>
+                    <p className="assign-goal">共同リポジトリでオセロを完成させます。技術的な目的はGitの共同作業に慣れることですが、本当のゴールは<strong>「大きなものを小さく割って、順番に片付ける」進め方を体で覚える</strong>ことです。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>2人で1つのGitHubリポジトリを作り、両方がpushできるようにする（Collaborator に追加）</li>
+                      <li>2人で話し合ってオセロの機能を洗い出し、Issueとして登録する</li>
+                      <li>どれから作るか順番を決め、担当を分ける</li>
+                      <li>週ごとに区切って進める。毎回こまめにcommit・pushする</li>
+                      <li>相手のコードを読み、気付いたことを伝え合う</li>
+                      <li>完成したら2人で対戦してみる</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">2人とも遊べるオセロが動いている</div>
+                      <div className="chk-item">リポジトリの履歴に、2人分のcommitが交互に並んでいる</div>
+                      <div className="chk-item">Issueが立てられ、終わったものが閉じられている</div>
+                      <div className="chk-item">「どの機能にどれくらいかかったか」を振り返って話せる</div>
+                      <div className="chk-item">コンフリクトを最低1回は経験し、自力で解決した</div>
+                    <p className="assign-hint">💡 完璧を目指さないこと。まず「石が置けるだけ」の状態でいいので動かす。動くものがあると、次に何をすべきかが自然に見えてきます。逆に、全部作り終わるまで動かないやり方は必ず行き詰まります。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 詰まったときの合図:</strong> 裏返し判定は多くの人が詰まります。8方向をどう表現するか、で悩んだら「方向を [x, y] の組で配列に持つ」と考えてみてください。それ以上は自分たちで調べてみましょう。
                   </div>
                   <h3>チェックリスト</h3>
                   <div className="chk-item">clone / add / commit / push / pull の役割を言える</div>
                   <div className="chk-item">自分のコードをGitHubにpushできる</div>
                   <div className="chk-item">こまめにcommitする習慣がついている</div>
+                  <div className="chk-item">大きな課題を機能単位に分解できる</div>
+                  <div className="chk-item">2人で1つのリポジトリを共有して開発できた</div>
+                  <div className="chk-item">コンフリクトを解決したことがある</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>
@@ -208,7 +285,7 @@ git pull            # GitHubの最新を手元に取り込む`}</div>
 
           <div className="flex justify-between mt-8 no-print">
             <a href="ch03.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第3章 JavaScript</a>
-            <a href="ch05.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第5章 TypeScript →</a>
+            <a href="ch05.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第5章 Python →</a>
           </div>
         </main>
       </div>

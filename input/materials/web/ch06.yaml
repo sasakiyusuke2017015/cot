@@ -1,76 +1,174 @@
 id: 6
 level: web
-type: advanced
-icon: "⚛️"
-title: React
-subtitle: 画面を部品で組み立てる
+type: backend
+icon: "🗃️"
+title: SQL
+subtitle: データの置き場所を設計する
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 teaching:
-  sessions: 8
-  goal: 「画面=stateの反映結果」の理解。TODOアプリを完成させる。
-  watch: DOMを直接触ろうとしたら止める。まず画面を部品に分解させてから書き始めさせる。
-  ask: この画面はどんな部品に分けられる？その部品に何を渡す？
+  sessions: 6
+  goal: テーブル設計ができること。SELECT/INSERT/UPDATE/DELETE と JOIN を、戦績データという具体で覚えさせる。
+  watch: 設計を代わりにやらないこと。「1行が何を表すか」を必ず自分の言葉で言わせる。最初は列が足りない設計を作りがちだが、後で気付かせるほうが学びが深い。
+  ask: この表の1行は何を表している？後から「対戦した日時で並べたい」と言われたら足せる？
 keywords:
-  - term: コンポーネント
-    desc: 画面を構成する再利用可能な部品
-  - term: JSX
-    desc: HTMLに似た書き方でコンポーネントの見た目を書く記法
-  - term: props
-    desc: 親から部品に渡すデータ。渡す値で表示が変わる
-  - term: state
-    desc: 部品が持つ状態。変わると画面が自動で再描画される
-  - term: useState
-    desc: stateを作るReactの関数（フック）
+  - term: テーブル
+    desc: 行と列でデータを持つ表。Excelのシートに近い
+  - term: 主キー
+    desc: 行を1つに特定するための列。重複しない値を入れる
+  - term: 外部キー
+    desc: 別のテーブルの行を指す列。表と表を繋ぐ
+  - term: CRUD
+    desc: Create / Read / Update / Delete の4操作
+  - term: JOIN
+    desc: 複数のテーブルを繋いで1つの結果として取り出す
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。
+    text: "**オセロの戦績を保存するテーブルを自分で設計できる**ようになる。あわせてSQLの基本操作を覚え、データの出し入れができるようにする。"
   - kind: h3
-    text: Reactとは何か
+    text: なぜデータベースが要るのか
   - kind: paragraph
-    text: Reactは、画面を**コンポーネント（部品）**として分割して組み立てるライブラリです。「ボタン」「カード」「一覧」を部品として作り、組み合わせて画面にします。部品は再利用できるので、大きなアプリでも整理された状態を保てます。
-  - kind: h3
-    text: コンポーネントとJSX
-  - kind: code
-    text: |
-      function Hello(props) {
-        return <h1>こんにちは、{props.name}さん</h1>;
-      }
-
-      function App() {
-        return (
-          <div>
-            <Hello name="田中" />
-            <Hello name="佐藤" />
-          </div>
-        );
-      }
+    text: 前章でPythonを覚えましたが、プログラムの中の変数は**実行が終われば消えます**。オセロの対戦結果を後から見返したいなら、どこかに書き残さないといけません。その置き場所がデータベース（DB）です。
   - kind: paragraph
-    text: HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。**props**は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。
+    text: 「ファイルに書けばいいのでは」と思うかもしれません。実際できます。ただ、**探す・並べ替える・複数人が同時に書く**といったことをファイルでやると大変です。DBはそれを得意とする専用の道具です。
   - kind: h3
-    text: state — 画面が変わる仕組み
-  - kind: code
-    text: |
-      function Counter() {
-        const [count, setCount] = useState(0);
-        return (
-          <button onClick={() => setCount(count + 1)}>
-            {count} 回押しました
-          </button>
-        );
-      }
+    text: テーブル = 表
+  - kind: paragraph
+    text: DBの中では、データを**テーブル**という表の形で持ちます。Excelのシートを思い浮かべてください。列（どんな項目か）と行（1件ずつのデータ）でできています。
+  - kind: table
+    headers:
+      - id
+      - winner
+      - black_count
+      - white_count
+      - played_at
+    rows:
+      - - "1"
+        - 黒
+        - "38"
+        - "26"
+        - 2026-08-01 14:30
+      - - "2"
+        - 白
+        - "20"
+        - "44"
+        - 2026-08-01 15:10
+      - - "3"
+        - 引き分け
+        - "32"
+        - "32"
+        - 2026-08-02 09:05
   - kind: kv-box
-    title: "📌 Reactの考え方:"
-    text: DOMを直接書き換えるのではなく、**stateを変えると画面が自動で再描画される**。「画面 = stateの反映結果」と考えるのがReactの核心です。
+    title: "📌 設計でいちばん大事な問い:"
+    text: "**「この表の1行は、何を表しているのか」** を一言で言えるようにすること。上の表なら「1行 = 1回の対戦」です。これが曖昧なまま作ると、後で必ず破綻します。"
+  - kind: h3
+    text: 列には型を決める
+  - kind: paragraph
+    text: 各列には「どんな種類のデータが入るか」（型）を決めます。数値の列に文字を入れようとするとDBが拒否してくれるので、おかしなデータが混ざるのを防げます。
+  - kind: code
+    text: |
+      CREATE TABLE games (
+        id           INTEGER PRIMARY KEY,   -- 主キー。行を特定する
+        winner       TEXT NOT NULL,         -- 文字。空は許さない
+        black_count  INTEGER NOT NULL,      -- 整数
+        white_count  INTEGER NOT NULL,
+        played_at    TIMESTAMP DEFAULT NOW() -- 日時。既定は今
+      );
+  - kind: ul
+    items:
+      - "**INTEGER** … 整数"
+      - "**TEXT** … 文字列"
+      - "**BOOLEAN** … true / false"
+      - "**TIMESTAMP** … 日時"
+      - "**PRIMARY KEY** … その行を特定する列。重複できない"
+      - "**NOT NULL** … 空を許さない"
+  - kind: h3
+    text: 4つの基本操作（CRUD）
+  - kind: code
+    text: |
+      -- Create: 追加する
+      INSERT INTO games (winner, black_count, white_count)
+      VALUES ('黒', 38, 26);
+
+      -- Read: 取り出す
+      SELECT * FROM games;                          -- 全部
+      SELECT * FROM games WHERE winner = '黒';      -- 条件つき
+      SELECT * FROM games ORDER BY played_at DESC;  -- 新しい順
+      SELECT * FROM games ORDER BY played_at DESC LIMIT 5;  -- 直近5件
+
+      -- Update: 書き換える
+      UPDATE games SET winner = '白' WHERE id = 1;
+
+      -- Delete: 消す
+      DELETE FROM games WHERE id = 1;
+  - kind: warn-box
+    title: "⚠️ WHERE を忘れると全部消える:"
+    text: "`DELETE FROM games;` と書くと**全行が消えます**。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、**先に同じ条件で SELECT して対象を確認する**癖をつけてください。"
+  - kind: h3
+    text: 表を分ける — 外部キー
+  - kind: paragraph
+    text: 「誰が対戦したか」も残したくなったとします。プレイヤー名を games テーブルに直接書くこともできますが、名前が変わったとき全行を直すことになります。そこで**表を分けて、繋ぐ**という考え方を使います。
+  - kind: code
+    text: |
+      CREATE TABLE players (
+        id    INTEGER PRIMARY KEY,
+        name  TEXT NOT NULL
+      );
+
+      CREATE TABLE games (
+        id            INTEGER PRIMARY KEY,
+        black_player  INTEGER REFERENCES players(id),  -- 外部キー
+        white_player  INTEGER REFERENCES players(id),
+        winner        TEXT NOT NULL,
+        black_count   INTEGER NOT NULL,
+        white_count   INTEGER NOT NULL,
+        played_at     TIMESTAMP DEFAULT NOW()
+      );
+  - kind: paragraph
+    text: games には名前ではなく**プレイヤーのid**を持たせます。こうすると名前を変えたいとき players を1行直すだけで済みます。
+  - kind: h3
+    text: 繋いで取り出す — JOIN
+  - kind: paragraph
+    text: 表を分けると、取り出すときに繋ぎ直す必要があります。それが JOIN です。
+  - kind: code
+    text: |
+      SELECT
+        g.id,
+        b.name AS black_name,
+        w.name AS white_name,
+        g.winner,
+        g.played_at
+      FROM games g
+      JOIN players b ON g.black_player = b.id
+      JOIN players w ON g.white_player = w.id
+      ORDER BY g.played_at DESC;
   - kind: tip-box
-    title: "💡 コツ:"
-    text: 迷ったら「この画面はどんな部品に分けられるか？」から考えます。ヘッダー・一覧・一覧の1行・ボタン…と分解してから作り始めると設計が楽になります。
-  - kind: ex-box
-    title: 演習
-    text: TODOアプリを作ってみましょう。入力欄に文字を入れて追加ボタンを押すと一覧に増え、クリックで完了線が引かれる。（state・props・イベントの総合練習）
+    title: "💡 まずは分けずに作ってもいい:"
+    text: 最初から完璧な設計を目指すと進みません。**1つのテーブルで作ってみて、不便を感じてから分ける**ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。
+  - kind: assignment
+    title: 戦績テーブルを設計する
+    goal: オセロの戦績を保存するテーブルを、自分たちで設計します。**答えを写すのではなく、何が必要かを2人で話し合って決めること**が課題の本体です。
+    steps:
+      - SQLiteかPostgreSQLを用意する（SQLiteが手軽）
+      - "2人で「戦績として何を残したいか」を話し合って書き出す"
+      - その項目をもとに CREATE TABLE を書く
+      - 手で5件くらい INSERT してデータを入れる
+      - "「直近5件」「黒の勝ち数」「勝率の高い順」を SELECT で取り出す"
+      - プレイヤーを別テーブルに分け、JOINで名前つきの一覧を出す
+    done:
+      - "「この表の1行は何を表すか」を一言で説明できる"
+      - CRUD の4操作をすべて自分で書いて実行した
+      - JOIN で2つの表を繋いだ結果を取り出せた
+      - 後から項目を足したくなったとき、どう直すか説明できる
+    hint: 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。
+  - kind: tip-box
+    title: "💡 次章への橋渡し:"
+    text: データの置き場所ができました。ただ、ブラウザで動くオセロからは**まだこのDBに触れません**。次章では両者をつなぐ窓口（API）を作ります。
   - kind: checklist
     items:
-      - コンポーネント・props・stateの役割を説明できる
-      - useStateで画面が変わるアプリを作れる
-      - 画面を部品に分解してから作り始められる
+      - "「1行が何を表すか」を意識してテーブルを設計できる"
+      - SELECT / INSERT / UPDATE / DELETE が書ける
+      - WHERE を忘れる危険を理解している
+      - 主キーと外部キーの役割を説明できる
+      - JOIN で複数テーブルを繋げる

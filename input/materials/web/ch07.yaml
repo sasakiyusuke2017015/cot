@@ -3,14 +3,14 @@ level: web
 type: backend
 icon: "🔌"
 title: API
-subtitle: データをやり取りする窓口
+subtitle: ブラウザとサーバをつなぐ
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 teaching:
-  sessions: 6
-  goal: フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。
-  watch: 通信が失敗したとき想像で直そうとする。必ずNetworkタブを開かせて事実を見せる。
-  ask: いまリクエストは飛んでる？何が返ってきた？
+  sessions: 8
+  goal: ブラウザとサーバが別プログラムだと腹落ちさせる。FastAPIで自分の手でエンドポイントを作らせ、オセロから実際に叩かせる。
+  watch: 通信が失敗すると想像で直そうとする。必ずNetworkタブと自動ドキュメント（/docs）を開かせて事実を見せる。CORSで詰まるのは通過儀礼なので、原因を説明してから直させる。
+  ask: いまリクエストは飛んでる？何が返ってきた？サーバ側とブラウザ側、どっちで落ちてる？
 keywords:
   - term: API
     desc: プログラム同士がデータをやり取りする窓口
@@ -18,66 +18,162 @@ keywords:
     desc: GET=取得 / POST=追加 / PUT=更新 / DELETE=削除
   - term: JSON
     desc: データ交換の標準的なテキスト形式
-  - term: fetch
-    desc: JavaScriptからAPIを呼び出す関数
-  - term: エンドポイント
-    desc: APIの窓口となるURL。/api/todos など
+  - term: FastAPI
+    desc: PythonでAPIを作るライブラリ。自動でドキュメントも作る
+  - term: CORS
+    desc: 別のオリジンからの通信を許可する仕組み。最初に必ず詰まる
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: フロントエンドとサーバーがHTTPとJSONでやり取りする仕組みを理解し、fetchでAPIを呼び、簡単なAPIを自作できるようになる。
+    text: FastAPIでサーバを立て、**オセロの画面から戦績を送って一覧を取得できる**ようにする。ブラウザとサーバが別プログラムとして動いていることを、目で見て確認する。
   - kind: h3
-    text: APIとは何か
+    text: いま2つのプログラムがある
   - kind: paragraph
-    text: API（Application Programming Interface）は、プログラム同士が**データをやり取りする窓口**です。Reactで作った画面（フロントエンド）は、APIを通じてサーバーからデータをもらい、サーバーにデータを送ります。
+    text: ここまでで、ブラウザで動くオセロ（HTML/CSS/JS）と、Pythonで書いたコード、そしてデータベースができました。これらは**それぞれ別の場所で動く、別のプログラム**です。
   - kind: code
     text: |
-      [ブラウザ / React]  ←── HTTP + JSON ──→  [サーバー / API]
+      [ブラウザ]              [サーバ]
+      HTML/CSS/JS      ？      Python + DB
+      オセロの画面     ←→      戦績の保存先
 
-      GET  /api/todos      … 一覧が欲しい
-      POST /api/todos      … 新しく追加したい
-      PUT  /api/todos/1    … 1番を更新したい
-      DELETE /api/todos/1  … 1番を削除したい
-  - kind: h3
-    text: JSONとfetch
+      この「？」の部分をつなぐのが API
   - kind: paragraph
-    text: やり取りするデータは**JSON**という形式で書きます。JavaScriptからAPIを呼ぶには fetch を使います。
-  - kind: code
-    text: |
-      // APIからデータを取得して表示する
-      const res = await fetch('/api/todos');
-      const todos = await res.json();
-      // → [{ "id": 1, "title": "牛乳を買う", "done": false }, ...]
-
-      // APIにデータを送る
-      await fetch('/api/todos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: '掃除をする' }),
-      });
+    text: ブラウザのJavaScriptから、サーバのPythonの関数を直接呼ぶことはできません。**間にHTTPという約束事を挟んで、JSONという形式でデータをやり取りします**。その窓口がAPIです。
   - kind: h3
-    text: 自分でAPIを作る（Node.js）
-  - kind: code
-    text: |
-      import express from 'express';
-      const app = express();
-      app.use(express.json());
-
-      const todos = [{ id: 1, title: '牛乳を買う', done: false }];
-
-      app.get('/api/todos', (req, res) => {
-        res.json(todos);
-      });
-
-      app.listen(3000);
+    text: 窓口の作り方 — URLとメソッド
+  - kind: paragraph
+    text: APIは「どのURLに」「どの方法で」アクセスするかで機能が決まります。
+  - kind: table
+    headers:
+      - メソッド
+      - URL
+      - やること
+    rows:
+      - - GET
+        - /api/games
+        - 戦績の一覧を取得する
+      - - POST
+        - /api/games
+        - 対戦結果を1件追加する
+      - - GET
+        - /api/games/3
+        - 3番の対戦の詳細を取得する
+      - - DELETE
+        - /api/games/3
+        - 3番の対戦を削除する
   - kind: tip-box
-    title: "💡 コツ:"
-    text: 開発者ツールの**Networkタブ**を開くと、ページが実際にどんなAPIを呼んでいるか全部見えます。うまく動かないときは「リクエストは飛んだか」「何が返ってきたか」をここで確認します。
-  - kind: ex-box
-    title: 演習
-    text: 前章のTODOアプリを進化させましょう。TODOの一覧をAPI（自作のNode.jsサーバー）から取得し、追加もAPI経由にします。
+    title: "💡 前章とのつながり:"
+    text: この4つは、SQLで学んだ **CRUD**（INSERT / SELECT / UPDATE / DELETE）ときれいに対応します。APIは「外から使えるようにしたCRUD」だと考えると分かりやすくなります。
+  - kind: h3
+    text: FastAPIでサーバを書く
+  - kind: paragraph
+    text: PythonでAPIを作るライブラリはいくつかありますが、ここでは **FastAPI** を使います。書く量が少なく、**自動でAPIの説明ページを作ってくれる**のが大きな利点です。
+  - kind: code
+    text: |
+      # main.py
+      from fastapi import FastAPI
+      from pydantic import BaseModel
+
+      app = FastAPI()
+
+      # 受け取るデータの形を決めておく
+      class Game(BaseModel):
+          winner: str
+          black_count: int
+          white_count: int
+
+      games = []   # ひとまずメモリに置く（次章でDBに移す）
+
+      @app.get("/api/games")
+      def list_games():
+          return games
+
+      @app.post("/api/games")
+      def add_game(game: Game):
+          games.append(game)
+          return {"ok": True, "count": len(games)}
+  - kind: code
+    text: |
+      uvicorn main:app --reload      # サーバを起動する
+      # → http://127.0.0.1:8000 で動く
+  - kind: kv-box
+    title: "📌 まずは /docs を開くこと:"
+    text: サーバを起動したら `http://127.0.0.1:8000/docs` を開いてください。**FastAPIが自動で作ったAPIの操作画面**が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に**サーバだけで動作確認できます**。切り分けができるので、詰まったときの強い味方になります。
+  - kind: h3
+    text: ブラウザ側から呼ぶ
+  - kind: paragraph
+    text: サーバが動いたら、オセロの画面から呼びます。JavaScriptの `fetch` を使います。
+  - kind: code
+    text: |
+      // 対戦が終わったら結果を送る
+      async function saveResult(winner, black, white) {
+        const res = await fetch("http://127.0.0.1:8000/api/games", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            winner: winner,
+            black_count: black,
+            white_count: white,
+          }),
+        });
+        const data = await res.json();
+        console.log("保存しました", data);
+      }
+
+      // 戦績一覧を取ってくる
+      async function loadHistory() {
+        const res = await fetch("http://127.0.0.1:8000/api/games");
+        const games = await res.json();
+        return games;
+      }
+  - kind: warn-box
+    title: "⚠️ ここで必ず CORS エラーが出ます:"
+    text: ブラウザは安全のため、**別の場所にあるサーバへの通信を既定で止めます**。コンソールに「CORS policy」というエラーが出たら、これです。バグではなくブラウザの正しい動作なので、サーバ側で「このオリジンからは許可する」と設定します。
+  - kind: code
+    text: |
+      # main.py に追記
+      from fastapi.middleware.cors import CORSMiddleware
+
+      app.add_middleware(
+          CORSMiddleware,
+          allow_origins=["*"],      # 学習用。本番では実際のURLを指定する
+          allow_methods=["*"],
+          allow_headers=["*"],
+      )
+  - kind: h3
+    text: 詰まったときの切り分け
+  - kind: paragraph
+    text: うまく動かないとき、**ブラウザ側とサーバ側のどちらで失敗しているか**を先に切り分けます。想像で直そうとすると必ず遠回りになります。
+  - kind: ol
+    items:
+      - "`/docs` でサーバ単体を試す → ここで失敗するならサーバ側の問題"
+      - ブラウザの Network タブを開く → リクエストが飛んでいるか確認する
+      - "飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）"
+      - サーバを起動したターミナルを見る → Pythonのエラーが出ていないか
+  - kind: assignment
+    title: オセロの戦績をサーバに送る
+    goal: FastAPIでAPIを作り、オセロの画面から実際に呼びます。ブラウザとサーバという**2つのプログラムが通信している**ことを、自分の目で確認するのが狙いです。
+    steps:
+      - FastAPIを入れ、main.py を作ってサーバを起動する
+      - "`/docs` を開き、画面から戦績を1件登録してみる"
+      - GET /api/games と POST /api/games を作る
+      - オセロ側で、対戦が終わったら結果を自動でPOSTする
+      - 「戦績一覧」ボタンを作り、GETした結果を画面に表示する
+      - CORSエラーを解決する
+    done:
+      - オセロで対戦を終えると、サーバにデータが届く
+      - 一覧ボタンで過去の戦績が表示される
+      - Networkタブでリクエストとレスポンスの中身を説明できる
+      - サーバを止めると画面側でどうなるか確認した
+    hint: いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。
+  - kind: warn-box
+    title: "⚠️ まだデータは消えます:"
+    text: いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。**サーバを再起動すると全部消えます**。次章でDBに繋いで、本当に保存されるようにします。
   - kind: checklist
     items:
       - GET / POST / PUT / DELETE の使い分けが分かる
-      - fetchでAPIを呼んで結果を画面に表示できる
-      - Networkタブで通信内容を確認できる
+      - FastAPIでエンドポイントを作れる
+      - "/docs でサーバ単体の動作確認ができる"
+      - fetchでAPIを呼んで結果を画面に出せる
+      - CORSエラーの原因を説明できる
+      - ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる

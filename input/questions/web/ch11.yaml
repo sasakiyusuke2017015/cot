@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: React
+    stem: Reactの「コンポーネント」とは何か。
+    correct: 画面を構成する再利用可能な部品
+    wrongs:
+      - データベースのテーブル
+      - CSSのアニメーション機能
+      - サーバーの設定ファイル
+    explanation: Reactでは画面をコンポーネント（部品）に分割して作る。部品は再利用できpropsで渡すデータを変えれば表示も変わる。
+    keywords: [React, コンポーネント, props]
+  - learning_item: React
+    stem: ReactのuseStateの役割はどれか。
+    correct: 状態を保持し変更されると画面を再描画する
+    wrongs:
+      - 外部のCSSを読み込む
+      - HTMLファイルを圧縮する
+      - Gitのcommitを自動化する
+    explanation: stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。
+    keywords: [React, useState, state]

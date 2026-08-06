@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web開発の虎の巻 第8章 - DB</title>
+<title>Web開発の虎の巻 第8章 - DB連携</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -54,49 +54,49 @@ const { useState } = React;
 
 const KEYWORDS = [
   {
-    "term": "データベース（DB）",
-    "desc": "データを永続的に保存する場所"
+    "term": "3層構成",
+    "desc": "ブラウザ → API → DB。Webアプリの基本形"
   },
   {
-    "term": "テーブル",
-    "desc": "Excelの表のようにデータを行と列で管理する単位"
+    "term": "コネクション",
+    "desc": "プログラムからDBへの接続"
   },
   {
-    "term": "SQL",
-    "desc": "DBを操作する言語。SELECT / INSERT / UPDATE / DELETE"
+    "term": "プレースホルダ",
+    "desc": "SQLに値を安全に埋め込む仕組み。? や %s で書く"
   },
   {
-    "term": "CRUD",
-    "desc": "Create・Read・Update・Delete の4基本操作"
+    "term": "SQLインジェクション",
+    "desc": "入力値でSQLを改ざんされる攻撃。文字列連結が原因"
   },
   {
     "term": "ORM",
-    "desc": "SQLをコードで書ける道具。型とDBがつながる"
+    "desc": "SQLをコードとして書ける道具。型とDBがつながる"
   }
 ];
 
 const QUIZ = [
   {
-    "q": "SQLのSELECT文が行うことはどれか。",
-    "options": [
-      "テーブルにデータを追加する",
-      "テーブルを削除する",
-      "テーブルからデータを取得する",
-      "サーバーを再起動する"
-    ],
-    "answer": 2,
-    "explain": "SELECTは取得・INSERTは追加・UPDATEは更新・DELETEは削除であり4つをまとめてCRUDと呼ぶ。"
-  },
-  {
     "q": "Webアプリの3層構成におけるAPIの位置づけはどれか。",
     "options": [
       "DBの中に保存されるデータの一種",
-      "画面（フロントエンド）とDBの橋渡しをする",
-      "インターネット回線そのもの",
-      "画面のデザインを決める層"
+      "画面のデザインを決める層",
+      "ブラウザとDBの橋渡しをする",
+      "インターネット回線そのもの"
+    ],
+    "answer": 2,
+    "explain": "ブラウザ（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。この絵が描ければ全体像を理解できたと言える。"
+  },
+  {
+    "q": "SQLに値を埋め込むとき、プレースホルダ（? など）を使う理由はどれか。",
+    "options": [
+      "文字列連結よりも実行速度が速くなるため",
+      "文字列連結だとSQLインジェクションで乗っ取られる危険があるため",
+      "データベースの容量を節約するため",
+      "SQLの文字数制限を回避するため"
     ],
     "answer": 1,
-    "explain": "React（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。"
+    "explain": "ユーザー入力を文字列連結でSQLに埋め込むと、入力次第で条件を無意味にされたりテーブルを削除されたりする。入力値は必ずプレースホルダで渡す。"
   }
 ];
 
@@ -157,7 +157,7 @@ function Page() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
           <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
-          <p className="text-sm text-blue-200">第8章 / 全9章</p>
+          <p className="text-sm text-blue-200">第8章 / 全11章</p>
         </div>
       </header>
 
@@ -165,8 +165,8 @@ function Page() {
         <main className="flex-1 p-6 min-w-0">
           <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
             <span className="tag bg-white/20 text-white">第8章 · バックエンド</span>
-            <h1 className="text-2xl font-bold mt-2">🗄️ DB</h1>
-            <p className="text-emerald-100 mt-1">データの保存先を知る</p>
+            <h1 className="text-2xl font-bold mt-2">🗄️ DB連携</h1>
+            <p className="text-emerald-100 mt-1">サーバからデータを保存する</p>
           </div>
 
           <div className="flex gap-6 items-start">
@@ -174,43 +174,118 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> データベースの役割とSQLの基本4操作を理解し、「APIがアプリとDBの橋渡しをしている」全体像をつかむ。
+                    <strong>🎯 この章のゴール:</strong> 前章のAPIをDBに繋ぎ、<strong>サーバを再起動しても戦績が残る</strong>状態にする。Webアプリの3層構成を自分の言葉で説明できるようになる。
                   </div>
-                  <h3>なぜデータベースが要るのか</h3>
-                  <p>前章のAPIは、データを変数（メモリ）に持っていたため、サーバーを再起動すると消えてしまいます。データを<strong>永続的に保存する</strong>場所がデータベース（DB）です。</p>
-                  <div className="code-block">{`[React] ←→ [API / Node.js] ←→ [DB / PostgreSQLなど]
- 画面        橋渡し・入り口       データの保存先`}</div>
-                  <p>この3層の絵が、Webアプリの基本形です。<strong>APIがアプリとDBの橋渡し</strong>をしている、と理解できればこの章の半分は達成です。</p>
-                  <h3>テーブルとSQL</h3>
-                  <p>リレーショナルDBでは、データをExcelのような<strong>テーブル（表）</strong>で管理します。操作にはSQLという言語を使います。</p>
-                  <div className="code-block">{`-- 取得（Read）
-SELECT * FROM todos WHERE done = false;
+                  <h3>全体像がつながる</h3>
+                  <p>ここまでに作ったものが、いよいよ1本につながります。</p>
+                  <div className="code-block">{`[ブラウザ]          [サーバ]              [DB]
+オセロの画面   →    FastAPI        →    games テーブル
+HTML/CSS/JS   ←    Python         ←    players テーブル
 
--- 追加（Create）
-INSERT INTO todos (title, done) VALUES ('牛乳を買う', false);
+  fetch()          エンドポイント        SQL`}</div>
+                  <p>この3層の絵が描ければ、Webアプリの基本は理解できたと言えます。<strong>APIがブラウザとDBの橋渡しをしている</strong>——これがいちばん大事な理解です。</p>
+                  <h3>PythonからDBに繋ぐ</h3>
+                  <p>まずは生のSQLで動かします。SQLiteなら追加のインストールも要りません。</p>
+                  <div className="code-block">{`# db.py
+import sqlite3
 
--- 更新（Update）
-UPDATE todos SET done = true WHERE id = 1;
+def get_conn():
+    conn = sqlite3.connect("othello.db")
+    conn.row_factory = sqlite3.Row   # 辞書のように使えるようにする
+    return conn
 
--- 削除（Delete）
-DELETE FROM todos WHERE id = 1;`}</div>
-                  <p>この4操作をまとめて<strong>CRUD</strong>（Create / Read / Update / Delete）と呼びます。APIのGET / POST / PUT / DELETEときれいに対応します。</p>
-                  <h3>ORM — コードからDBを扱う</h3>
-                  <div className="code-block">{`// ORM（例: Prisma）を使うとSQLをコードで書ける
-const todos = await prisma.todo.findMany({ where: { done: false } });
-await prisma.todo.create({ data: { title: '牛乳を買う' } });`}</div>
-                  <p>ORMを使うとTypeScriptの型とDBがつながり、安全にデータを扱えます。まずはSQLで仕組みを理解してからORMに進むのがおすすめです。</p>
+def init_db():
+    conn = get_conn()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS games (
+          id          INTEGER PRIMARY KEY AUTOINCREMENT,
+          winner      TEXT NOT NULL,
+          black_count INTEGER NOT NULL,
+          white_count INTEGER NOT NULL,
+          played_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()`}</div>
+                  <h3>APIをDBに繋ぎ替える</h3>
+                  <p>前章では戦績をリスト（メモリ）に入れていました。そこをDBの読み書きに置き換えます。</p>
+                  <div className="code-block">{`# main.py
+@app.get("/api/games")
+def list_games():
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT * FROM games ORDER BY played_at DESC"
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.post("/api/games")
+def add_game(game: Game):
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO games (winner, black_count, white_count) VALUES (?, ?, ?)",
+        (game.winner, game.black_count, game.white_count),   # ← 値は別で渡す
+    )
+    conn.commit()
+    conn.close()
+    return {"ok": True}`}</div>
+                  <div className="kv-box">
+                    <strong>📌 ここが本章のハイライト:</strong> この状態で<strong>サーバを再起動してから一覧を見てください</strong>。データが残っているはずです。前章までは消えていました。この違いが「保存する」ということです。
+                  </div>
+                  <h3>絶対にやってはいけない書き方</h3>
+                  <p>上のコードで、値を `?` で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、<strong>入力次第でSQLを乗っ取られます</strong>。</p>
+                  <div className="code-block">{`# ❌ 絶対にダメな書き方
+name = 受け取った値
+conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
+
+# もし name に  ' OR '1'='1  が入ったら、実行されるSQLは
+# SELECT * FROM players WHERE name = '' OR '1'='1'
+# → 全件が返ってくる（条件が無意味になる）
+
+# もっと悪いと  '; DROP TABLE games; --  で表ごと消される`}</div>
+                  <div className="code-block">{`# ⭕ 正しい書き方（プレースホルダを使う）
+conn.execute("SELECT * FROM players WHERE name = ?", (name,))`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ 注意:</strong> ユーザーの入力をそのままSQL文字列に埋め込むと、SQLインジェクションという攻撃を受けます。必ずプレースホルダやORMを使いましょう。
+                    <strong>⚠️ SQLインジェクション:</strong> これは<strong>実際に起き続けている代表的な攻撃</strong>です。「自分のアプリは小さいから大丈夫」ということはありません。<strong>ユーザーからの入力をSQLに文字列連結しない</strong>——これだけは例外なく守ってください。
                   </div>
-                  <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>TODOアプリのデータをDBに保存しましょう。SQLiteやPostgreSQLにtodosテーブルを作り、APIの各エンドポイントをDB読み書きに置き換えます。再起動してもデータが残ることを確認します。</p>
+                  <h3>ORM — SQLをコードで書く</h3>
+                  <p>生SQLで仕組みが分かったら、<strong>ORM</strong>という道具に進めます。SQLをPythonのコードとして書けるようになり、プレースホルダも自動で使われるので安全です。</p>
+                  <div className="code-block">{`# SQLAlchemy を使った例
+games = session.query(Game).order_by(Game.played_at.desc()).all()
+
+session.add(Game(winner="黒", black_count=38, white_count=26))
+session.commit()`}</div>
+                  <div className="tip-box">
+                    <strong>💡 なぜ生SQLを先にやったか:</strong> ORMは便利ですが、<strong>中で何が起きているか分からないまま使うと詰まったとき何もできません</strong>。生SQLを知っていれば「ORMがどんなSQLを出しているか」を確認して原因を追えます。順番が大事です。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: 戦績が消えないようにする</p>
+                    <p className="assign-goal">前章のAPIをDBに繋ぎます。<strong>サーバを再起動してもデータが残る</strong>ことを確認するのが、この章のいちばんの成果です。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>第6章で設計したテーブルを、実際にDBに作る</li>
+                      <li>GET /api/games を DBのSELECTに置き換える</li>
+                      <li>POST /api/games を DBのINSERTに置き換える</li>
+                      <li>オセロで何回か対戦し、戦績を貯める</li>
+                      <li><strong>サーバを再起動して、データが残っていることを確認する</strong></li>
+                      <li>余裕があれば、プレイヤー名も保存してJOINで一覧を出す</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">サーバを再起動しても戦績が消えない</div>
+                      <div className="chk-item">ブラウザ → API → DB の3層を自分で図に描いて説明できる</div>
+                      <div className="chk-item">なぜプレースホルダを使うのか説明できる</div>
+                      <div className="chk-item">実際にDBファイルを開いて、中のデータを確認した</div>
+                    <p className="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを<strong>誰でもアクセスできる場所に置きます</strong>。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">React → API → DB の3層の絵を描ける</div>
-                  <div className="chk-item">SELECT / INSERT / UPDATE / DELETE を書ける</div>
-                  <div className="chk-item">CRUDとHTTPメソッドの対応が分かる</div>
+                  <div className="chk-item">ブラウザ → API → DB の3層を説明できる</div>
+                  <div className="chk-item">PythonからDBに接続してSQLを実行できる</div>
+                  <div className="chk-item">サーバを再起動してもデータが残ることを確認した</div>
+                  <div className="chk-item">プレースホルダを使う理由を説明できる</div>
+                  <div className="chk-item">SQLインジェクションがどう起きるか説明できる</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>

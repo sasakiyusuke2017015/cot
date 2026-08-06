@@ -45,7 +45,7 @@ content_blocks:
     text: VercelやNetlify、Render などのホスティングサービスは、**GitHubのリポジトリを連携するだけ**で、pushのたびに自動で最新版を公開してくれます。第4章で身につけたGitの習慣がここで直接活きます。
   - kind: ul
     items:
-      - フロントエンド（React）… Vercel / Netlify などが定番
+      - フロントエンド（HTML/CSS/JS）… Vercel / Netlify などが定番
       - API + DB … Render / Railway など、DBも一緒に提供するサービスが手軽
   - kind: warn-box
     title: "⚠️ 公開前チェック:"
@@ -53,9 +53,22 @@ content_blocks:
   - kind: tip-box
     title: "💡 なぜデプロイが大事か:"
     text: 公開URLを人に送って使ってもらえると、学習のモチベーションが一気に変わります。「動くものを世界に出した」経験が、次の学習の最大の燃料になります。
-  - kind: ex-box
-    title: 演習（卒業制作）
-    text: TODOアプリ（React + API + DB）をデプロイして、公開URLをもう1人の学習仲間に送って使ってもらいましょう。感想をもらって1つ改善したら卒業です。
+  - kind: assignment
+    title: オセロを世界に公開する
+    goal: 2人で作ったオセロを、誰でも遊べる場所に置きます。**公開URLを人に送って遊んでもらう**ところまでが課題です。ここまでの全部の集大成になります。
+    steps:
+      - フロントエンド（オセロの画面）をVercelかNetlifyにデプロイする
+      - API + DB を Render か Railway にデプロイする
+      - フロント側のAPI接続先を、ローカルのURLから公開URLに書き換える
+      - CORSの許可設定を、公開したフロントのURLに変更する
+      - 公開URLで実際に対戦し、戦績が保存されることを確認する
+      - 家族や友人にURLを送って遊んでもらう
+    done:
+      - 公開URLにアクセスして対戦できる
+      - 対戦結果が保存され、再訪しても残っている
+      - 自分以外の誰かに遊んでもらった
+      - APIキーやパスワードがコードに残っていないか確認した
+    hint: フロントとAPIは別々のサービスにデプロイすることになります。「フロントは動くがAPIに繋がらない」ときは、接続先URLとCORS設定の2つを疑ってください。第7章で学んだ切り分けがそのまま使えます。
   - kind: checklist
     items:
       - デプロイの意味を説明できる

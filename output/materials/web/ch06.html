@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web開発の虎の巻 第6章 - React</title>
+<title>Web開発の虎の巻 第6章 - SQL</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -54,49 +54,49 @@ const { useState } = React;
 
 const KEYWORDS = [
   {
-    "term": "コンポーネント",
-    "desc": "画面を構成する再利用可能な部品"
+    "term": "テーブル",
+    "desc": "行と列でデータを持つ表。Excelのシートに近い"
   },
   {
-    "term": "JSX",
-    "desc": "HTMLに似た書き方でコンポーネントの見た目を書く記法"
+    "term": "主キー",
+    "desc": "行を1つに特定するための列。重複しない値を入れる"
   },
   {
-    "term": "props",
-    "desc": "親から部品に渡すデータ。渡す値で表示が変わる"
+    "term": "外部キー",
+    "desc": "別のテーブルの行を指す列。表と表を繋ぐ"
   },
   {
-    "term": "state",
-    "desc": "部品が持つ状態。変わると画面が自動で再描画される"
+    "term": "CRUD",
+    "desc": "Create / Read / Update / Delete の4操作"
   },
   {
-    "term": "useState",
-    "desc": "stateを作るReactの関数（フック）"
+    "term": "JOIN",
+    "desc": "複数のテーブルを繋いで1つの結果として取り出す"
   }
 ];
 
 const QUIZ = [
   {
-    "q": "Reactの「コンポーネント」とは何か。",
+    "q": "テーブルを設計するとき、最初に決めるべき最も大事なことはどれか。",
     "options": [
-      "データベースのテーブル",
-      "画面を構成する再利用可能な部品",
-      "CSSのアニメーション機能",
-      "サーバーの設定ファイル"
+      "列の並び順をどうするか",
+      "その表の1行が何を表しているか",
+      "テーブル名を英語にするか日本語にするか",
+      "何件のデータが入る予定か"
     ],
     "answer": 1,
-    "explain": "Reactでは画面をコンポーネント（部品）に分割して作る。部品は再利用できpropsで渡すデータを変えれば表示も変わる。"
+    "explain": "「その表の1行が何を表しているか」が曖昧なまま作ると後で必ず破綻する。戦績テーブルなら「1行=1回の対戦」のように一言で言えるようにする。"
   },
   {
-    "q": "ReactのuseStateの役割はどれか。",
+    "q": "DELETE 文を書くときに特に注意すべきことはどれか。",
     "options": [
-      "Gitのcommitを自動化する",
-      "状態を保持し変更されると画面を再描画する",
-      "外部のCSSを読み込む",
-      "HTMLファイルを圧縮する"
+      "削除したデータは自動でバックアップされる",
+      "WHERE を忘れると全行が消えてしまう",
+      "実行に時間がかかるので夜間に実行する",
+      "1度に1行しか削除できない"
     ],
     "answer": 1,
-    "explain": "stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。"
+    "explain": "WHERE無しのDELETEやUPDATEは全行が対象になる。実行前に同じ条件でSELECTして対象を確認する癖をつけるとよい。"
   }
 ];
 
@@ -157,16 +157,16 @@ function Page() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
           <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
-          <p className="text-sm text-blue-200">第6章 / 全9章</p>
+          <p className="text-sm text-blue-200">第6章 / 全11章</p>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto w-full flex-1">
         <main className="flex-1 p-6 min-w-0">
-          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-violet-700 to-violet-500">
-            <span className="tag bg-white/20 text-white">第6章 · 発展</span>
-            <h1 className="text-2xl font-bold mt-2">⚛️ React</h1>
-            <p className="text-violet-100 mt-1">画面を部品で組み立てる</p>
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
+            <span className="tag bg-white/20 text-white">第6章 · バックエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🗃️ SQL</h1>
+            <p className="text-emerald-100 mt-1">データの置き場所を設計する</p>
           </div>
 
           <div className="flex gap-6 items-start">
@@ -174,47 +174,122 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。
+                    <strong>🎯 この章のゴール:</strong> <strong>オセロの戦績を保存するテーブルを自分で設計できる</strong>ようになる。あわせてSQLの基本操作を覚え、データの出し入れができるようにする。
                   </div>
-                  <h3>Reactとは何か</h3>
-                  <p>Reactは、画面を<strong>コンポーネント（部品）</strong>として分割して組み立てるライブラリです。「ボタン」「カード」「一覧」を部品として作り、組み合わせて画面にします。部品は再利用できるので、大きなアプリでも整理された状態を保てます。</p>
-                  <h3>コンポーネントとJSX</h3>
-                  <div className="code-block">{`function Hello(props) {
-  return <h1>こんにちは、{props.name}さん</h1>;
-}
-
-function App() {
-  return (
-    <div>
-      <Hello name="田中" />
-      <Hello name="佐藤" />
-    </div>
-  );
-}`}</div>
-                  <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。</p>
-                  <h3>state — 画面が変わる仕組み</h3>
-                  <div className="code-block">{`function Counter() {
-  const [count, setCount] = useState(0);
-  return (
-    <button onClick={() => setCount(count + 1)}>
-      {count} 回押しました
-    </button>
-  );
-}`}</div>
+                  <h3>なぜデータベースが要るのか</h3>
+                  <p>前章でPythonを覚えましたが、プログラムの中の変数は<strong>実行が終われば消えます</strong>。オセロの対戦結果を後から見返したいなら、どこかに書き残さないといけません。その置き場所がデータベース（DB）です。</p>
+                  <p>「ファイルに書けばいいのでは」と思うかもしれません。実際できます。ただ、<strong>探す・並べ替える・複数人が同時に書く</strong>といったことをファイルでやると大変です。DBはそれを得意とする専用の道具です。</p>
+                  <h3>テーブル = 表</h3>
+                  <p>DBの中では、データを<strong>テーブル</strong>という表の形で持ちます。Excelのシートを思い浮かべてください。列（どんな項目か）と行（1件ずつのデータ）でできています。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">id</th><th className="tbl-th">winner</th><th className="tbl-th">black_count</th><th className="tbl-th">white_count</th><th className="tbl-th">played_at</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">1</td><td className="tbl-td">黒</td><td className="tbl-td">38</td><td className="tbl-td">26</td><td className="tbl-td">2026-08-01 14:30</td></tr>
+                        <tr><td className="tbl-td">2</td><td className="tbl-td">白</td><td className="tbl-td">20</td><td className="tbl-td">44</td><td className="tbl-td">2026-08-01 15:10</td></tr>
+                        <tr><td className="tbl-td">3</td><td className="tbl-td">引き分け</td><td className="tbl-td">32</td><td className="tbl-td">32</td><td className="tbl-td">2026-08-02 09:05</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
                   <div className="kv-box">
-                    <strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。
+                    <strong>📌 設計でいちばん大事な問い:</strong> <strong>「この表の1行は、何を表しているのか」</strong> を一言で言えるようにすること。上の表なら「1行 = 1回の対戦」です。これが曖昧なまま作ると、後で必ず破綻します。
+                  </div>
+                  <h3>列には型を決める</h3>
+                  <p>各列には「どんな種類のデータが入るか」（型）を決めます。数値の列に文字を入れようとするとDBが拒否してくれるので、おかしなデータが混ざるのを防げます。</p>
+                  <div className="code-block">{`CREATE TABLE games (
+  id           INTEGER PRIMARY KEY,   -- 主キー。行を特定する
+  winner       TEXT NOT NULL,         -- 文字。空は許さない
+  black_count  INTEGER NOT NULL,      -- 整数
+  white_count  INTEGER NOT NULL,
+  played_at    TIMESTAMP DEFAULT NOW() -- 日時。既定は今
+);`}</div>
+                  <ul>
+                    <li><strong>INTEGER</strong> … 整数</li>
+                    <li><strong>TEXT</strong> … 文字列</li>
+                    <li><strong>BOOLEAN</strong> … true / false</li>
+                    <li><strong>TIMESTAMP</strong> … 日時</li>
+                    <li><strong>PRIMARY KEY</strong> … その行を特定する列。重複できない</li>
+                    <li><strong>NOT NULL</strong> … 空を許さない</li>
+                  </ul>
+                  <h3>4つの基本操作（CRUD）</h3>
+                  <div className="code-block">{`-- Create: 追加する
+INSERT INTO games (winner, black_count, white_count)
+VALUES ('黒', 38, 26);
+
+-- Read: 取り出す
+SELECT * FROM games;                          -- 全部
+SELECT * FROM games WHERE winner = '黒';      -- 条件つき
+SELECT * FROM games ORDER BY played_at DESC;  -- 新しい順
+SELECT * FROM games ORDER BY played_at DESC LIMIT 5;  -- 直近5件
+
+-- Update: 書き換える
+UPDATE games SET winner = '白' WHERE id = 1;
+
+-- Delete: 消す
+DELETE FROM games WHERE id = 1;`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ WHERE を忘れると全部消える:</strong> `DELETE FROM games;` と書くと<strong>全行が消えます</strong>。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。
+                  </div>
+                  <h3>表を分ける — 外部キー</h3>
+                  <p>「誰が対戦したか」も残したくなったとします。プレイヤー名を games テーブルに直接書くこともできますが、名前が変わったとき全行を直すことになります。そこで<strong>表を分けて、繋ぐ</strong>という考え方を使います。</p>
+                  <div className="code-block">{`CREATE TABLE players (
+  id    INTEGER PRIMARY KEY,
+  name  TEXT NOT NULL
+);
+
+CREATE TABLE games (
+  id            INTEGER PRIMARY KEY,
+  black_player  INTEGER REFERENCES players(id),  -- 外部キー
+  white_player  INTEGER REFERENCES players(id),
+  winner        TEXT NOT NULL,
+  black_count   INTEGER NOT NULL,
+  white_count   INTEGER NOT NULL,
+  played_at     TIMESTAMP DEFAULT NOW()
+);`}</div>
+                  <p>games には名前ではなく<strong>プレイヤーのid</strong>を持たせます。こうすると名前を変えたいとき players を1行直すだけで済みます。</p>
+                  <h3>繋いで取り出す — JOIN</h3>
+                  <p>表を分けると、取り出すときに繋ぎ直す必要があります。それが JOIN です。</p>
+                  <div className="code-block">{`SELECT
+  g.id,
+  b.name AS black_name,
+  w.name AS white_name,
+  g.winner,
+  g.played_at
+FROM games g
+JOIN players b ON g.black_player = b.id
+JOIN players w ON g.white_player = w.id
+ORDER BY g.played_at DESC;`}</div>
+                  <div className="tip-box">
+                    <strong>💡 まずは分けずに作ってもいい:</strong> 最初から完璧な設計を目指すと進みません。<strong>1つのテーブルで作ってみて、不便を感じてから分ける</strong>ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: 戦績テーブルを設計する</p>
+                    <p className="assign-goal">オセロの戦績を保存するテーブルを、自分たちで設計します。<strong>答えを写すのではなく、何が必要かを2人で話し合って決めること</strong>が課題の本体です。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>SQLiteかPostgreSQLを用意する（SQLiteが手軽）</li>
+                      <li>2人で「戦績として何を残したいか」を話し合って書き出す</li>
+                      <li>その項目をもとに CREATE TABLE を書く</li>
+                      <li>手で5件くらい INSERT してデータを入れる</li>
+                      <li>「直近5件」「黒の勝ち数」「勝率の高い順」を SELECT で取り出す</li>
+                      <li>プレイヤーを別テーブルに分け、JOINで名前つきの一覧を出す</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                      <div className="chk-item">「この表の1行は何を表すか」を一言で説明できる</div>
+                      <div className="chk-item">CRUD の4操作をすべて自分で書いて実行した</div>
+                      <div className="chk-item">JOIN で2つの表を繋いだ結果を取り出せた</div>
+                      <div className="chk-item">後から項目を足したくなったとき、どう直すか説明できる</div>
+                    <p className="assign-hint">💡 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。</p>
                   </div>
                   <div className="tip-box">
-                    <strong>💡 コツ:</strong> 迷ったら「この画面はどんな部品に分けられるか？」から考えます。ヘッダー・一覧・一覧の1行・ボタン…と分解してから作り始めると設計が楽になります。
-                  </div>
-                  <div className="ex-box">
-                    <p className="ex-title">✏️ 演習</p>
-                    <p>TODOアプリを作ってみましょう。入力欄に文字を入れて追加ボタンを押すと一覧に増え、クリックで完了線が引かれる。（state・props・イベントの総合練習）</p>
+                    <strong>💡 次章への橋渡し:</strong> データの置き場所ができました。ただ、ブラウザで動くオセロからは<strong>まだこのDBに触れません</strong>。次章では両者をつなぐ窓口（API）を作ります。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">コンポーネント・props・stateの役割を説明できる</div>
-                  <div className="chk-item">useStateで画面が変わるアプリを作れる</div>
-                  <div className="chk-item">画面を部品に分解してから作り始められる</div>
+                  <div className="chk-item">「1行が何を表すか」を意識してテーブルを設計できる</div>
+                  <div className="chk-item">SELECT / INSERT / UPDATE / DELETE が書ける</div>
+                  <div className="chk-item">WHERE を忘れる危険を理解している</div>
+                  <div className="chk-item">主キーと外部キーの役割を説明できる</div>
+                  <div className="chk-item">JOIN で複数テーブルを繋げる</div>
                 </div>
                 <Quiz items={QUIZ} />
               </div>
@@ -223,7 +298,7 @@ function App() {
           </div>
 
           <div className="flex justify-between mt-8 no-print">
-            <a href="ch05.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第5章 TypeScript</a>
+            <a href="ch05.html" className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">← 第5章 Python</a>
             <a href="ch07.html" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">第7章 API →</a>
           </div>
         </main>
