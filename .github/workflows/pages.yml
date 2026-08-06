@@ -46,7 +46,12 @@ jobs:
         with:
           path: _site
 
+      # デプロイ自体は完了するが、完了の検知に時間がかかりタイムアウトすることがある
+      # （実際にはサイトは公開されている）。待ち時間を長めに取る。
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-        timeout-minutes: 20
+        timeout-minutes: 30
+        with:
+          timeout: 1500000
+          error_count: 20

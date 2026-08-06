@@ -67,6 +67,8 @@ git commit && git push
 **1. 公開版を開く**（push 済みの内容・いちばん手軽）
 [https://sasakiyusuke2017015.github.io/cot/](https://sasakiyusuke2017015.github.io/cot/)
 
+push すれば数分で反映される。スマホでブックマークしておけば、開き直すだけで最新版が読める。
+
 **2. ファイルを送る**（サーバも通信も不要）
 `output/toranomaki-all.html` は**全 9 章 + 講師用メモ + 確認問題を 1 ファイルにまとめた版**（53KB・外部依存なし）。
 メールに添付するかクラウド経由でスマホに送れば、そのまま読める。オフラインでも見られる。
