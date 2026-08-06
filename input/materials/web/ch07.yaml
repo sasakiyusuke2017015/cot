@@ -1,0 +1,78 @@
+id: 7
+level: web
+type: user
+icon: "🔌"
+title: API
+subtitle: データをやり取りする窓口
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: API
+    desc: プログラム同士がデータをやり取りする窓口
+  - term: HTTPメソッド
+    desc: GET=取得 / POST=追加 / PUT=更新 / DELETE=削除
+  - term: JSON
+    desc: データ交換の標準的なテキスト形式
+  - term: fetch
+    desc: JavaScriptからAPIを呼び出す関数
+  - term: エンドポイント
+    desc: APIの窓口となるURL。/api/todos など
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: フロントエンドとサーバーがHTTPとJSONでやり取りする仕組みを理解し、fetchでAPIを呼び、簡単なAPIを自作できるようになる。
+  - kind: h3
+    text: APIとは何か
+  - kind: paragraph
+    text: API（Application Programming Interface）は、プログラム同士が**データをやり取りする窓口**です。Reactで作った画面（フロントエンド）は、APIを通じてサーバーからデータをもらい、サーバーにデータを送ります。
+  - kind: code
+    text: |
+      [ブラウザ / React]  ←── HTTP + JSON ──→  [サーバー / API]
+
+      GET  /api/todos      … 一覧が欲しい
+      POST /api/todos      … 新しく追加したい
+      PUT  /api/todos/1    … 1番を更新したい
+      DELETE /api/todos/1  … 1番を削除したい
+  - kind: h3
+    text: JSONとfetch
+  - kind: paragraph
+    text: やり取りするデータは**JSON**という形式で書きます。JavaScriptからAPIを呼ぶには fetch を使います。
+  - kind: code
+    text: |
+      // APIからデータを取得して表示する
+      const res = await fetch('/api/todos');
+      const todos = await res.json();
+      // → [{ "id": 1, "title": "牛乳を買う", "done": false }, ...]
+
+      // APIにデータを送る
+      await fetch('/api/todos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: '掃除をする' }),
+      });
+  - kind: h3
+    text: 自分でAPIを作る（Node.js）
+  - kind: code
+    text: |
+      import express from 'express';
+      const app = express();
+      app.use(express.json());
+
+      const todos = [{ id: 1, title: '牛乳を買う', done: false }];
+
+      app.get('/api/todos', (req, res) => {
+        res.json(todos);
+      });
+
+      app.listen(3000);
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: 開発者ツールの**Networkタブ**を開くと、ページが実際にどんなAPIを呼んでいるか全部見えます。うまく動かないときは「リクエストは飛んだか」「何が返ってきたか」をここで確認します。
+  - kind: ex-box
+    title: 演習
+    text: 前章のTODOアプリを進化させましょう。TODOの一覧をAPI（自作のNode.jsサーバー）から取得し、追加もAPI経由にします。
+  - kind: checklist
+    items:
+      - GET / POST / PUT / DELETE の使い分けが分かる
+      - fetchでAPIを呼んで結果を画面に表示できる
+      - Networkタブで通信内容を確認できる

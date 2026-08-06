@@ -1,0 +1,70 @@
+id: 2
+level: web
+type: core
+icon: "🎨"
+title: CSS
+subtitle: 見た目とレイアウトを整える
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: CSS
+    desc: HTMLに見た目（色・大きさ・配置）を与える言語
+  - term: セレクタ
+    desc: スタイルを当てる対象を選ぶ書き方。.card や h1 など
+  - term: ボックスモデル
+    desc: content→padding→border→margin の4層構造
+  - term: Flexbox
+    desc: 要素を柔軟に並べるレイアウト機能。display:flex
+  - term: 開発者ツール
+    desc: 要素のボックスモデルを色付きで確認できる
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、Flexboxで簡単なレイアウトを組めるようになる。
+  - kind: h3
+    text: CSSとは何か
+  - kind: paragraph
+    text: CSS（Cascading Style Sheets）は、HTMLで作った骨組みに**見た目（色・大きさ・配置）**を与える言語です。「どの要素に」「どんなスタイルを」の2つをセットで書きます。
+  - kind: code
+    text: |
+      /* セレクタ { プロパティ: 値; } */
+      h1 {
+        color: #1e3a8a;
+        font-size: 2rem;
+      }
+      .card {          /* class="card" の要素に当たる */
+        padding: 16px;
+        border-radius: 8px;
+      }
+  - kind: h3
+    text: セレクタの基本
+  - kind: ul
+    items:
+      - "**h1** … タグ名で選ぶ"
+      - "**.card** … class属性で選ぶ（先頭にドット）。最もよく使う"
+      - "**#header** … id属性で選ぶ（先頭にシャープ）"
+  - kind: h3
+    text: ボックスモデル
+  - kind: paragraph
+    text: すべての要素は箱（ボックス）として描画されます。内側から **content → padding → border → margin** の層になっていて、レイアウト崩れの原因の大半はここの理解不足です。
+  - kind: h3
+    text: Flexboxで並べる
+  - kind: code
+    text: |
+      .row {
+        display: flex;        /* 子要素を横に並べる */
+        gap: 12px;            /* 要素間の隙間 */
+        justify-content: center;  /* 水平方向の揃え */
+        align-items: center;      /* 垂直方向の揃え */
+      }
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。
+  - kind: ex-box
+    title: 演習
+    text: 前章の自己紹介ページにCSSを当ててみましょう。見出しに色を付け、カード風の枠（padding + border-radius + 影）を作り、Flexboxで2枚並べます。
+  - kind: checklist
+    items:
+      - セレクタとプロパティの書き方が分かる
+      - ボックスモデルの4層を言える
+      - display:flex で要素を横に並べられる

@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: JavaScript
+    stem: JavaScriptの主な役割はどれか。
+    correct: ページに動き（ロジック）をつける
+    wrongs:
+      - ページの構造を定義する
+      - ページの配色を決める
+      - サーバーの電源を管理する
+    explanation: 構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。
+    keywords: [JavaScript, ロジック, イベント]
+  - learning_item: JavaScript
+    stem: JavaScriptで配列fruitsの要素数を調べる書き方はどれか。
+    correct: fruits.length
+    wrongs:
+      - fruits.size()
+      - count(fruits)
+      - fruits.total
+    explanation: JavaScriptの配列はlengthプロパティで要素数を取得する。
+    keywords: [JavaScript, 配列, length]

@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'デプロイ', desc: 'アプリを公開して誰でも使える状態にすること' },
-  { term: 'ホスティング', desc: 'アプリを動かすサーバーを貸してくれるサービス' },
-  { term: 'Vercel / Netlify', desc: 'GitHub連携でフロントを自動公開する定番サービス' },
-  { term: '環境変数', desc: 'APIキーなど秘密の設定をコード外に置く仕組み' },
-  { term: '自動デプロイ', desc: 'pushのたびに最新版が自動で公開される仕組み' },
+  {
+    "term": "デプロイ",
+    "desc": "アプリを公開して誰でも使える状態にすること"
+  },
+  {
+    "term": "ホスティング",
+    "desc": "アプリを動かすサーバーを貸してくれるサービス"
+  },
+  {
+    "term": "Vercel / Netlify",
+    "desc": "GitHub連携でフロントを自動公開する定番サービス"
+  },
+  {
+    "term": "環境変数",
+    "desc": "APIキーなど秘密の設定をコード外に置く仕組み"
+  },
+  {
+    "term": "自動デプロイ",
+    "desc": "pushのたびに最新版が自動で公開される仕組み"
+  }
 ];
 
 const QUIZ = [
-  { q: '「デプロイ」の意味として正しいのはどれ？', options: ['アプリを公開して誰でも使える状態にすること', 'コードを削除すること', 'デザインを修正すること', 'パソコンを初期化すること'], answer: 0, explain: 'デプロイは作ったアプリをサーバーに配置して公開することです。学習の総仕上げにあたります。' },
-  { q: '今どきの典型的な公開の流れはどれ？', options: ['GitHubへpushするとホスティングサービスが自動で公開する', 'USBメモリでサーバー室に運ぶ', 'コードを印刷して郵送する', 'HTMLをメールで全員に送る'], answer: 0, explain: 'VercelなどのサービスはGitHub連携により、pushのたびに自動でビルド・公開してくれます。' },
+  {
+    "q": "「デプロイ」の意味として正しいものはどれか。",
+    "options": [
+      "アプリを公開して誰でも使える状態にすること",
+      "デザインを修正すること",
+      "パソコンを初期化すること",
+      "コードを削除すること"
+    ],
+    "answer": 0,
+    "explain": "デプロイは作ったアプリをサーバーに配置して公開することであり学習の総仕上げにあたる。"
+  },
+  {
+    "q": "今どきの典型的なWebアプリ公開の流れはどれか。",
+    "options": [
+      "HTMLをメールで全員に送る",
+      "USBメモリでサーバー室に運ぶ",
+      "コードを印刷して郵送する",
+      "GitHubへpushするとホスティングサービスが自動で公開する"
+    ],
+    "answer": 3,
+    "explain": "VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

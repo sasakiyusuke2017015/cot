@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: HTML
+    stem: HTMLの役割として最も適切なものはどれか。
+    correct: ページの構造（骨組み）を記述する
+    wrongs:
+      - ページの見た目を装飾する
+      - ページに動きをつける
+      - データベースを操作する
+    explanation: 正しくは「${正答1}」。構造はHTML・見た目はCSS・動きはJavaScriptと役割が分かれている。
+    keywords: [HTML, 構造, タグ]
+  - learning_item: HTML
+    stem: ページ内で最上位の見出しを表すHTMLタグはどれか。
+    correct: h1
+    wrongs:
+      - p
+      - div
+      - span
+    explanation: 見出しはh1〜h6で表しh1が最上位。pは段落・div/spanは意味を持たないグループ化の入れ物である。
+    keywords: [HTML, 見出し, h1]

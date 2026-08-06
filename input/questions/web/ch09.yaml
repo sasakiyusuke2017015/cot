@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: デプロイ
+    stem: 「デプロイ」の意味として正しいものはどれか。
+    correct: アプリを公開して誰でも使える状態にすること
+    wrongs:
+      - コードを削除すること
+      - デザインを修正すること
+      - パソコンを初期化すること
+    explanation: デプロイは作ったアプリをサーバーに配置して公開することであり学習の総仕上げにあたる。
+    keywords: [デプロイ, 公開, ホスティング]
+  - learning_item: デプロイ
+    stem: 今どきの典型的なWebアプリ公開の流れはどれか。
+    correct: GitHubへpushするとホスティングサービスが自動で公開する
+    wrongs:
+      - USBメモリでサーバー室に運ぶ
+      - コードを印刷して郵送する
+      - HTMLをメールで全員に送る
+    explanation: VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。
+    keywords: [デプロイ, GitHub, 自動化]

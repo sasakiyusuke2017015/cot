@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: DB
+    stem: SQLのSELECT文が行うことはどれか。
+    correct: テーブルからデータを取得する
+    wrongs:
+      - テーブルにデータを追加する
+      - テーブルを削除する
+      - サーバーを再起動する
+    explanation: SELECTは取得・INSERTは追加・UPDATEは更新・DELETEは削除であり4つをまとめてCRUDと呼ぶ。
+    keywords: [SQL, SELECT, CRUD]
+  - learning_item: DB
+    stem: Webアプリの3層構成におけるAPIの位置づけはどれか。
+    correct: 画面（フロントエンド）とDBの橋渡しをする
+    wrongs:
+      - DBの中に保存されるデータの一種
+      - 画面のデザインを決める層
+      - インターネット回線そのもの
+    explanation: React（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。
+    keywords: [DB, 3層構成, API]

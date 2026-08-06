@@ -1,0 +1,58 @@
+id: 9
+level: web
+type: user
+icon: "🚀"
+title: デプロイ
+subtitle: 世界に公開する
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: デプロイ
+    desc: アプリを公開して誰でも使える状態にすること
+  - term: ホスティング
+    desc: アプリを動かすサーバーを貸してくれるサービス
+  - term: Vercel / Netlify
+    desc: GitHub連携でフロントを自動公開する定番サービス
+  - term: 環境変数
+    desc: APIキーなど秘密の設定をコード外に置く仕組み
+  - term: 自動デプロイ
+    desc: pushのたびに最新版が自動で公開される仕組み
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: 自分の作ったWebアプリをインターネットに公開し、「自分でWebサービスを作った」を実感する。
+  - kind: h3
+    text: デプロイとは何か
+  - kind: paragraph
+    text: デプロイとは、手元で動いているアプリを**インターネット上のサーバーに配置して、誰でも使える状態にする**ことです。ここまで学んだ全部の総仕上げです。
+  - kind: code
+    text: |
+      コードを書く
+         ↓
+      GitHubへ push
+         ↓
+      ホスティングサービスが自動でビルド・公開
+         ↓
+      https://あなたのアプリ.vercel.app  ← 世界中からアクセスできる
+  - kind: h3
+    text: 今どきのデプロイはGit連携
+  - kind: paragraph
+    text: VercelやNetlify、Render などのホスティングサービスは、**GitHubのリポジトリを連携するだけ**で、pushのたびに自動で最新版を公開してくれます。第4章で身につけたGitの習慣がここで直接活きます。
+  - kind: ul
+    items:
+      - フロントエンド（React）… Vercel / Netlify などが定番
+      - API + DB … Render / Railway など、DBも一緒に提供するサービスが手軽
+  - kind: warn-box
+    title: "⚠️ 公開前チェック:"
+    text: APIキーやパスワードを環境変数にしたか。誰でも触れる状態になるので、秘密情報がコードに残っていないか必ず確認します。
+  - kind: tip-box
+    title: "💡 なぜデプロイが大事か:"
+    text: 公開URLを人に送って使ってもらえると、学習のモチベーションが一気に変わります。「動くものを世界に出した」経験が、次の学習の最大の燃料になります。
+  - kind: ex-box
+    title: 演習（卒業制作）
+    text: TODOアプリ（React + API + DB）をデプロイして、公開URLをもう1人の学習仲間に送って使ってもらいましょう。感想をもらって1つ改善したら卒業です。
+  - kind: checklist
+    items:
+      - デプロイの意味を説明できる
+      - push → 自動公開の流れを体験した
+      - 公開URLを人に共有して使ってもらった

@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'HTML', desc: 'Webページの構造（骨組み）を記述する言語' },
-  { term: 'タグ', desc: '要素の始まりと終わりを示す目印。<p>〜</p> のように書く' },
-  { term: '要素', desc: 'タグで挟まれたページの構成単位。見出し・段落など' },
-  { term: '属性', desc: '要素に追加する情報。href や src など' },
-  { term: '開発者ツール', desc: 'ブラウザ内蔵の解析ツール。右クリック→検証で開く' },
+  {
+    "term": "HTML",
+    "desc": "Webページの構造（骨組み）を記述する言語"
+  },
+  {
+    "term": "タグ",
+    "desc": "要素の始まりと終わりを示す目印。<p>〜</p> のように書く"
+  },
+  {
+    "term": "要素",
+    "desc": "タグで挟まれたページの構成単位。見出し・段落など"
+  },
+  {
+    "term": "属性",
+    "desc": "要素に追加する情報。href や src など"
+  },
+  {
+    "term": "開発者ツール",
+    "desc": "ブラウザ内蔵の解析ツール。右クリック→検証で開く"
+  }
 ];
 
 const QUIZ = [
-  { q: 'HTMLの役割として最も適切なのはどれ？', options: ['ページの構造（骨組み）を記述する', 'ページの見た目を装飾する', 'ページに動きをつける', 'データベースを操作する'], answer: 0, explain: '構造はHTML・見た目はCSS・動きはJavaScriptと役割が分かれています。' },
-  { q: 'ページ内で最上位の見出しを表すタグはどれ？', options: ['h1', 'p', 'div', 'span'], answer: 0, explain: 'h1〜h6が見出しタグで、h1が最上位です。pは段落、div/spanは意味を持たない入れ物です。' },
+  {
+    "q": "HTMLの役割として最も適切なものはどれか。",
+    "options": [
+      "ページの見た目を装飾する",
+      "データベースを操作する",
+      "ページの構造（骨組み）を記述する",
+      "ページに動きをつける"
+    ],
+    "answer": 2,
+    "explain": "正しくは「ページの構造（骨組み）を記述する」。構造はHTML・見た目はCSS・動きはJavaScriptと役割が分かれている。"
+  },
+  {
+    "q": "ページ内で最上位の見出しを表すHTMLタグはどれか。",
+    "options": [
+      "span",
+      "h1",
+      "div",
+      "p"
+    ],
+    "answer": 1,
+    "explain": "見出しはh1〜h6で表しh1が最上位。pは段落・div/spanは意味を持たないグループ化の入れ物である。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

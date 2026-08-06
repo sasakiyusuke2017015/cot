@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'データベース（DB）', desc: 'データを永続的に保存する場所' },
-  { term: 'テーブル', desc: 'Excelの表のようにデータを行と列で管理する単位' },
-  { term: 'SQL', desc: 'DBを操作する言語。SELECT / INSERT / UPDATE / DELETE' },
-  { term: 'CRUD', desc: 'Create・Read・Update・Delete の4基本操作' },
-  { term: 'ORM', desc: 'SQLをコードで書ける道具。型とDBがつながる' },
+  {
+    "term": "データベース（DB）",
+    "desc": "データを永続的に保存する場所"
+  },
+  {
+    "term": "テーブル",
+    "desc": "Excelの表のようにデータを行と列で管理する単位"
+  },
+  {
+    "term": "SQL",
+    "desc": "DBを操作する言語。SELECT / INSERT / UPDATE / DELETE"
+  },
+  {
+    "term": "CRUD",
+    "desc": "Create・Read・Update・Delete の4基本操作"
+  },
+  {
+    "term": "ORM",
+    "desc": "SQLをコードで書ける道具。型とDBがつながる"
+  }
 ];
 
 const QUIZ = [
-  { q: 'SQLのSELECT文が行うことはどれ？', options: ['テーブルからデータを取得する', 'テーブルにデータを追加する', 'テーブルを削除する', 'サーバーを再起動する'], answer: 0, explain: 'SELECTは取得・INSERTは追加・UPDATEは更新・DELETEは削除です。この4つをCRUDと呼びます。' },
-  { q: 'Webアプリ3層構成でのAPIの位置づけはどれ？', options: ['画面（フロントエンド）とDBの橋渡しをする', 'DBの中に保存されるデータの一種', '画面のデザインを決める層', 'インターネット回線そのもの'], answer: 0, explain: 'React（画面）→ API（橋渡し）→ DB（保存先）という3層がWebアプリの基本形です。' },
+  {
+    "q": "SQLのSELECT文が行うことはどれか。",
+    "options": [
+      "テーブルにデータを追加する",
+      "テーブルを削除する",
+      "テーブルからデータを取得する",
+      "サーバーを再起動する"
+    ],
+    "answer": 2,
+    "explain": "SELECTは取得・INSERTは追加・UPDATEは更新・DELETEは削除であり4つをまとめてCRUDと呼ぶ。"
+  },
+  {
+    "q": "Webアプリの3層構成におけるAPIの位置づけはどれか。",
+    "options": [
+      "DBの中に保存されるデータの一種",
+      "画面（フロントエンド）とDBの橋渡しをする",
+      "インターネット回線そのもの",
+      "画面のデザインを決める層"
+    ],
+    "answer": 1,
+    "explain": "React（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

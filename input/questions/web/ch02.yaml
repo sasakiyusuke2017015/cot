@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: CSS
+    stem: class属性が「card」の要素を選ぶCSSセレクタはどれか。
+    correct: .card
+    wrongs:
+      - "#card"
+      - card()
+      - "@card"
+    explanation: classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。
+    keywords: [CSS, セレクタ, class]
+  - learning_item: CSS
+    stem: 子要素を横一列に並べたいとき親要素に指定するCSSはどれか。
+    correct: "display: flex;"
+    wrongs:
+      - "color: red;"
+      - "font-size: 2rem;"
+      - "content: row;"
+    explanation: 「${正答1}」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。
+    keywords: [CSS, Flexbox, レイアウト]

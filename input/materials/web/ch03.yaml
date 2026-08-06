@@ -1,0 +1,70 @@
+id: 3
+level: web
+type: core
+icon: "⚡"
+title: JavaScript
+subtitle: ページに動きをつける
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: 変数
+    desc: 値に名前を付けて保存する。const（再代入不可）と let
+  - term: 条件分岐
+    desc: if / else で条件に応じて処理を切り替える
+  - term: 配列
+    desc: 複数の値を順番に持つ入れ物。length で要素数
+  - term: DOM操作
+    desc: JavaScriptからHTML要素を取得・変更すること
+  - term: console.log
+    desc: 変数の中身をコンソールに表示するデバッグの基本
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: 変数・条件分岐・繰り返し・関数・配列を使えるようになり、ボタンクリックでページが変わる体験をする。
+  - kind: h3
+    text: JavaScriptとは何か
+  - kind: paragraph
+    text: JavaScriptは、ページに**動き（ロジック）**を与えるプログラミング言語です。「ボタンを押したら表示を変える」「入力内容をチェックする」など、ユーザーの操作に反応する部分を担当します。
+  - kind: h3
+    text: 基本文法
+  - kind: code
+    text: |
+      const name = '田中';            // 変数（再代入しないなら const）
+      let count = 0;                  // 再代入するなら let
+
+      if (count > 10) {               // 条件分岐
+        console.log('多いですね');
+      } else {
+        console.log('まだ少ない');
+      }
+
+      const fruits = ['りんご', 'みかん', 'バナナ'];  // 配列
+      for (const f of fruits) {       // 繰り返し
+        console.log(f);
+      }
+
+      function greet(who) {           // 関数
+        return 'こんにちは、' + who + 'さん';
+      }
+  - kind: h3
+    text: DOM操作 — HTMLとつなぐ
+  - kind: code
+    text: |
+      const btn = document.querySelector('#myButton');
+      btn.addEventListener('click', () => {
+        document.querySelector('#message').textContent = '押されました！';
+      });
+  - kind: warn-box
+    title: "⚠️ ここが本番:"
+    text: JavaScriptからは**必ずエラーに出会います**。エラーが出たら「エラー文を読む → 原因の仮説を立てる → 調べる → 修正する」。この流れを毎回意識してください。エラー文はコンソール（開発者ツールのConsoleタブ）に出ます。
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: 困ったらまず **console.log()** で変数の中身を表示して確認する癖をつけましょう。「思っていた値と違う」がバグの正体であることがほとんどです。
+  - kind: ex-box
+    title: 演習
+    text: カウンターを作ってみましょう。「+1」ボタンを押すと数字が増え、10を超えたら「よく頑張りました」と表示します。（変数・イベント・条件分岐の総合練習）
+  - kind: checklist
+    items:
+      - const と let の使い分けが分かる
+      - if / for / 関数 / 配列を組み合わせて書ける
+      - エラーが出たらコンソールを読む習慣がある

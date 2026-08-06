@@ -1,0 +1,62 @@
+id: 1
+level: web
+type: core
+icon: "🏗️"
+title: HTML
+subtitle: ページの骨組みを作る
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: HTML
+    desc: Webページの構造（骨組み）を記述する言語
+  - term: タグ
+    desc: 要素の始まりと終わりを示す目印。<p>〜</p> のように書く
+  - term: 要素
+    desc: タグで挟まれたページの構成単位。見出し・段落など
+  - term: 属性
+    desc: 要素に追加する情報。href や src など
+  - term: 開発者ツール
+    desc: ブラウザ内蔵の解析ツール。右クリック→検証で開く
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: HTMLが「見た目」ではなく「構造」を書く言語だと理解し、基本のタグでページの骨組みを作れるようになる。
+  - kind: h3
+    text: HTMLとは何か
+  - kind: paragraph
+    text: HTML（HyperText Markup Language）は、Webページの**構造（骨組み）**を記述する言語です。「ここは見出し」「ここは段落」「ここはリスト」と、内容に意味を与えていきます。色や配置などの見た目は次章のCSSが担当します。
+  - kind: h3
+    text: 要素とタグ
+  - kind: paragraph
+    text: HTMLは「要素」の積み重ねでできています。要素は開始タグと終了タグで内容を挟んで書きます。
+  - kind: code
+    text: |
+      <h1>今日の献立</h1>
+      <p>今日はカレーを作ります。</p>
+      <ul>
+        <li>じゃがいも</li>
+        <li>にんじん</li>
+        <li>玉ねぎ</li>
+      </ul>
+      <a href="https://example.com">レシピを見る</a>
+  - kind: h3
+    text: まず覚えるタグ
+  - kind: ul
+    items:
+      - "**h1〜h6** … 見出し（h1が最上位）"
+      - "**p** … 段落"
+      - "**ul / ol / li** … リスト（黒丸 / 番号つき）"
+      - "**a** … リンク（href属性で行き先を指定）"
+      - "**img** … 画像（src属性でファイルを指定）"
+      - "**div / span** … 意味を持たないグループ化の入れ物"
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: ブラウザで右クリック →「検証」（開発者ツール）を開くと、どんなページもHTMLの構造を見られます。好きなサイトの骨組みを覗いてみるのが一番の教材です。
+  - kind: ex-box
+    title: 演習
+    text: 自己紹介ページを作ってみましょう。名前（h1）・趣味のリスト（ul）・好きなサイトへのリンク（a）を入れて、ブラウザで開いて確認します。
+  - kind: checklist
+    items:
+      - HTMLの役割は「構造」だと説明できる
+      - 開始タグ・終了タグ・属性の書き方が分かる
+      - 開発者ツールで他のページの構造を見たことがある

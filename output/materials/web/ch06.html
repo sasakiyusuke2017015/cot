@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'コンポーネント', desc: '画面を構成する再利用可能な部品' },
-  { term: 'JSX', desc: 'HTMLに似た書き方でコンポーネントの見た目を書く記法' },
-  { term: 'props', desc: '親から部品に渡すデータ。渡す値で表示が変わる' },
-  { term: 'state', desc: '部品が持つ状態。変わると画面が自動で再描画される' },
-  { term: 'useState', desc: 'stateを作るReactの関数（フック）' },
+  {
+    "term": "コンポーネント",
+    "desc": "画面を構成する再利用可能な部品"
+  },
+  {
+    "term": "JSX",
+    "desc": "HTMLに似た書き方でコンポーネントの見た目を書く記法"
+  },
+  {
+    "term": "props",
+    "desc": "親から部品に渡すデータ。渡す値で表示が変わる"
+  },
+  {
+    "term": "state",
+    "desc": "部品が持つ状態。変わると画面が自動で再描画される"
+  },
+  {
+    "term": "useState",
+    "desc": "stateを作るReactの関数（フック）"
+  }
 ];
 
 const QUIZ = [
-  { q: 'Reactの「コンポーネント」とは何？', options: ['画面を構成する再利用可能な部品', 'データベースのテーブル', 'CSSのアニメーション機能', 'サーバーの設定ファイル'], answer: 0, explain: 'Reactでは画面をコンポーネント（部品）に分割して作ります。部品は再利用でき、propsで渡すデータを変えれば表示も変わります。' },
-  { q: 'useState の役割はどれ？', options: ['状態を保持し、変更されると画面を再描画する', '外部のCSSを読み込む', 'HTMLファイルを圧縮する', 'Gitのcommitを自動化する'], answer: 0, explain: 'stateが変わるとReactが自動で画面を再描画します。「画面=stateの反映結果」がReactの核心です。' },
+  {
+    "q": "Reactの「コンポーネント」とは何か。",
+    "options": [
+      "データベースのテーブル",
+      "画面を構成する再利用可能な部品",
+      "CSSのアニメーション機能",
+      "サーバーの設定ファイル"
+    ],
+    "answer": 1,
+    "explain": "Reactでは画面をコンポーネント（部品）に分割して作る。部品は再利用できpropsで渡すデータを変えれば表示も変わる。"
+  },
+  {
+    "q": "ReactのuseStateの役割はどれか。",
+    "options": [
+      "Gitのcommitを自動化する",
+      "状態を保持し変更されると画面を再描画する",
+      "外部のCSSを読み込む",
+      "HTMLファイルを圧縮する"
+    ],
+    "answer": 1,
+    "explain": "stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

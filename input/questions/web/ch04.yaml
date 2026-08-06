@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: Git
+    stem: git commitが行うことはどれか。
+    correct: 変更を履歴として記録する
+    wrongs:
+      - ファイルを削除する
+      - コードを自動で修正する
+      - サーバーにアプリを公開する
+    explanation: commitは「この時点の変更」を履歴として記録する操作でありpushでその履歴をGitHubに送る。
+    keywords: [Git, commit, バージョン管理]
+  - learning_item: Git
+    stem: 学習の最初の段階で覚えるべきGitコマンドの組み合わせはどれか。
+    correct: clone・add・commit・push・pull
+    wrongs:
+      - rebase・cherry-pick・stash
+      - merge・tag・bisect
+      - reset・revert・reflog
+    explanation: 最初は基本5コマンド（${正答1}）で十分でありbranchやrebaseはチーム開発に入る段階で学べばよい。
+    keywords: [Git, 基本コマンド, GitHub]

@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'CSS', desc: 'HTMLに見た目（色・大きさ・配置）を与える言語' },
-  { term: 'セレクタ', desc: 'スタイルを当てる対象を選ぶ書き方。.card や h1 など' },
-  { term: 'ボックスモデル', desc: 'content→padding→border→margin の4層構造' },
-  { term: 'Flexbox', desc: '要素を柔軟に並べるレイアウト機能。display:flex' },
-  { term: '開発者ツール', desc: '要素のボックスモデルを色付きで確認できる' },
+  {
+    "term": "CSS",
+    "desc": "HTMLに見た目（色・大きさ・配置）を与える言語"
+  },
+  {
+    "term": "セレクタ",
+    "desc": "スタイルを当てる対象を選ぶ書き方。.card や h1 など"
+  },
+  {
+    "term": "ボックスモデル",
+    "desc": "content→padding→border→margin の4層構造"
+  },
+  {
+    "term": "Flexbox",
+    "desc": "要素を柔軟に並べるレイアウト機能。display:flex"
+  },
+  {
+    "term": "開発者ツール",
+    "desc": "要素のボックスモデルを色付きで確認できる"
+  }
 ];
 
 const QUIZ = [
-  { q: 'class属性が「card」の要素を選ぶCSSセレクタはどれ？', options: ['.card', '#card', 'card()', '@card'], answer: 0, explain: 'classはドット（.card）・idはシャープ（#card）で選びます。' },
-  { q: '子要素を横一列に並べたいとき、親要素に指定するのはどれ？', options: ['display: flex;', 'color: red;', 'font-size: 2rem;', 'content: row;'], answer: 0, explain: 'display:flex を親に指定すると子要素が横に並び、gapやjustify-contentで整えられます。' },
+  {
+    "q": "class属性が「card」の要素を選ぶCSSセレクタはどれか。",
+    "options": [
+      "@card",
+      "card()",
+      "#card",
+      ".card"
+    ],
+    "answer": 3,
+    "explain": "classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。"
+  },
+  {
+    "q": "子要素を横一列に並べたいとき親要素に指定するCSSはどれか。",
+    "options": [
+      "display: flex;",
+      "color: red;",
+      "font-size: 2rem;",
+      "content: row;"
+    ],
+    "answer": 0,
+    "explain": "「display: flex;」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

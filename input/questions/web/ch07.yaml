@@ -1,0 +1,21 @@
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+questions:
+  - learning_item: API
+    stem: APIの役割として最も適切なものはどれか。
+    correct: プログラム同士がデータをやり取りする窓口
+    wrongs:
+      - 画像を圧縮する機能
+      - CSSを自動生成する機能
+      - パソコンの電源を管理する仕組み
+    explanation: フロントエンドはAPIという窓口を通じてサーバーとデータをやり取りする。
+    keywords: [API, HTTP, フロントエンド]
+  - learning_item: API
+    stem: JSONの説明として正しいものはどれか。
+    correct: データをやり取りするためのテキスト形式
+    wrongs:
+      - 画像ファイルの形式
+      - JavaScriptを高速化する機能
+      - データベース製品の名前
+    explanation: JSONはキーと値の組でデータを表すテキスト形式でありAPIのやり取りの標準として使われている。
+    keywords: [JSON, データ形式, API]

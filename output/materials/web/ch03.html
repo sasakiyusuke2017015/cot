@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: '変数', desc: '値に名前を付けて保存する。const（再代入不可）と let' },
-  { term: '条件分岐', desc: 'if / else で条件に応じて処理を切り替える' },
-  { term: '配列', desc: '複数の値を順番に持つ入れ物。length で要素数' },
-  { term: 'DOM操作', desc: 'JavaScriptからHTML要素を取得・変更すること' },
-  { term: 'console.log', desc: '変数の中身をコンソールに表示するデバッグの基本' },
+  {
+    "term": "変数",
+    "desc": "値に名前を付けて保存する。const（再代入不可）と let"
+  },
+  {
+    "term": "条件分岐",
+    "desc": "if / else で条件に応じて処理を切り替える"
+  },
+  {
+    "term": "配列",
+    "desc": "複数の値を順番に持つ入れ物。length で要素数"
+  },
+  {
+    "term": "DOM操作",
+    "desc": "JavaScriptからHTML要素を取得・変更すること"
+  },
+  {
+    "term": "console.log",
+    "desc": "変数の中身をコンソールに表示するデバッグの基本"
+  }
 ];
 
 const QUIZ = [
-  { q: 'JavaScriptの主な役割はどれ？', options: ['ページに動き（ロジック）をつける', 'ページの構造を定義する', 'ページの配色を決める', 'サーバーの電源を管理する'], answer: 0, explain: '構造=HTML・見た目=CSS・動き=JavaScriptという役割分担です。' },
-  { q: '配列 fruits の要素数を調べるにはどれを使う？', options: ['fruits.length', 'fruits.size()', 'count(fruits)', 'fruits.total'], answer: 0, explain: 'JavaScriptの配列は length プロパティで要素数を取得します。' },
+  {
+    "q": "JavaScriptの主な役割はどれか。",
+    "options": [
+      "ページの配色を決める",
+      "ページに動き（ロジック）をつける",
+      "サーバーの電源を管理する",
+      "ページの構造を定義する"
+    ],
+    "answer": 1,
+    "explain": "構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。"
+  },
+  {
+    "q": "JavaScriptで配列fruitsの要素数を調べる書き方はどれか。",
+    "options": [
+      "fruits.size()",
+      "count(fruits)",
+      "fruits.total",
+      "fruits.length"
+    ],
+    "answer": 3,
+    "explain": "JavaScriptの配列はlengthプロパティで要素数を取得する。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

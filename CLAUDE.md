@@ -31,7 +31,11 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 - 生成物が `ai_edu` の provisioner で問題なく投入できることを検証する
 - React18 + Babel + Tailwind の CDN 単一 HTML 構成を維持する（ビルド・画像に依存しない）
 
-## レベルとコース
+## コース種別
+
+このリポジトリは **2 つの独立したコース種別** を扱う。混同しないこと。
+
+### 1. `lvN` 種別（AI活用資格研修）— ai_edu へ出力する
 
 `ai_edu` のレベル規約に従う。
 
@@ -39,6 +43,27 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 |--------|----------------------|----------------------------|-------------------------------|
 | `lv0`  | AIリテラシー入門     | `materials/lv0/`           | `lv0-check.csv` / `lv0-cert.csv` |
 | `lv1`  | 生成AI活用ガイド     | `materials/lv1/`           | `lv1-check.csv` / `lv1-cert.csv` |
+
+- ビルド: `npm run build`（`build-materials.mjs` / `build-questions.mjs`）
+- 出力先: dry-run は `output/`、`--apply` で `ai_edu` の seed へ
+- 問題は `lvN-check.csv` / `lvN-cert.csv` に**レベル単位で集約**される
+
+### 2. `web` 種別（Web開発の虎の巻）— ai_edu へは出力しない
+
+新人向け Web 開発教育の教材。**DB 投入を前提とせず、`output/` に閉じる**。
+
+| 種別  | コース名            | 教材ディレクトリ     | 問題ファイル              |
+|-------|---------------------|----------------------|---------------------------|
+| `web` | Web開発の虎の巻     | `materials/web/`     | `chNN-check.csv`（章別）  |
+
+- 入力: `input/materials/web/chNN.yaml`・`input/questions/web/chNN.yaml`
+- ビルド: `npm run build:web` → `output/materials/web/chNN.html` + `output/questions/web/chNN-check.csv`
+- 検証: `npm run validate:web`
+- 章構成（全 9 章・ロードマップ順）: HTML → CSS → JavaScript → Git → TypeScript → React → API → DB → デプロイ
+- **問題 YAML が唯一の元データ**。CSV と HTML 内の確認クイズの両方をそこから生成する（二重管理しない）
+- HTML クイズの選択肢は問題番号を種にした決定的シャッフル（再生成しても並びは変わらない）
+- 問題番号は章をまたいだ通し連番（ch01 の 1 問目が 1 番）
+- `--apply` は無い（`ai_edu` へは書き込まない）
 
 ## 重要ルール（ハードルール）
 
@@ -67,10 +92,16 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 ## よく使うコマンド
 
 ```bash
-npm run build           # input → 教材HTML + 問題CSV を生成（dry-run、output/ に出す）
+# lvN 種別（AI研修 → ai_edu へ）
+npm run build             # input → 教材HTML + 問題CSV を生成（dry-run、output/ に出す）
 npm run build -- --apply  # ai_edu の seed ディレクトリへ直接書き込む
-npm run validate        # 生成物・入力の検証
-npm run preview         # 生成 HTML をブラウザで確認（ローカルサーバ）
+npm run validate          # 生成物・入力の検証
+
+# web 種別（虎の巻 → output/ に閉じる）
+npm run build:web         # input/*/web/*.yaml → output/materials/web/ + output/questions/web/
+npm run validate:web      # 生成HTML/CSV の構造検証 + HTML↔CSV の突き合わせ
+
+npm run preview           # 生成 HTML をブラウザで確認（ローカルサーバ）
 ```
 
 ## Claude 向け作業方針
@@ -86,13 +117,19 @@ npm run preview         # 生成 HTML をブラウザで確認（ローカルサ
 
 ## ディレクトリ概要
 
-- `input/blueprint.yaml` — コース全体の設計（レベル・章構成・生成既定値）
 - `input/raw/` — 元資料（md/txt）。教材本文の根拠
-- `input/materials/lvN/chNN.yaml` — 章データ（著者が書く）
-- `input/questions/lvN/check/`・`lvN/cert/` — 問題データ（著者が書く YAML）
-- `scripts/` — YAML→HTML / YAML→CSV 変換、preview
-- `validators/` — 構造・JSX・問題・CSV 検証
-- `output/` — dry-run 生成物（`--apply` なしのとき）
+- `input/materials/lvN/chNN.yaml` — 章データ（lvN 種別・著者が書く）
+- `input/questions/lvN/check/`・`lvN/cert/` — 問題データ（lvN 種別・著者が書く YAML）
+- `input/materials/web/chNN.yaml` — 章データ（web 種別・虎の巻）
+- `input/questions/web/chNN.yaml` — 問題データ（web 種別・CSV と HTML クイズの共通ソース）
+- `scripts/build-materials.mjs`・`build-questions.mjs` — lvN 種別のビルダー
+- `scripts/build-web.mjs` — web 種別のビルダー（HTML + CSV を一括生成）
+- `scripts/lib/render-blocks.mjs` — lvN 用 content_blocks → JSX
+- `scripts/lib/render-blocks-web.mjs` — web 用 content_blocks → JSX（`code` ブロック対応）
+- `scripts/templates/` — HTML の head 部テンプレート（種別ごと）
+- `validators/validate-all.mjs` — lvN 種別の検証
+- `validators/validate-web.mjs` — web 種別の検証
+- `output/` — 生成物（lvN は dry-run 用、web は最終出力）
 - `.claude/rules/` — ファイル種別ごとの詳細ルール
 - `.claude/skills/` — 生成ワークフロー
 

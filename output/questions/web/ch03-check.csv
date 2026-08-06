@@ -1,3 +1,3 @@
-問題番号,学習項目,問題文,正答1,誤答1,誤答2,誤答3,解説,関連キーワード
+﻿問題番号,学習項目,問題文,正答1,誤答1,誤答2,誤答3,解説,関連キーワード
 5,JavaScript,JavaScriptの主な役割はどれか。,ページに動き（ロジック）をつける,ページの構造を定義する,ページの配色を決める,サーバーの電源を管理する,構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。,JavaScript・ロジック・イベント
 6,JavaScript,JavaScriptで配列fruitsの要素数を調べる書き方はどれか。,fruits.length,fruits.size(),count(fruits),fruits.total,JavaScriptの配列はlengthプロパティで要素数を取得する。,JavaScript・配列・length

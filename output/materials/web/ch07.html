@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'API', desc: 'プログラム同士がデータをやり取りする窓口' },
-  { term: 'HTTPメソッド', desc: 'GET=取得 / POST=追加 / PUT=更新 / DELETE=削除' },
-  { term: 'JSON', desc: 'データ交換の標準的なテキスト形式' },
-  { term: 'fetch', desc: 'JavaScriptからAPIを呼び出す関数' },
-  { term: 'エンドポイント', desc: 'APIの窓口となるURL。/api/todos など' },
+  {
+    "term": "API",
+    "desc": "プログラム同士がデータをやり取りする窓口"
+  },
+  {
+    "term": "HTTPメソッド",
+    "desc": "GET=取得 / POST=追加 / PUT=更新 / DELETE=削除"
+  },
+  {
+    "term": "JSON",
+    "desc": "データ交換の標準的なテキスト形式"
+  },
+  {
+    "term": "fetch",
+    "desc": "JavaScriptからAPIを呼び出す関数"
+  },
+  {
+    "term": "エンドポイント",
+    "desc": "APIの窓口となるURL。/api/todos など"
+  }
 ];
 
 const QUIZ = [
-  { q: 'APIの役割として最も適切なのはどれ？', options: ['プログラム同士がデータをやり取りする窓口', '画像を圧縮する機能', 'CSSを自動生成する機能', 'パソコンの電源を管理する仕組み'], answer: 0, explain: 'フロントエンドはAPIという窓口を通じてサーバーとデータをやり取りします。' },
-  { q: 'JSONの説明として正しいのはどれ？', options: ['データをやり取りするためのテキスト形式', '画像ファイルの形式', 'JavaScriptを高速化する機能', 'データベース製品の名前'], answer: 0, explain: 'JSONはキーと値の組でデータを表すテキスト形式で、APIのやり取りの標準として使われています。' },
+  {
+    "q": "APIの役割として最も適切なものはどれか。",
+    "options": [
+      "CSSを自動生成する機能",
+      "パソコンの電源を管理する仕組み",
+      "プログラム同士がデータをやり取りする窓口",
+      "画像を圧縮する機能"
+    ],
+    "answer": 2,
+    "explain": "フロントエンドはAPIという窓口を通じてサーバーとデータをやり取りする。"
+  },
+  {
+    "q": "JSONの説明として正しいものはどれか。",
+    "options": [
+      "データベース製品の名前",
+      "JavaScriptを高速化する機能",
+      "画像ファイルの形式",
+      "データをやり取りするためのテキスト形式"
+    ],
+    "answer": 3,
+    "explain": "JSONはキーと値の組でデータを表すテキスト形式でありAPIのやり取りの標準として使われている。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

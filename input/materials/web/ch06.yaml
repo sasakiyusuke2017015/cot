@@ -1,0 +1,71 @@
+id: 6
+level: web
+type: user
+icon: "⚛️"
+title: React
+subtitle: 画面を部品で組み立てる
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: コンポーネント
+    desc: 画面を構成する再利用可能な部品
+  - term: JSX
+    desc: HTMLに似た書き方でコンポーネントの見た目を書く記法
+  - term: props
+    desc: 親から部品に渡すデータ。渡す値で表示が変わる
+  - term: state
+    desc: 部品が持つ状態。変わると画面が自動で再描画される
+  - term: useState
+    desc: stateを作るReactの関数（フック）
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。
+  - kind: h3
+    text: Reactとは何か
+  - kind: paragraph
+    text: Reactは、画面を**コンポーネント（部品）**として分割して組み立てるライブラリです。「ボタン」「カード」「一覧」を部品として作り、組み合わせて画面にします。部品は再利用できるので、大きなアプリでも整理された状態を保てます。
+  - kind: h3
+    text: コンポーネントとJSX
+  - kind: code
+    text: |
+      function Hello(props) {
+        return <h1>こんにちは、{props.name}さん</h1>;
+      }
+
+      function App() {
+        return (
+          <div>
+            <Hello name="田中" />
+            <Hello name="佐藤" />
+          </div>
+        );
+      }
+  - kind: paragraph
+    text: HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。**props**は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。
+  - kind: h3
+    text: state — 画面が変わる仕組み
+  - kind: code
+    text: |
+      function Counter() {
+        const [count, setCount] = useState(0);
+        return (
+          <button onClick={() => setCount(count + 1)}>
+            {count} 回押しました
+          </button>
+        );
+      }
+  - kind: kv-box
+    title: "📌 Reactの考え方:"
+    text: DOMを直接書き換えるのではなく、**stateを変えると画面が自動で再描画される**。「画面 = stateの反映結果」と考えるのがReactの核心です。
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: 迷ったら「この画面はどんな部品に分けられるか？」から考えます。ヘッダー・一覧・一覧の1行・ボタン…と分解してから作り始めると設計が楽になります。
+  - kind: ex-box
+    title: 演習
+    text: TODOアプリを作ってみましょう。入力欄に文字を入れて追加ボタンを押すと一覧に増え、クリックで完了線が引かれる。（state・props・イベントの総合練習）
+  - kind: checklist
+    items:
+      - コンポーネント・props・stateの役割を説明できる
+      - useStateで画面が変わるアプリを作れる
+      - 画面を部品に分解してから作り始められる

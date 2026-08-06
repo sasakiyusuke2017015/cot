@@ -1,0 +1,52 @@
+id: 4
+level: web
+type: user
+icon: "🌿"
+title: Git
+subtitle: コードの履歴を管理する
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: リポジトリ
+    desc: コードと履歴をまとめて管理する保管庫
+  - term: commit
+    desc: 変更を履歴として記録する操作
+  - term: push / pull
+    desc: 手元の履歴をGitHubへ送る / 最新を取り込む
+  - term: GitHub
+    desc: リポジトリをネット上に置いて共有するサービス
+  - term: .gitignore
+    desc: 履歴に含めないファイルを指定する設定
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: 「保存のたびに履歴が残る」感覚を身につけ、5つの基本コマンドで自分のコードをGitHubに置けるようになる。
+  - kind: h3
+    text: なぜ今Gitを学ぶのか
+  - kind: paragraph
+    text: Gitはコードの**変更履歴を記録する**道具です。TypeScriptやReactより先に学ぶのは、実際の開発では**早い段階からGitを使う習慣**をつけたほうが自然だからです。ここから先の演習はすべてGitで履歴を残しながら進めます。
+  - kind: h3
+    text: まず覚える5コマンド
+  - kind: code
+    text: |
+      git clone <URL>     # リモートのリポジトリを手元に複製する
+      git add .           # 変更をステージに載せる（コミット対象にする）
+      git commit -m "メッセージ"   # 変更を履歴として記録する
+      git push            # 手元の履歴をGitHubに送る
+      git pull            # GitHubの最新を手元に取り込む
+  - kind: paragraph
+    text: 日々の流れは「書く → add → commit → push」の繰り返しです。**この5つだけで十分**。branchやrebaseは後回しで構いません（チーム開発に入る段階で学びます）。
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: commitメッセージは「何をしたか」を短く書きます（例:「カウンター機能を追加」）。1日の終わりにまとめて1回ではなく、**キリのいい単位でこまめに**commitするのがおすすめです。
+  - kind: warn-box
+    title: "⚠️ 注意:"
+    text: パスワードやAPIキーを書いたファイルをcommitしないこと。一度pushした履歴は簡単には消せません。秘密情報は .gitignore で除外します。
+  - kind: ex-box
+    title: 演習
+    text: GitHubにリポジトリを作り、前章までの自己紹介ページとカウンターをpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。
+  - kind: checklist
+    items:
+      - clone / add / commit / push / pull の役割を言える
+      - 自分のコードをGitHubにpushできる
+      - こまめにcommitする習慣がついている

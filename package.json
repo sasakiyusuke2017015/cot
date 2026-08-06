@@ -8,7 +8,9 @@
     "build": "node scripts/build-all.mjs",
     "build:materials": "node scripts/build-materials.mjs",
     "build:questions": "node scripts/build-questions.mjs",
+    "build:web": "node scripts/build-web.mjs",
     "validate": "node validators/validate-all.mjs",
+    "validate:web": "node validators/validate-web.mjs",
     "preview": "node scripts/preview.mjs"
   },
   "dependencies": {

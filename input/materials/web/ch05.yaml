@@ -1,0 +1,70 @@
+id: 5
+level: web
+type: core
+icon: "🔷"
+title: TypeScript
+subtitle: 型でコードを安全にする
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: TypeScript
+    desc: JavaScriptに型を追加した言語。JSに変換されて動く
+  - term: 型注釈
+    desc: "変数や引数に「: number」のように型を書くこと"
+  - term: interface
+    desc: オブジェクト（データ）の形を定義する仕組み
+  - term: コンパイル
+    desc: TypeScriptをJavaScriptに変換すること
+  - term: 型エラー
+    desc: 型が合わないときにエディタが出す警告。実行前に気付ける
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。
+  - kind: h3
+    text: TypeScriptとは何か
+  - kind: paragraph
+    text: TypeScriptは、JavaScriptに**型**を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。
+  - kind: h3
+    text: 型注釈の基本
+  - kind: code
+    text: |
+      let count: number = 0;
+      let name: string = '田中';
+      let done: boolean = false;
+      let tags: string[] = ['html', 'css'];
+
+      function add(a: number, b: number): number {
+        return a + b;
+      }
+
+      add(1, 2);      // OK
+      add('1', '2');  // ← 実行する前にエラーで教えてくれる！
+  - kind: h3
+    text: interface — データの形を決める
+  - kind: code
+    text: |
+      interface User {
+        id: number;
+        name: string;
+        email: string;
+      }
+
+      function showUser(user: User) {
+        console.log(user.name);
+        console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
+      }
+  - kind: kv-box
+    title: "📌 なぜ型が大事か:"
+    text: JavaScriptだけだと、間違いは**実行して初めて**分かります。TypeScriptなら**書いた瞬間にエディタが教えてくれる**。バグ探しの時間が大幅に減り、あとで学ぶReactやAPI連携でも「データの形」が明確になります。
+  - kind: tip-box
+    title: "💡 コツ:"
+    text: VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。TypeScriptのエラー文は最初は長く感じますが「何が」「どの型と」合わないかが必ず書いてあります。
+  - kind: ex-box
+    title: 演習
+    text: カウンターのコードをTypeScriptに書き換えてみましょう。さらに User interface を定義して、ユーザーの配列から名前一覧を表示する関数を書きます。
+  - kind: checklist
+    items:
+      - number / string / boolean / 配列の型注釈が書ける
+      - interfaceでデータの形を定義できる
+      - エディタの型エラーを読んで直せる

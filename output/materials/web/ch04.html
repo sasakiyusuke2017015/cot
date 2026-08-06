@@ -41,19 +41,55 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 const { useState } = React;
 
 const KEYWORDS = [
-  { term: 'リポジトリ', desc: 'コードと履歴をまとめて管理する保管庫' },
-  { term: 'commit', desc: '変更を履歴として記録する操作' },
-  { term: 'push / pull', desc: '手元の履歴をGitHubへ送る / 最新を取り込む' },
-  { term: 'GitHub', desc: 'リポジトリをネット上に置いて共有するサービス' },
-  { term: '.gitignore', desc: '履歴に含めないファイルを指定する設定' },
+  {
+    "term": "リポジトリ",
+    "desc": "コードと履歴をまとめて管理する保管庫"
+  },
+  {
+    "term": "commit",
+    "desc": "変更を履歴として記録する操作"
+  },
+  {
+    "term": "push / pull",
+    "desc": "手元の履歴をGitHubへ送る / 最新を取り込む"
+  },
+  {
+    "term": "GitHub",
+    "desc": "リポジトリをネット上に置いて共有するサービス"
+  },
+  {
+    "term": ".gitignore",
+    "desc": "履歴に含めないファイルを指定する設定"
+  }
 ];
 
 const QUIZ = [
-  { q: 'git commit が行うことはどれ？', options: ['変更を履歴として記録する', 'ファイルを削除する', 'コードを自動で修正する', 'サーバーにアプリを公開する'], answer: 0, explain: 'commitは「この時点の変更」を履歴として記録する操作です。pushでその履歴をGitHubに送ります。' },
-  { q: '最初の段階で覚えるべきGitコマンドの組み合わせはどれ？', options: ['clone・add・commit・push・pull', 'rebase・cherry-pick・stash', 'merge・tag・bisect', 'reset・revert・reflog'], answer: 0, explain: '最初は基本5コマンドで十分です。branchやrebaseなどはチーム開発に入る段階で学べば問題ありません。' },
+  {
+    "q": "git commitが行うことはどれか。",
+    "options": [
+      "ファイルを削除する",
+      "変更を履歴として記録する",
+      "コードを自動で修正する",
+      "サーバーにアプリを公開する"
+    ],
+    "answer": 1,
+    "explain": "commitは「この時点の変更」を履歴として記録する操作でありpushでその履歴をGitHubに送る。"
+  },
+  {
+    "q": "学習の最初の段階で覚えるべきGitコマンドの組み合わせはどれか。",
+    "options": [
+      "reset・revert・reflog",
+      "rebase・cherry-pick・stash",
+      "clone・add・commit・push・pull",
+      "merge・tag・bisect"
+    ],
+    "answer": 2,
+    "explain": "最初は基本5コマンド（clone・add・commit・push・pull）で十分でありbranchやrebaseはチーム開発に入る段階で学べばよい。"
+  }
 ];
 
 function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
   return (
     <aside className="w-64 shrink-0 no-print hidden lg:block">
       <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -71,6 +107,7 @@ function KeywordsPanel({ keywords }) {
 
 function Quiz({ items }) {
   const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
   return (
     <div className="mt-10 pt-6 border-t-2 border-gray-200">
       <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>

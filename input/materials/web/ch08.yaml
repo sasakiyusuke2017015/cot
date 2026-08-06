@@ -1,0 +1,72 @@
+id: 8
+level: web
+type: core
+icon: "🗄️"
+title: DB
+subtitle: データの保存先を知る
+source_refs:
+  - input/raw/web-dev/mentoring-notes.md
+keywords:
+  - term: データベース（DB）
+    desc: データを永続的に保存する場所
+  - term: テーブル
+    desc: Excelの表のようにデータを行と列で管理する単位
+  - term: SQL
+    desc: DBを操作する言語。SELECT / INSERT / UPDATE / DELETE
+  - term: CRUD
+    desc: Create・Read・Update・Delete の4基本操作
+  - term: ORM
+    desc: SQLをコードで書ける道具。型とDBがつながる
+content_blocks:
+  - kind: kv-box
+    title: "🎯 この章のゴール:"
+    text: データベースの役割とSQLの基本4操作を理解し、「APIがアプリとDBの橋渡しをしている」全体像をつかむ。
+  - kind: h3
+    text: なぜデータベースが要るのか
+  - kind: paragraph
+    text: 前章のAPIは、データを変数（メモリ）に持っていたため、サーバーを再起動すると消えてしまいます。データを**永続的に保存する**場所がデータベース（DB）です。
+  - kind: code
+    text: |
+      [React] ←→ [API / Node.js] ←→ [DB / PostgreSQLなど]
+       画面        橋渡し・入り口       データの保存先
+  - kind: paragraph
+    text: この3層の絵が、Webアプリの基本形です。**APIがアプリとDBの橋渡し**をしている、と理解できればこの章の半分は達成です。
+  - kind: h3
+    text: テーブルとSQL
+  - kind: paragraph
+    text: リレーショナルDBでは、データをExcelのような**テーブル（表）**で管理します。操作にはSQLという言語を使います。
+  - kind: code
+    text: |
+      -- 取得（Read）
+      SELECT * FROM todos WHERE done = false;
+
+      -- 追加（Create）
+      INSERT INTO todos (title, done) VALUES ('牛乳を買う', false);
+
+      -- 更新（Update）
+      UPDATE todos SET done = true WHERE id = 1;
+
+      -- 削除（Delete）
+      DELETE FROM todos WHERE id = 1;
+  - kind: paragraph
+    text: この4操作をまとめて**CRUD**（Create / Read / Update / Delete）と呼びます。APIのGET / POST / PUT / DELETEときれいに対応します。
+  - kind: h3
+    text: ORM — コードからDBを扱う
+  - kind: code
+    text: |
+      // ORM（例: Prisma）を使うとSQLをコードで書ける
+      const todos = await prisma.todo.findMany({ where: { done: false } });
+      await prisma.todo.create({ data: { title: '牛乳を買う' } });
+  - kind: paragraph
+    text: ORMを使うとTypeScriptの型とDBがつながり、安全にデータを扱えます。まずはSQLで仕組みを理解してからORMに進むのがおすすめです。
+  - kind: warn-box
+    title: "⚠️ 注意:"
+    text: ユーザーの入力をそのままSQL文字列に埋め込むと、SQLインジェクションという攻撃を受けます。必ずプレースホルダやORMを使いましょう。
+  - kind: ex-box
+    title: 演習
+    text: TODOアプリのデータをDBに保存しましょう。SQLiteやPostgreSQLにtodosテーブルを作り、APIの各エンドポイントをDB読み書きに置き換えます。再起動してもデータが残ることを確認します。
+  - kind: checklist
+    items:
+      - React → API → DB の3層の絵を描ける
+      - SELECT / INSERT / UPDATE / DELETE を書ける
+      - CRUDとHTTPメソッドの対応が分かる
