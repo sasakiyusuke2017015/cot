@@ -1,0 +1,41 @@
+# GitHub Pages へのデプロイ（Actions 方式）
+#
+# legacy（Jekyll）方式でデプロイがキュー待ちのままタイムアウトする場合の代替。
+# ビルド工程は無く、リポジトリの内容をそのまま配信する（生成物は commit 済みのため）。
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時デプロイを1本に絞る。進行中があれば新しい方を待たせる
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
