@@ -47,6 +47,10 @@ git commit && git push
 数分で https://sasakiyusuke2017015.github.io/cot/ に反映
 ```
 
+> **Actions が「失敗」でもサイトは公開されていることがある。**
+> `deploy-pages` はデプロイ成功後の完了検知でタイムアウトすることがあるため、
+> 成否は Actions の表示ではなく**公開 URL を直接開いて**確認する。
+
 ### 内容を直すとき
 
 **`output/` の生成物は直接編集しない。** `input/` の YAML を直して再生成する。
