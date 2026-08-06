@@ -5,9 +5,13 @@
 
 name: Deploy to GitHub Pages
 
+# GitHub Pages には「1時間あたり10回」のデプロイ制限がある。
+# push のたびに走らせると、まとめて作業した日に制限へ当たって
+# 「どの回も反映されない」状態になる（実際に14回連続で失敗した）。
+# そのため自動デプロイはやめ、公開したいときだけ手動で実行する。
+#   gh workflow run pages.yml --repo sasakiyusuke2017015/cot
+# または GitHub の Actions 画面から「Run workflow」。
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
