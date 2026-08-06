@@ -15,9 +15,12 @@ permissions:
   pages: write
   id-token: write
 
+# 連続 push したとき、古い実行は捨てて最新だけを通す。
+# cancel-in-progress: false だと後続が待たされ、待機上限でキャンセルされて
+# 「どの実行も反映されない」状態になっていた。
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
