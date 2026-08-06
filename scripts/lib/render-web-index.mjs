@@ -28,15 +28,28 @@ function pad2(n) {
   return String(n).padStart(2, '0')
 }
 
-/** 章カード一覧 + 総コマ数。chNN.yaml から自動集約する。 */
-function renderRoadmap(chapters) {
+/** セクション見出しの番号。0 を渡すと番号なし（受講者用は通し番号を振らない）。 */
+function num(n) {
+  return n ? `${n}. ` : ''
+}
+
+/**
+ * 章カード一覧。chNN.yaml から自動集約する。
+ * teacher=true のときだけ コマ数 / ねらい（teaching:）を出す。
+ */
+function renderRoadmap(chapters, { teacher }) {
   const totalSessions = chapters.reduce((s, c) => s + (c.teaching?.sessions ?? 0), 0)
   const cards = chapters
     .map((c) => {
       const isCore = c.type === 'core'
       const tagCls = isCore ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
       const t = c.teaching ?? {}
-      const sessions = t.sessions ? `<span class="text-xs text-slate-400 shrink-0">${t.sessions}コマ</span>` : ''
+      const sessions =
+        teacher && t.sessions ? `<span class="text-xs text-slate-400 shrink-0">${t.sessions}コマ</span>` : ''
+      const goal =
+        teacher && t.goal
+          ? `<p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> ${inline(t.goal)}</p>`
+          : ''
       return `        <a href="materials/web/ch${pad2(c.id)}.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
           <div class="flex items-center gap-2 mb-2">
             <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">${c.id}</span>
@@ -45,18 +58,23 @@ function renderRoadmap(chapters) {
             <span class="text-xs rounded-full px-2 py-0.5 font-semibold ${tagCls}">${isCore ? '知識' : '実践'}</span>
             ${sessions}
           </div>
-          <p class="text-sm text-slate-500 mb-2">${inline(c.subtitle)}</p>
-          ${t.goal ? `<p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> ${inline(t.goal)}</p>` : ''}
+          <p class="text-sm text-slate-500${goal ? ' mb-2' : ''}">${inline(c.subtitle)}</p>
+          ${goal}
         </a>`
     })
     .join('\n')
 
+  const heading = teacher ? `学習ロードマップ（全${chapters.length}章）` : `学習ロードマップ`
+  const note = teacher
+    ? 'カードをクリックすると受講者向けの教材ページが開きます。認証は対象外。'
+    : 'この順に進めます。カードをクリックすると教材が開きます。'
+
   return `    <section>
       <div class="flex items-baseline justify-between mb-4">
-        <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">1. 学習ロードマップ（全${chapters.length}章）</h2>
-        ${totalSessions ? `<span class="text-sm text-slate-500">想定 計${totalSessions}コマ（1コマ=1時間）</span>` : ''}
+        <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">${teacher ? '1. ' : ''}${heading}</h2>
+        ${teacher && totalSessions ? `<span class="text-sm text-slate-500">想定 計${totalSessions}コマ（1コマ=1時間）</span>` : ''}
       </div>
-      <p class="text-sm text-slate-600 mb-4">カードをクリックすると生徒向けの教材ページが開きます。認証は対象外。</p>
+      <p class="text-sm text-slate-600 mb-4">${note}</p>
       <div class="grid md:grid-cols-2 gap-3">
 ${cards}
       </div>
@@ -114,7 +132,7 @@ function renderPrinciple(p, n) {
     )
     .join('\n          ')
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(p.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(p.title)}</h2>
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <p class="leading-relaxed mb-4">${inline(p.text)}</p>
         <div class="flex flex-wrap items-center justify-center gap-2 text-center font-semibold text-sm">
@@ -140,7 +158,7 @@ function renderLessonPlan(lp, n) {
     )
     .join('\n          ')
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(lp.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(lp.title)}</h2>
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex w-full h-12 rounded-lg overflow-hidden text-white text-xs md:text-sm font-bold text-center">
           ${bar}
@@ -174,7 +192,7 @@ function renderMentorRoles(mr, n) {
       </div>`
     : ''
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(mr.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(mr.title)}</h2>
       ${mr.lead ? `<p class="mb-4 text-sm text-slate-600">${inline(mr.lead)}</p>` : ''}
       <div class="grid md:grid-cols-2 gap-4">
 ${cards}
@@ -186,7 +204,7 @@ ${notNeeded}
 function renderQuestionRule(qr, n) {
   if (!qr) return ''
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(qr.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(qr.title)}</h2>
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <p class="mb-3 text-sm">${inline(qr.lead)}</p>
         <blockquote class="border-l-4 border-amber-500 bg-amber-50 rounded p-4 font-semibold">${inline(qr.quote)}</blockquote>
@@ -229,7 +247,7 @@ function renderGrowthSteps(gs, n) {
     })
     .join('\n')
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(gs.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(gs.title)}</h2>
       <div class="space-y-4">
 ${items}
       </div>
@@ -247,7 +265,7 @@ function renderAntiPatterns(ap, n) {
     )
     .join('\n')
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(ap.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(ap.title)}</h2>
       <div class="grid md:grid-cols-3 gap-4 text-sm">
 ${cards}
       </div>
@@ -262,7 +280,7 @@ function renderLearnerTraits(lt, n) {
           <ul class="list-disc list-inside space-y-1">${(side.items ?? []).map((x) => `<li>${inline(x)}</li>`).join('')}</ul>
         </div>`
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(lt.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(lt.title)}</h2>
       <div class="grid md:grid-cols-2 gap-4 text-sm">
 ${panel(lt.good, 'bg-emerald-50 border border-emerald-200 text-emerald-900')}
 ${panel(lt.bad, 'bg-red-50 border border-red-200 text-red-900')}
@@ -280,7 +298,7 @@ function renderTeachingCycle(tc, n) {
     )
     .join('\n          ')
   return `    <section>
-      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${n}. ${inline(tc.title)}</h2>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">${num(n)}${inline(tc.title)}</h2>
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-center">
           ${steps}
@@ -290,58 +308,88 @@ function renderTeachingCycle(tc, n) {
     </section>`
 }
 
-export function renderWebIndex(course, chapters) {
+/**
+ * ハブページを組み立てる。
+ * @param {object} course   course.yaml
+ * @param {object[]} chapters chNN.yaml の配列
+ * @param {{audience?: 'teacher'|'learner'}} [opts]
+ *   teacher … 章別カンペ・教え方（course.yaml の各節）を含む
+ *   learner … 章一覧と学び方の心得だけ。teaching: の内容は一切出さない
+ */
+export function renderWebIndex(course, chapters, { audience = 'teacher' } = {}) {
+  const teacher = audience === 'teacher'
   const badges = (course.conditions ?? [])
     .map((c) => `<span class="bg-white/20 rounded-full px-3 py-1">${inline(c)}</span>`)
     .join('\n        ')
 
-  // セクション番号は存在するものだけ通し番号を振る
-  let n = 0
-  const sections = [
-    renderRoadmap(chapters), // 1
-    renderTeachingNotes(chapters), // 2
-  ]
-  n = 2
-  const rest = [
-    [course.principle, renderPrinciple],
-    [course.lesson_plan, renderLessonPlan],
-    [course.mentor_roles, renderMentorRoles],
-    [course.question_rule, renderQuestionRule],
-    [course.growth_steps, renderGrowthSteps],
-    [course.anti_patterns, renderAntiPatterns],
-    [course.learner_traits, renderLearnerTraits],
-    [course.teaching_cycle, renderTeachingCycle],
-  ]
-  for (const [data, fn] of rest) {
-    if (!data) continue
-    n += 1
-    sections.push(fn(data, n))
+  const sections = [renderRoadmap(chapters, { teacher })]
+
+  if (teacher) {
+    // セクション番号は存在するものだけ通し番号を振る
+    sections.push(renderTeachingNotes(chapters)) // 2
+    let n = 2
+    const rest = [
+      [course.principle, renderPrinciple],
+      [course.lesson_plan, renderLessonPlan],
+      [course.mentor_roles, renderMentorRoles],
+      [course.question_rule, renderQuestionRule],
+      [course.growth_steps, renderGrowthSteps],
+      [course.anti_patterns, renderAntiPatterns],
+      [course.learner_traits, renderLearnerTraits],
+      [course.teaching_cycle, renderTeachingCycle],
+    ]
+    for (const [data, fn] of rest) {
+      if (!data) continue
+      n += 1
+      sections.push(fn(data, n))
+    }
+  } else {
+    // 受講者にも役立つ「学び方」だけを、教え方の文脈を外して載せる
+    if (course.principle) sections.push(renderPrinciple(course.principle, 0))
+    if (course.question_rule) sections.push(renderQuestionRule(course.question_rule, 0))
+    if (course.learner_traits) sections.push(renderLearnerTraits(course.learner_traits, 0))
   }
+
+  const head = teacher
+    ? { label: '🐯 WEB DEVELOPMENT PLAYBOOK — 講師用', title: '講師用ガイド', grad: 'from-amber-500 to-orange-600' }
+    : { label: '🐯 WEB DEVELOPMENT PLAYBOOK', title: '受講者用', grad: 'from-blue-600 to-indigo-700' }
+
+  const lead = teacher
+    ? `${inline(course.subtitle)}<br class="hidden md:block" />${inline(course.lead)}`
+    : `${inline(course.lead)}`
+
+  // 相手側のページへの導線（受講者用には講師用リンクを置かない）
+  const switchLink = teacher
+    ? `<div class="max-w-5xl mx-auto px-6 pt-6">
+    <a href="index.html" class="inline-block text-sm bg-white border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50 no-print">👥 受講者に見せるページを開く →</a>
+  </div>`
+    : ''
 
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${inline(course.title)} — 講師用ガイド</title>
+<title>${inline(course.title)}${teacher ? ' — 講師用ガイド' : ''}</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 @media print { .no-print { display:none; } a { text-decoration:none; color:inherit; } }
 </style>
 </head>
-<body class="bg-amber-50 text-slate-800">
+<body class="${teacher ? 'bg-amber-50' : 'bg-slate-50'} text-slate-800">
 
-<header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+<header class="bg-gradient-to-r ${head.grad} text-white">
   <div class="max-w-5xl mx-auto px-6 py-10">
-    <p class="text-amber-100 text-sm tracking-widest mb-2">🐯 WEB DEVELOPMENT PLAYBOOK — 講師用</p>
+    <p class="text-white/80 text-sm tracking-widest mb-2">${head.label}</p>
     <h1 class="text-3xl md:text-4xl font-bold mb-3">${inline(course.title)}</h1>
-    <p class="text-amber-50 leading-relaxed">${inline(course.subtitle)}<br class="hidden md:block" />${inline(course.lead)}</p>
+    <p class="text-white/90 leading-relaxed">${lead}</p>
     <div class="flex flex-wrap gap-2 mt-4 text-sm">
         ${badges}
     </div>
   </div>
 </header>
+${switchLink}
 
 <main class="max-w-5xl mx-auto px-6 py-10 space-y-12">
 
@@ -350,7 +398,7 @@ ${sections.filter(Boolean).join('\n\n')}
 </main>
 
 <footer class="text-center text-xs text-slate-400 pb-8">
-  ${inline(course.title)} — 講師用ガイド（このページは input/materials/web/ の YAML から生成されています）
+  ${inline(course.title)}${teacher ? ' — 講師用ガイド' : ''}
 </footer>
 
 </body>

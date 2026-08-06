@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web開発の虎の巻 — 全9章（講師用）</title>
+<title>Web開発の虎の巻 — 全9章</title>
 <style>
 :root { color-scheme: light dark; }
 * { box-sizing: border-box; }
@@ -91,9 +91,9 @@ details p { margin:.4rem 0; font-size:.88rem; }
 
 <header class="top">
   <div class="inner">
-    <p style="font-size:.75rem;letter-spacing:.15em;opacity:.9;margin:0">🐯 WEB DEVELOPMENT PLAYBOOK — 講師用</p>
+    <p style="font-size:.75rem;letter-spacing:.15em;opacity:.9;margin:0">🐯 WEB DEVELOPMENT PLAYBOOK</p>
     <h1>Web開発の虎の巻</h1>
-    <p>リモート・2人・1日1時間で、Web開発を教えるためのガイド。全9章・確認問題18問。</p>
+    <p>Web開発を学ぶための教材。全9章・確認問題18問。</p>
     <div class="badges">
       <span>👥 生徒2人</span><span>🏠 リモート</span><span>⏰ 1日1時間</span><span>🗓 目安 4〜6か月</span>
     </div>
@@ -113,11 +113,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
     <h2>🏗️ HTML</h2>
     <p class="ch-sub">ページの骨組みを作る</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（2コマ）</summary>
-  <p><strong>ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。</p>
-  <p><strong>つまずき:</strong> 見た目を整えたがるので「それは次章」と切る。閉じタグ忘れは自分で気付かせる。</p>
-  <p><strong>問いかけ:</strong> 「なぜここは div ではなく h1 にした？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、基本のタグでページの骨組みを作れるようになる。</div>
 <h3>HTMLとは何か</h3>
@@ -163,11 +159,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
     <h2>🎨 CSS</h2>
     <p class="ch-sub">見た目とレイアウトを整える</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（3コマ）</summary>
-  <p><strong>ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</p>
-  <p><strong>つまずき:</strong> レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。</p>
-  <p><strong>問いかけ:</strong> 「この余白は padding と margin どっちが正しい？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、Flexboxで簡単なレイアウトを組めるようになる。</div>
 <h3>CSSとは何か</h3>
@@ -221,11 +213,7 @@ h1 {
     <h2>⚡ JavaScript</h2>
     <p class="ch-sub">ページに動きをつける</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（6コマ）</summary>
-  <p><strong>ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</p>
-  <p><strong>つまずき:</strong> 詰まる人が一番多い。ここで30分ルールを本格的に運用開始する。答えを言わずコンソールを見せる。</p>
-  <p><strong>問いかけ:</strong> 「console.log を入れるならどこ？なぜそこ？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> 変数・条件分岐・繰り返し・関数・配列を使えるようになり、ボタンクリックでページが変わる体験をする。</div>
 <h3>JavaScriptとは何か</h3>
@@ -283,11 +271,7 @@ btn.addEventListener('click', () =&gt; {
     <h2>🌿 Git</h2>
     <p class="ch-sub">コードの履歴を管理する</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（2コマ）</summary>
-  <p><strong>ねらい:</strong> 5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。</p>
-  <p><strong>つまずき:</strong> branch や rebase を聞かれても後回しでよいと伝える。秘密情報のcommitだけは強く注意する。</p>
-  <p><strong>問いかけ:</strong> 「このcommitメッセージで、3か月後の自分に何をしたか伝わる？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> 「保存のたびに履歴が残る」感覚を身につけ、5つの基本コマンドで自分のコードをGitHubに置けるようになる。</div>
 <h3>なぜ今Gitを学ぶのか</h3>
@@ -329,11 +313,7 @@ git pull            # GitHubの最新を手元に取り込む</pre>
     <h2>🔷 TypeScript</h2>
     <p class="ch-sub">型でコードを安全にする</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（4コマ）</summary>
-  <p><strong>ねらい:</strong> 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。</p>
-  <p><strong>つまずき:</strong> 型エラーの文面に怯む。長いエラーも「何が」「どの型と」合わないかだけ読めばよいと教える。</p>
-  <p><strong>問いかけ:</strong> 「この関数、引数に何が来たら壊れる？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。</div>
 <h3>TypeScriptとは何か</h3>
@@ -391,11 +371,7 @@ function showUser(user: User) {
     <h2>⚛️ React</h2>
     <p class="ch-sub">画面を部品で組み立てる</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（8コマ）</summary>
-  <p><strong>ねらい:</strong> 「画面=stateの反映結果」の理解。TODOアプリを完成させる。</p>
-  <p><strong>つまずき:</strong> DOMを直接触ろうとしたら止める。まず画面を部品に分解させてから書き始めさせる。</p>
-  <p><strong>問いかけ:</strong> 「この画面はどんな部品に分けられる？その部品に何を渡す？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。</div>
 <h3>Reactとは何か</h3>
@@ -453,11 +429,7 @@ function App() {
     <h2>🔌 API</h2>
     <p class="ch-sub">データをやり取りする窓口</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（6コマ）</summary>
-  <p><strong>ねらい:</strong> フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。</p>
-  <p><strong>つまずき:</strong> 通信が失敗したとき想像で直そうとする。必ずNetworkタブを開かせて事実を見せる。</p>
-  <p><strong>問いかけ:</strong> 「いまリクエストは飛んでる？何が返ってきた？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> フロントエンドとサーバーがHTTPとJSONでやり取りする仕組みを理解し、fetchでAPIを呼び、簡単なAPIを自作できるようになる。</div>
 <h3>APIとは何か</h3>
@@ -522,11 +494,7 @@ app.listen(3000);</pre>
     <h2>🗄️ DB</h2>
     <p class="ch-sub">データの保存先を知る</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（5コマ）</summary>
-  <p><strong>ねらい:</strong> React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。</p>
-  <p><strong>つまずき:</strong> いきなりORMに行きたがるが、まず生SQLを触らせる。SQLインジェクションは必ず触れる。</p>
-  <p><strong>問いかけ:</strong> 「もしデータが100万件あったら、このクエリはどうなる？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> データベースの役割とSQLの基本4操作を理解し、「APIがアプリとDBの橋渡しをしている」全体像をつかむ。</div>
 <h3>なぜデータベースが要るのか</h3>
@@ -582,11 +550,7 @@ await prisma.todo.create({ data: { title: '牛乳を買う' } });</pre>
     <h2>🚀 デプロイ</h2>
     <p class="ch-sub">世界に公開する</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（3コマ）</summary>
-  <p><strong>ねらい:</strong> 公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。</p>
-  <p><strong>つまずき:</strong> 公開前に環境変数・秘密情報のチェックを一緒にやる。ここは講師が必ず確認する。</p>
-  <p><strong>問いかけ:</strong> 「このリポジトリ、いま公開して困るものは入ってない？」</p>
-</details>
+  
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> 自分の作ったWebアプリをインターネットに公開し、「自分でWebサービスを作った」を実感する。</div>
 <h3>デプロイとは何か</h3>

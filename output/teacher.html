@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 — 講師用ガイド</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+@media print { .no-print { display:none; } a { text-decoration:none; color:inherit; } }
+</style>
+</head>
+<body class="bg-amber-50 text-slate-800">
+
+<header class="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+  <div class="max-w-5xl mx-auto px-6 py-10">
+    <p class="text-white/80 text-sm tracking-widest mb-2">🐯 WEB DEVELOPMENT PLAYBOOK — 講師用</p>
+    <h1 class="text-3xl md:text-4xl font-bold mb-3">Web開発の虎の巻</h1>
+    <p class="text-white/90 leading-relaxed">リモート・2人・1日1時間で、Web開発を教えるためのガイド<br class="hidden md:block" />ゴールは文法を覚えさせることではなく、<strong>自分で調べて・考えて・修正できるエンジニア</strong>に育てること。</p>
+    <div class="flex flex-wrap gap-2 mt-4 text-sm">
+        <span class="bg-white/20 rounded-full px-3 py-1">👥 生徒2人</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">🏠 リモート</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">⏰ 1日1時間</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">📚 かじった程度からスタート</span>
+        <span class="bg-white/20 rounded-full px-3 py-1">🗓 目安 4〜6か月</span>
+    </div>
+  </div>
+</header>
+<div class="max-w-5xl mx-auto px-6 pt-6">
+    <a href="index.html" class="inline-block text-sm bg-white border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50 no-print">👥 受講者に見せるページを開く →</a>
+  </div>
+
+<main class="max-w-5xl mx-auto px-6 py-10 space-y-12">
+
+    <section>
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">1. 学習ロードマップ（全9章）</h2>
+        <span class="text-sm text-slate-500">想定 計39コマ（1コマ=1時間）</span>
+      </div>
+      <p class="text-sm text-slate-600 mb-4">カードをクリックすると受講者向けの教材ページが開きます。認証は対象外。</p>
+      <div class="grid md:grid-cols-2 gap-3">
+        <a href="materials/web/ch01.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">1</span>
+            <span class="text-lg">🏗️</span>
+            <span class="font-bold flex-1 truncate">HTML</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
+            <span class="text-xs text-slate-400 shrink-0">2コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">ページの骨組みを作る</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。</p>
+        </a>
+        <a href="materials/web/ch02.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">2</span>
+            <span class="text-lg">🎨</span>
+            <span class="font-bold flex-1 truncate">CSS</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
+            <span class="text-xs text-slate-400 shrink-0">3コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">見た目とレイアウトを整える</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</p>
+        </a>
+        <a href="materials/web/ch03.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">3</span>
+            <span class="text-lg">⚡</span>
+            <span class="font-bold flex-1 truncate">JavaScript</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
+            <span class="text-xs text-slate-400 shrink-0">6コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">ページに動きをつける</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</p>
+        </a>
+        <a href="materials/web/ch04.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">4</span>
+            <span class="text-lg">🌿</span>
+            <span class="font-bold flex-1 truncate">Git</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
+            <span class="text-xs text-slate-400 shrink-0">2コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">コードの履歴を管理する</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。</p>
+        </a>
+        <a href="materials/web/ch05.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">5</span>
+            <span class="text-lg">🔷</span>
+            <span class="font-bold flex-1 truncate">TypeScript</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
+            <span class="text-xs text-slate-400 shrink-0">4コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">型でコードを安全にする</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。</p>
+        </a>
+        <a href="materials/web/ch06.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">6</span>
+            <span class="text-lg">⚛️</span>
+            <span class="font-bold flex-1 truncate">React</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
+            <span class="text-xs text-slate-400 shrink-0">8コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">画面を部品で組み立てる</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 「画面=stateの反映結果」の理解。TODOアプリを完成させる。</p>
+        </a>
+        <a href="materials/web/ch07.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">7</span>
+            <span class="text-lg">🔌</span>
+            <span class="font-bold flex-1 truncate">API</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
+            <span class="text-xs text-slate-400 shrink-0">6コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">データをやり取りする窓口</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。</p>
+        </a>
+        <a href="materials/web/ch08.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">8</span>
+            <span class="text-lg">🗄️</span>
+            <span class="font-bold flex-1 truncate">DB</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-blue-100 text-blue-700">知識</span>
+            <span class="text-xs text-slate-400 shrink-0">5コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">データの保存先を知る</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。</p>
+        </a>
+        <a href="materials/web/ch09.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-7 h-7 shrink-0 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">9</span>
+            <span class="text-lg">🚀</span>
+            <span class="font-bold flex-1 truncate">デプロイ</span>
+            <span class="text-xs rounded-full px-2 py-0.5 font-semibold bg-emerald-100 text-emerald-700">実践</span>
+            <span class="text-xs text-slate-400 shrink-0">3コマ</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-2">世界に公開する</p>
+          <p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> 公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。</p>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">2. 章別カンペ（講師用）</h2>
+      <p class="text-sm text-slate-600 mb-4">各章を教えるときのねらい・つまずきポイント・投げかける質問。生徒向けページには出ません。</p>
+      <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+        <table class="w-full text-left min-w-[720px]">
+          <thead class="bg-slate-100 text-xs uppercase text-slate-500">
+            <tr>
+              <th class="px-3 py-2">章</th>
+              <th class="px-3 py-2">ねらい</th>
+              <th class="px-3 py-2">つまずき・見るところ</th>
+              <th class="px-3 py-2">問いかけ</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch01.html" class="font-semibold text-amber-700 hover:underline">1. HTML</a>
+              <div class="text-xs text-slate-400 mt-0.5">2コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">タグで構造を書く感覚をつかませる。見た目の話はまだしない。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">見た目を整えたがるので「それは次章」と切る。閉じタグ忘れは自分で気付かせる。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「なぜここは div ではなく h1 にした？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch02.html" class="font-semibold text-amber-700 hover:underline">2. CSS</a>
+              <div class="text-xs text-slate-400 mt-0.5">3コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「この余白は padding と margin どっちが正しい？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch03.html" class="font-semibold text-amber-700 hover:underline">3. JavaScript</a>
+              <div class="text-xs text-slate-400 mt-0.5">6コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">詰まる人が一番多い。ここで30分ルールを本格的に運用開始する。答えを言わずコンソールを見せる。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「console.log を入れるならどこ？なぜそこ？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch04.html" class="font-semibold text-amber-700 hover:underline">4. Git</a>
+              <div class="text-xs text-slate-400 mt-0.5">2コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">branch や rebase を聞かれても後回しでよいと伝える。秘密情報のcommitだけは強く注意する。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「このcommitメッセージで、3か月後の自分に何をしたか伝わる？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch05.html" class="font-semibold text-amber-700 hover:underline">5. TypeScript</a>
+              <div class="text-xs text-slate-400 mt-0.5">4コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">型エラーの文面に怯む。長いエラーも「何が」「どの型と」合わないかだけ読めばよいと教える。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「この関数、引数に何が来たら壊れる？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch06.html" class="font-semibold text-amber-700 hover:underline">6. React</a>
+              <div class="text-xs text-slate-400 mt-0.5">8コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">「画面=stateの反映結果」の理解。TODOアプリを完成させる。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">DOMを直接触ろうとしたら止める。まず画面を部品に分解させてから書き始めさせる。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「この画面はどんな部品に分けられる？その部品に何を渡す？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch07.html" class="font-semibold text-amber-700 hover:underline">7. API</a>
+              <div class="text-xs text-slate-400 mt-0.5">6コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">通信が失敗したとき想像で直そうとする。必ずNetworkタブを開かせて事実を見せる。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「いまリクエストは飛んでる？何が返ってきた？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch08.html" class="font-semibold text-amber-700 hover:underline">8. DB</a>
+              <div class="text-xs text-slate-400 mt-0.5">5コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">いきなりORMに行きたがるが、まず生SQLを触らせる。SQLインジェクションは必ず触れる。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「もしデータが100万件あったら、このクエリはどうなる？」</td>
+          </tr>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="px-3 py-3 whitespace-nowrap">
+              <a href="materials/web/ch09.html" class="font-semibold text-amber-700 hover:underline">9. デプロイ</a>
+              <div class="text-xs text-slate-400 mt-0.5">3コマ</div>
+            </td>
+            <td class="px-3 py-3 text-sm">公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。</td>
+            <td class="px-3 py-3 text-sm text-slate-600">公開前に環境変数・秘密情報のチェックを一緒にやる。ここは講師が必ず確認する。</td>
+            <td class="px-3 py-3 text-sm text-violet-700 italic">「このリポジトリ、いま公開して困るものは入ってない？」</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">3. 基本理念</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <p class="leading-relaxed mb-4">重要なのは「知識量」ではなく<strong>「問題解決能力」</strong>への移行。実務では検索・AI・ドキュメントを見ながら開発するため、文法暗記よりも次のサイクルを体で覚えることを最優先にする。</p>
+        <div class="flex flex-wrap items-center justify-center gap-2 text-center font-semibold text-sm">
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">エラー文を読む</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">原因の仮説を立てる</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">調査する</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">修正する</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">4. 1日1時間の使い方</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex w-full h-12 rounded-lg overflow-hidden text-white text-xs md:text-sm font-bold text-center">
+          <div class="bg-sky-500 flex items-center justify-center" style="width:16.7%">10分</div>
+          <div class="bg-amber-500 flex items-center justify-center" style="width:25.0%">15分</div>
+          <div class="bg-emerald-500 flex items-center justify-center" style="width:50.0%">30分</div>
+          <div class="bg-violet-500 flex items-center justify-center" style="width:8.3%">5分</div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm">
+          <div><p class="font-bold text-sky-600">復習・質疑応答</p><p>前回の内容を確認し、疑問を解消する。</p></div>
+          <div><p class="font-bold text-amber-600">新しい内容の解説</p><p>今日のテーマを短く伝える。講義は最小限。</p></div>
+          <div><p class="font-bold text-emerald-600">手を動かす演習</p><p>時間の半分は必ず実践。ここが本体。</p></div>
+          <div><p class="font-bold text-violet-600">振り返りと宿題</p><p>できたことを確認し、次回までの課題を出す。</p></div>
+        </div>
+        <p class="mt-4 text-sm bg-red-50 border-l-4 border-red-400 rounded p-3">⚠️ 1日1時間だと<strong>3日止まるだけで流れが切れる</strong>。小さな目標・できたことの確認・難しすぎない課題で継続を最優先に。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">5. 教師（メンター）の役割</h2>
+      <p class="mb-4 text-sm text-slate-600">この条件での教師は「講師」ではなく<strong>メンター兼コードレビュアー</strong>。知識を教えるのではなく、学習を設計・継続させる。</p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-amber-400 border border-slate-200 p-5">
+          <p class="font-bold mb-2">① 学習の道筋を作る <span class="text-xs bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 ml-1">最重要</span></p>
+          <p class="text-sm">何をどの順番で学ぶかを設計し、迷わず進めるロードマップを示す。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-red-400 border border-slate-200 p-5">
+          <p class="font-bold mb-2">② エラー解決の考え方を教える</p>
+          <p class="text-sm">答えを教えるのではなく「エラーを読む → 原因を予想 → どこを調べるか → 仮説を検証」を身につけさせる。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-sky-400 border border-slate-200 p-5">
+          <p class="font-bold mb-2">③ コードレビュー</p>
+          <p class="text-sm">毎回レビューするだけで成長速度が変わる。見るのは <strong>命名 / 可読性 / 重複 / 責務の分離 / バグになりそうな箇所</strong>。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-emerald-400 border border-slate-200 p-5">
+          <p class="font-bold mb-2">④ モチベーション管理</p>
+          <p class="text-sm">小さな目標を設定し、できたことを確認する。難しすぎる課題は出さない。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-violet-400 border border-slate-200 p-5 md:col-span-2">
+          <p class="font-bold mb-2">⑤ 「なぜ？」を問いかける</p>
+          <p class="text-sm">「なぜこの書き方にした？」「他の方法は？」「もし100件データがあったら？」——考えさせる質問で理解を深める。</p>
+        </div>
+      </div>
+      <div class="mt-4 bg-slate-100 rounded-xl p-5 text-sm">
+        <p class="font-bold mb-2">🚫 教師がやらなくていいこと（書籍・動画・AIで代替できる）</p>
+        <p>文法を延々と講義する ／ スライドを読むだけ ／ 完成したコードを配る ／ すべて答えを教える</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">6. 質問のルール「30分ルール」</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <p class="mb-3 text-sm">「分からなかったら聞いて」では質問する力が育たない。代わりにこう教える。</p>
+        <blockquote class="border-l-4 border-amber-500 bg-amber-50 rounded p-4 font-semibold">30分調べて、「分かったこと」「試したこと」「仮説」を持って聞く。</blockquote>
+        <p class="mt-3 text-sm text-slate-600">質問が具体的になり、調べる力・整理する力が同時に育つ。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">7. 育成の3ステップ</h2>
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <p class="font-bold text-lg mb-1">STEP 1｜基礎理解 <span class="text-sm font-normal text-slate-500">（1〜2週間）— コードが読める状態にする</span></p>
+          <ul class="text-sm list-disc list-inside space-y-1"><li>開発環境構築: VS Code / Git / ターミナル操作</li><li>プログラミング基礎: 変数 / 条件分岐 / 繰り返し / 関数 / 配列 / クラス</li><li>デバッグ方法: エラー文を読む / ログを見る</li></ul>
+          
+          
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <p class="font-bold text-lg mb-1">STEP 2｜小さい成果物を作る <span class="text-sm font-normal text-slate-500">（2〜4週間）— 開発感覚をつける</span></p>
+          <div class="grid md:grid-cols-2 gap-3 text-sm mt-2"><div class="bg-emerald-50 rounded p-3"><p class="font-bold text-emerald-600 mb-1">初級</p>TODOアプリ / 電卓 / CSV集計ツール / 簡単なWeb API</div><div class="bg-sky-50 rounded p-3"><p class="font-bold text-sky-600 mb-1">中級</p>ログイン機能 / DB CRUD / ファイルアップロード / 外部API連携</div></div>
+          <p class="text-sm mt-3">完成度より<strong>「なぜこの設計にしたのか」を説明できること</strong>を重視する。</p>
+          
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <p class="font-bold text-lg mb-1">STEP 3｜実務形式へ移行 <span class="text-sm font-normal text-slate-500">— チーム開発を経験する</span></p>
+          <ul class="text-sm list-disc list-inside space-y-1"><li>Git: branch / commit / pull request / merge</li><li>コードレビュー: 命名 / 重複 / 責務分離 / エラー処理 / セキュリティ</li></ul>
+          
+          <div class="flex flex-wrap items-center gap-1 text-sm font-semibold mt-3"><span class="bg-slate-100 rounded px-3 py-1">仕様確認</span><span class="text-amber-500">→</span><span class="bg-slate-100 rounded px-3 py-1">設計</span><span class="text-amber-500">→</span><span class="bg-slate-100 rounded px-3 py-1">実装</span><span class="text-amber-500">→</span><span class="bg-slate-100 rounded px-3 py-1">テスト</span><span class="text-amber-500">→</span><span class="bg-slate-100 rounded px-3 py-1">レビュー</span><span class="text-amber-500">→</span><span class="bg-slate-100 rounded px-3 py-1">リリース</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">8. やってはいけないこと</h2>
+      <div class="grid md:grid-cols-3 gap-4 text-sm">
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-red-500 border border-slate-200 p-5">
+          <p class="font-bold mb-2">❌ 最初から大きなシステム</p>
+          <p>新人は全体像が見えず混乱する。小さく作って積み上げる。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-red-500 border border-slate-200 p-5">
+          <p class="font-bold mb-2">❌ 「分からなかったら聞いて」</p>
+          <p>質問方法が育たない。→ <strong>30分ルール</strong>を教える。</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border-t-4 border-red-500 border border-slate-200 p-5">
+          <p class="font-bold mb-2">❌ 文法暗記中心</p>
+          <p>実務では検索・AI・ドキュメントを見る。知識量より問題解決能力。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">9. 伸びる人・伸びにくい人</h2>
+      <div class="grid md:grid-cols-2 gap-4 text-sm">
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-5">
+          <p class="font-bold mb-2">🌱 伸びる新人</p>
+          <ul class="list-disc list-inside space-y-1"><li>エラーを怖がらない</li><li>仮説を立てる</li><li>調べた内容を整理できる</li><li>質問が具体的</li><li>他人のコードを読む努力をする</li></ul>
+        </div>
+        <div class="bg-red-50 border border-red-200 text-red-900 rounded-xl p-5">
+          <p class="font-bold mb-2">🥀 伸びにくい新人</p>
+          <ul class="list-disc list-inside space-y-1"><li>答えを待つ</li><li>動けばOKで済ませる</li><li>なぜ動くか説明できない</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3 mb-4">10. 毎回まわすサイクル</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-center">
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">ゴールを明確にする</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">学ぶ内容を整理する</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">詰まったときの考え方を示す</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">レビューで改善点を伝える</span><span class="text-amber-500">→</span>
+          <span class="bg-amber-100 text-amber-800 rounded-lg px-4 py-2">次回までの宿題を設定する</span>
+        </div>
+        <p class="mt-4 text-sm text-center text-slate-600">このサイクルを回せれば、限られた時間でも着実に力が伸びる。</p>
+      </div>
+    </section>
+
+</main>
+
+<footer class="text-center text-xs text-slate-400 pb-8">
+  Web開発の虎の巻 — 講師用ガイド
+</footer>
+
+</body>
+</html>

@@ -11,12 +11,16 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import yaml from 'js-yaml'
+
 import { ROOT } from '../scripts/lib/paths.mjs'
 import { QUESTION_HEADER } from '../scripts/lib/csv.mjs'
 
 const MATERIALS = path.join(ROOT, 'output', 'materials', 'web')
 const QUESTIONS = path.join(ROOT, 'output', 'questions', 'web')
-const INDEX = path.join(ROOT, 'output', 'toranomaki.html')
+const LEARNER = path.join(ROOT, 'output', 'index.html')
+const TEACHER = path.join(ROOT, 'output', 'teacher.html')
+const MATERIALS_IN = path.join(ROOT, 'input', 'materials', 'web')
 
 const errors = []
 const warnings = []
@@ -226,14 +230,14 @@ function validateCsv(file) {
   return body
 }
 
-/** 講師用ハブ: 全章へのリンクが揃っているか・リンク先が実在するか。 */
-function validateIndex(chapterFiles) {
-  const rel = path.relative(ROOT, INDEX)
-  if (!fs.existsSync(INDEX)) {
-    err(rel, '講師用ハブが生成されていません')
-    return
+/** ハブ共通: 全章へのリンクが揃っているか・リンク先が実在するか。 */
+function validateHubLinks(file, chapterFiles) {
+  const rel = path.relative(ROOT, file)
+  if (!fs.existsSync(file)) {
+    err(rel, 'ハブが生成されていません')
+    return null
   }
-  const html = fs.readFileSync(INDEX, 'utf8')
+  const html = fs.readFileSync(file, 'utf8')
 
   const linked = new Set([...html.matchAll(/href="materials\/web\/(ch\d+\.html)"/g)].map((m) => m[1]))
   for (const f of chapterFiles) {
@@ -242,16 +246,70 @@ function validateIndex(chapterFiles) {
   for (const l of linked) {
     if (!fs.existsSync(path.join(MATERIALS, l))) err(rel, `リンク先が存在しません: materials/web/${l}`)
   }
-  if (!/全\d+章/.test(html)) err(rel, '章数の表示が見つかりません')
-  const shown = Number(html.match(/全(\d+)章/)?.[1])
-  if (shown !== chapterFiles.length) {
-    err(rel, `見出しの章数 ${shown} が実際の ${chapterFiles.length} と違います`)
+  return html
+}
+
+/**
+ * 受講者用と講師用の分離を検証する。
+ * 受講者用（index.html）に teaching: の中身が 1 文字でも出ていたら不合格。
+ */
+function validateAudienceSeparation(chapterFiles) {
+  const learnerRel = path.relative(ROOT, LEARNER)
+  const learner = validateHubLinks(LEARNER, chapterFiles)
+  const teacher = validateHubLinks(TEACHER, chapterFiles)
+  if (!learner || !teacher) return
+
+  // 章数表示は講師用のみ
+  const shown = Number(teacher.match(/全(\d+)章/)?.[1])
+  if (!shown) err(path.relative(ROOT, TEACHER), '章数の表示が見つかりません')
+  else if (shown !== chapterFiles.length) {
+    err(path.relative(ROOT, TEACHER), `見出しの章数 ${shown} が実際の ${chapterFiles.length} と違います`)
   }
-  // 章ページ側からハブへ戻れること
+
+  // teaching: の実文言が受講者用に漏れていないか（章 YAML を直接読んで突き合わせる）
+  if (fs.existsSync(MATERIALS_IN)) {
+    const yamls = fs.readdirSync(MATERIALS_IN).filter((f) => /^ch\d+\.ya?ml$/.test(f))
+    for (const y of yamls) {
+      const doc = yaml.load(fs.readFileSync(path.join(MATERIALS_IN, y), 'utf8'))
+      const t = doc?.teaching
+      if (!t) continue
+      for (const key of ['goal', 'watch', 'ask']) {
+        const v = t[key]
+        if (!v) continue
+        if (learner.includes(v)) {
+          err(learnerRel, `講師用メモが受講者ページに漏れています（${y} の teaching.${key}）`)
+        }
+        if (!teacher.includes(v)) {
+          err(path.relative(ROOT, TEACHER), `${y} の teaching.${key} が講師ページに出ていません`)
+        }
+      }
+    }
+  }
+
+  // 章ページ（受講者が見る）の戻り先は受講者用ハブであること
   for (const f of chapterFiles) {
     const chHtml = fs.readFileSync(path.join(MATERIALS, f), 'utf8')
-    if (!chHtml.includes('href="../../toranomaki.html"')) {
-      err(`materials/web/${f}`, '講師用ハブへ戻るリンクがありません')
+    if (!chHtml.includes('href="../../index.html"')) {
+      err(`materials/web/${f}`, '受講者用ハブへ戻るリンクがありません')
+    }
+    if (chHtml.includes('teacher.html')) {
+      err(`materials/web/${f}`, '章ページから講師用ページへリンクしています（受講者に見えてしまう）')
+    }
+  }
+
+  // 単一ファイル版（配布用）も同じ基準で検証する
+  const singleLearner = path.join(ROOT, 'output', 'all-learner.html')
+  if (fs.existsSync(singleLearner) && fs.existsSync(MATERIALS_IN)) {
+    const rel = path.relative(ROOT, singleLearner)
+    const html = fs.readFileSync(singleLearner, 'utf8')
+    for (const y of fs.readdirSync(MATERIALS_IN).filter((f) => /^ch\d+\.ya?ml$/.test(f))) {
+      const t = yaml.load(fs.readFileSync(path.join(MATERIALS_IN, y), 'utf8'))?.teaching
+      if (!t) continue
+      for (const key of ['goal', 'watch', 'ask']) {
+        if (t[key] && html.includes(t[key])) {
+          err(rel, `講師用メモが配布用ファイルに漏れています（${y} の teaching.${key}）`)
+        }
+      }
     }
   }
 }
@@ -264,9 +322,9 @@ function main() {
   const htmlFiles = fs.readdirSync(MATERIALS).filter((f) => /^ch\d+\.html$/.test(f)).sort()
   const csvFiles = fs.readdirSync(QUESTIONS).filter((f) => /^ch\d+-check\.csv$/.test(f)).sort()
 
-  console.log(`[validate-web] 章HTML ${htmlFiles.length} 本 / CSV ${csvFiles.length} 本 / 講師用ハブ を検証`)
+  console.log(`[validate-web] 章HTML ${htmlFiles.length} 本 / CSV ${csvFiles.length} 本 / ハブ2種（受講者用・講師用）を検証`)
 
-  validateIndex(htmlFiles)
+  validateAudienceSeparation(htmlFiles)
 
   const quizByChapter = new Map()
   for (const f of htmlFiles) {

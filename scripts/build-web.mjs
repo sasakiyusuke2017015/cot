@@ -26,8 +26,13 @@ const MATERIALS_IN = path.join(ROOT, 'input', 'materials', 'web')
 const QUESTIONS_IN = path.join(ROOT, 'input', 'questions', 'web')
 const MATERIALS_OUT = path.join(ROOT, 'output', 'materials', 'web')
 const QUESTIONS_OUT = path.join(ROOT, 'output', 'questions', 'web')
-// 講師用ハブは output/ 直下（materials/web/chNN.html への相対リンクが通る位置）
-const INDEX_OUT = path.join(ROOT, 'output', 'toranomaki.html')
+// ハブは output/ 直下（materials/web/chNN.html への相対リンクが通る位置）
+//   index.html   … 受講者用。章一覧と学び方だけ。teaching: の内容は出さない
+//   teacher.html … 講師用。章別カンペ・進め方つき
+//   toranomaki.html … teacher.html への転送（従来の URL を維持するため）
+const LEARNER_OUT = path.join(ROOT, 'output', 'index.html')
+const TEACHER_OUT = path.join(ROOT, 'output', 'teacher.html')
+const LEGACY_OUT = path.join(ROOT, 'output', 'toranomaki.html')
 const COURSE_IN = path.join(MATERIALS_IN, 'course.yaml')
 const HEAD_TPL = fs.readFileSync(path.join(ROOT, 'scripts', 'templates', 'web-chapter-head.html'), 'utf8')
 
@@ -179,7 +184,7 @@ function Page() {
     <div className="min-h-screen flex flex-col">
       <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
-          <a href="../../toranomaki.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
+          <a href="../../index.html" className="px-2 py-1 rounded hover:bg-white/20 text-sm">← 目次</a>
           <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
           <p className="text-sm text-blue-200">第${chapter.id}章 / 全${total}章</p>
         </div>
@@ -217,6 +222,25 @@ ${body}
 
 ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
 </script>
+</body>
+</html>
+`
+}
+
+/** 旧 URL を維持するための転送ページ。 */
+function redirectHtml(to, label) {
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${label}へ移動します</title>
+<meta http-equiv="refresh" content="0; url=${to}">
+<link rel="canonical" href="${to}">
+</head>
+<body style="font-family:'Yu Gothic UI',sans-serif;text-align:center;padding:60px 20px">
+<p>${label}へ移動します。</p>
+<p><a href="${to}">開かない場合はこちら</a></p>
 </body>
 </html>
 `
@@ -274,13 +298,21 @@ function main() {
     }
   }
 
-  // 講師用ハブページ（章一覧・カンペは chNN.yaml から自動集約）
+  // ハブページ（章一覧・カンペは chNN.yaml から自動集約）
   if (fs.existsSync(COURSE_IN)) {
     const course = yaml.load(fs.readFileSync(COURSE_IN, 'utf8'))
-    fs.writeFileSync(INDEX_OUT, renderWebIndex(course, chapters), 'utf8')
-    console.log(`  ✓ ${path.relative(ROOT, INDEX_OUT)}  (講師用ハブ)`)
+
+    fs.writeFileSync(LEARNER_OUT, renderWebIndex(course, chapters, { audience: 'learner' }), 'utf8')
+    console.log(`  ✓ ${path.relative(ROOT, LEARNER_OUT)}  (受講者用ハブ)`)
+
+    fs.writeFileSync(TEACHER_OUT, renderWebIndex(course, chapters, { audience: 'teacher' }), 'utf8')
+    console.log(`  ✓ ${path.relative(ROOT, TEACHER_OUT)}  (講師用ハブ)`)
+
+    // 従来 toranomaki.html を共有していた場合に備えて転送を置く
+    fs.writeFileSync(LEGACY_OUT, redirectHtml('teacher.html', '講師用ガイド'), 'utf8')
+    console.log(`  ✓ ${path.relative(ROOT, LEGACY_OUT)}  (→ teacher.html へ転送)`)
   } else {
-    console.log('  － course.yaml が無いので講師用ハブはスキップ')
+    console.log('  － course.yaml が無いのでハブはスキップ')
   }
 }
 

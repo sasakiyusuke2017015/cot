@@ -18,7 +18,11 @@ import { ROOT, ensureDir } from './lib/paths.mjs'
 
 const MATERIALS_IN = path.join(ROOT, 'input', 'materials', 'web')
 const QUESTIONS_IN = path.join(ROOT, 'input', 'questions', 'web')
-const OUT = path.join(ROOT, 'output', 'toranomaki-all.html')
+// 受講者用（講師用メモ抜き）と講師用（メモ入り）の2種類を出す
+const OUT_LEARNER = path.join(ROOT, 'output', 'all-learner.html')
+const OUT_TEACHER = path.join(ROOT, 'output', 'all-teacher.html')
+// 従来の名前は講師用として維持
+const OUT_LEGACY = path.join(ROOT, 'output', 'toranomaki-all.html')
 
 const TYPE_LABEL = { core: '知識', user: '実践' }
 
@@ -89,7 +93,7 @@ function renderBlocks(blocks) {
     .join('\n')
 }
 
-function renderChapter(ch, questions) {
+function renderChapter(ch, questions, teacher) {
   const kw = (ch.keywords ?? [])
     .map((k) => `<div class="kw"><span class="kw-term">${esc(k.term)}</span>${esc(k.desc)}</div>`)
     .join('')
@@ -110,7 +114,7 @@ function renderChapter(ch, questions) {
     })
     .join('\n')
 
-  const t = ch.teaching
+  const t = teacher ? ch.teaching : null
   const teaching = t
     ? `<details class="teaching"><summary>👤 講師用メモ${t.sessions ? `（${t.sessions}コマ）` : ''}</summary>
   ${t.goal ? `<p><strong>ねらい:</strong> ${esc(t.goal)}</p>` : ''}
@@ -135,13 +139,7 @@ ${renderBlocks(ch.content_blocks)}
 </section>`
 }
 
-function main() {
-  const chapters = loadChapters()
-  if (chapters.length === 0) {
-    console.log('[build-web-single] 章入力がありません')
-    return
-  }
-
+function buildHtml(chapters, teacher) {
   const toc = chapters
     .map(
       (c) =>
@@ -149,15 +147,15 @@ function main() {
     )
     .join('')
 
-  const body = chapters.map((c) => renderChapter(c, loadQuestions(c.id))).join('\n')
+  const body = chapters.map((c) => renderChapter(c, loadQuestions(c.id), teacher)).join('\n')
   const totalQ = chapters.reduce((s, c) => s + loadQuestions(c.id).length, 0)
 
-  const html = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web開発の虎の巻 — 全${chapters.length}章</title>
+<title>Web開発の虎の巻 — 全${chapters.length}章${teacher ? '（講師用）' : ''}</title>
 <style>
 :root { color-scheme: light dark; }
 * { box-sizing: border-box; }
@@ -245,9 +243,9 @@ details p { margin:.4rem 0; font-size:.88rem; }
 
 <header class="top">
   <div class="inner">
-    <p style="font-size:.75rem;letter-spacing:.15em;opacity:.9;margin:0">🐯 WEB DEVELOPMENT PLAYBOOK</p>
+    <p style="font-size:.75rem;letter-spacing:.15em;opacity:.9;margin:0">🐯 WEB DEVELOPMENT PLAYBOOK${teacher ? ' — 講師用' : ''}</p>
     <h1>Web開発の虎の巻</h1>
-    <p>リモート・2人・1日1時間で、Web開発を教えるためのガイド。全${chapters.length}章・確認問題${totalQ}問。</p>
+    <p>${teacher ? 'リモート・2人・1日1時間で、Web開発を教えるためのガイド。' : 'Web開発を学ぶための教材。'}全${chapters.length}章・確認問題${totalQ}問。</p>
     <div class="badges">
       <span>👥 生徒2人</span><span>🏠 リモート</span><span>⏰ 1日1時間</span><span>🗓 目安 4〜6か月</span>
     </div>
@@ -268,11 +266,30 @@ ${body}
 </html>
 `
 
-  ensureDir(path.dirname(OUT))
-  fs.writeFileSync(OUT, html, 'utf8')
-  const kb = Math.round(Buffer.byteLength(html, 'utf8') / 1024)
-  console.log(`[build-web-single] ✓ ${path.relative(ROOT, OUT)}  (${chapters.length}章 / ${totalQ}問 / ${kb}KB)`)
-  console.log('  このファイル1つで完結します。メール添付やクラウド経由でスマホに送れば読めます。')
+}
+
+function main() {
+  const chapters = loadChapters()
+  if (chapters.length === 0) {
+    console.log('[build-web-single] 章入力がありません')
+    return
+  }
+
+  ensureDir(path.join(ROOT, 'output'))
+  const write = (file, teacher, label) => {
+    const html = buildHtml(chapters, teacher)
+    fs.writeFileSync(file, html, 'utf8')
+    const kb = Math.round(Buffer.byteLength(html, 'utf8') / 1024)
+    console.log(`[build-web-single] ✓ ${path.relative(ROOT, file)}  (${label} / ${kb}KB)`)
+    return html
+  }
+
+  write(OUT_LEARNER, false, '受講者用・講師メモなし')
+  const teacherHtml = write(OUT_TEACHER, true, '講師用・メモ入り')
+  // 従来の名前は講師用として維持
+  fs.writeFileSync(OUT_LEGACY, teacherHtml, 'utf8')
+
+  console.log('  1ファイルで完結します。受講者に渡すのは all-learner.html です。')
 }
 
 main()

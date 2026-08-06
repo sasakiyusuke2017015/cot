@@ -6,7 +6,15 @@
 
 新人向け Web 開発教育の教材。全 9 章。
 
-**📖 [講師用ガイドを開く](https://sasakiyusuke2017015.github.io/cot/)** — 章一覧・章別カンペ・進め方
+**入口は受講者用と講師用で分かれています。**
+
+| | URL | 中身 |
+|---|-----|------|
+| 👥 受講者用 | **[https://sasakiyusuke2017015.github.io/cot/](https://sasakiyusuke2017015.github.io/cot/)** | 章一覧・学び方の心得。**講師用カンペは出ない** |
+| 👤 講師用 | [/output/teacher.html](https://sasakiyusuke2017015.github.io/cot/output/teacher.html) | 上記 + 章別カンペ・進め方・1コマの配分 |
+
+受講者に渡すのは上のURL。カンペ（ねらい・つまずき・問いかけ）は講師用にしか出力されず、
+漏れがないことは `npm run validate:web` が毎回チェックする。
 
 スマホのブラウザでそのまま読めます（GitHub Pages で公開）。
 push すれば数分で反映されるので、生成 → push → スマホで確認、という流れでレビューできます。
@@ -74,8 +82,15 @@ git commit && git push
 push すれば数分で反映される。スマホでブックマークしておけば、開き直すだけで最新版が読める。
 
 **2. ファイルを送る**（サーバも通信も不要）
-`output/toranomaki-all.html` は**全 9 章 + 講師用メモ + 確認問題を 1 ファイルにまとめた版**（53KB・外部依存なし）。
-メールに添付するかクラウド経由でスマホに送れば、そのまま読める。オフラインでも見られる。
+
+全章を 1 ファイルにまとめた版。外部依存なしでオフラインでも読める。
+
+| ファイル | 渡す相手 | 中身 |
+|----------|----------|------|
+| `output/all-learner.html` | **受講者** | 全 9 章 + 確認問題（48KB） |
+| `output/all-teacher.html` | 講師（自分） | 上記 + 講師用メモ（53KB） |
+
+受講者に渡すときは **`all-learner.html`** のほう。取り違えないよう注意。
 
 **3. push 前の手元の内容を見る**
 
@@ -95,11 +110,16 @@ input/          著者が書く YAML（唯一の元データ）
 scripts/        YAML → HTML / CSV の変換
 validators/     生成物の検証
 output/         生成物
-  toranomaki.html       講師用ハブ（章一覧・カンペ。公開サイトの入口）
-  toranomaki-all.html   全章を1ファイルにまとめた版（送付・オフライン用）
-  materials/web/        章ページ chNN.html
+  index.html            受講者用ハブ（公開サイトの入口）
+  teacher.html          講師用ハブ（章別カンペ・進め方つき）
+  all-learner.html      受講者用・全章1ファイル版（配布用）
+  all-teacher.html      講師用・全章1ファイル版（メモ入り）
+  materials/web/        章ページ chNN.html（受講者向け）
   questions/web/        問題 CSV chNN-check.csv
 ```
+
+**講師向けの内容は `teacher.html` と `all-teacher.html` にしか出ない。**
+章ページ（chNN.html）は受講者向けなので、`teaching:` の内容は一切含まれない。
 
 詳しいルールは [CLAUDE.md](CLAUDE.md) と `.claude/rules/` を参照。
 
