@@ -46,12 +46,26 @@ jobs:
         with:
           path: _site
 
-      # デプロイ自体は完了するが、完了の検知に時間がかかりタイムアウトすることがある
-      # （実際にはサイトは公開されている）。待ち時間を長めに取る。
+      # デプロイ自体は成功するのに、完了の検知が終わらずタイムアウト → その回の内容が
+      # キャンセルされる事象が続いた。待たずに投げっぱなしにして、反映は別途確認する。
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
         timeout-minutes: 30
+        continue-on-error: true
         with:
-          timeout: 1500000
-          error_count: 20
+          timeout: 1800000
+          error_count: 30
+
+      - name: 反映確認
+        run: |
+          url="${{ steps.deployment.outputs.page_url }}"
+          url="${url:-https://sasakiyusuke2017015.github.io/cot/}"
+          echo "確認先: $url"
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$url" || echo 000)
+            echo "  [$i] $code"
+            [ "$code" = "200" ] && { echo "公開を確認しました: $url"; exit 0; }
+            sleep 20
+          done
+          echo "::warning::公開が確認できませんでした（後で $url を直接確認してください）"
