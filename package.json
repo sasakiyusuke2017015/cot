@@ -1,9 +1,9 @@
 {
-  "name": "content-agent",
+  "name": "cot",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "社内AI活用資格研修の教材・確認問題・試験問題を量産し、ai_edu の seed フォーマットへ生成するハーネス",
+  "description": "教材本文・確認問題を YAML から生成・検証するハーネス（Web開発の虎の巻 / AI活用資格研修）",
   "scripts": {
     "build": "node scripts/build-all.mjs",
     "build:materials": "node scripts/build-materials.mjs",
@@ -11,6 +11,7 @@
     "build:web": "node scripts/build-web.mjs",
     "validate": "node validators/validate-all.mjs",
     "validate:web": "node validators/validate-web.mjs",
+    "web": "npm run build:web && npm run validate:web",
     "preview": "node scripts/preview.mjs"
   },
   "dependencies": {

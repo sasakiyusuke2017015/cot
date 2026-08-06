@@ -24,9 +24,27 @@ push すれば数分で反映されるので、生成 → push → スマホで�
 ```bash
 npm install
 
+npm run web         # 生成 + 検証（ふだんはこれ1つ）
+npm run preview     # ローカルサーバで確認（スマホ用に QR コードも表示）
+```
+
+個別に動かす場合:
+
+```bash
 npm run build:web       # input/ の YAML → output/ の HTML と CSV
 npm run validate:web    # 生成物の検証（構造・リンク・HTML↔CSV の一致）
-npm run preview         # ローカルサーバで確認（スマホ用に QR コードも表示）
+```
+
+### 公開までの流れ
+
+```
+input/ の YAML を直す
+   ↓
+npm run web          … 生成 + 検証
+   ↓
+git commit && git push
+   ↓
+数分で https://sasakiyusuke2017015.github.io/cot/ に反映
 ```
 
 ### 内容を直すとき
