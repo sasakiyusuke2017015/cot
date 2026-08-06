@@ -1,7 +1,7 @@
 # GitHub Pages へのデプロイ（Actions 方式）
 #
-# legacy（Jekyll）方式でデプロイがキュー待ちのままタイムアウトする場合の代替。
-# ビルド工程は無く、リポジトリの内容をそのまま配信する（生成物は commit 済みのため）。
+# 公開に必要なファイルだけを _site に集めてからアップロードする。
+# リポジトリ全体（scripts / input / .claude など）を配信する必要はないため。
 
 name: Deploy to GitHub Pages
 
@@ -15,7 +15,6 @@ permissions:
   pages: write
   id-token: write
 
-# 同時デプロイを1本に絞る。進行中があれば新しい方を待たせる
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -31,11 +30,23 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
+      - name: Collect public files
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp .nojekyll _site/ 2>/dev/null || true
+          cp -r output _site/
+          echo "--- 配信するファイル ---"
+          find _site -type f | sort
+          echo "--- 合計 ---"
+          find _site -type f | wc -l
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+        timeout-minutes: 20
