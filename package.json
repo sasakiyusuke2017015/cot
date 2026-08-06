@@ -9,9 +9,10 @@
     "build:materials": "node scripts/build-materials.mjs",
     "build:questions": "node scripts/build-questions.mjs",
     "build:web": "node scripts/build-web.mjs",
+    "build:web:single": "node scripts/build-web-single.mjs",
     "validate": "node validators/validate-all.mjs",
     "validate:web": "node validators/validate-web.mjs",
-    "web": "npm run build:web && npm run validate:web",
+    "web": "npm run build:web && npm run build:web:single && npm run validate:web",
     "preview": "node scripts/preview.mjs"
   },
   "dependencies": {

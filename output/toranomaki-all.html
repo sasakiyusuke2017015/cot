@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 — 全9章</title>
+<style>
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { font-family: 'Yu Gothic UI','Yu Gothic',-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;
+  margin:0; padding:0; line-height:1.8; color:#1f2937; background:#f9fafb; }
+.wrap { max-width: 820px; margin:0 auto; padding: 0 16px 60px; }
+header.top { background:linear-gradient(135deg,#f59e0b,#ea580c); color:#fff; padding:28px 16px; }
+header.top .inner { max-width:820px; margin:0 auto; }
+header.top h1 { margin:6px 0 8px; font-size:1.7rem; }
+header.top p { margin:0; opacity:.95; font-size:.9rem; }
+.badges { margin-top:12px; display:flex; flex-wrap:wrap; gap:6px; }
+.badges span { background:rgba(255,255,255,.22); border-radius:999px; padding:3px 10px; font-size:.78rem; }
+#toc { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin:20px 0; }
+#toc h2 { margin:0 0 10px; font-size:1.1rem; color:#92400e; }
+#toc ul { list-style:none; margin:0; padding:0; }
+#toc li a { display:flex; align-items:center; gap:8px; padding:9px 6px; border-bottom:1px solid #f3f4f6;
+  text-decoration:none; color:#1f2937; font-weight:600; }
+#toc li:last-child a { border-bottom:none; }
+.toc-n { width:26px; height:26px; flex:none; border-radius:50%; background:#f59e0b; color:#fff;
+  font-size:.8rem; display:flex; align-items:center; justify-content:center; }
+.toc-sub { margin-left:auto; font-weight:400; font-size:.75rem; color:#9ca3af; }
+.chapter { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:0 0 16px; margin:18px 0; overflow:hidden; }
+.ch-head { padding:18px 16px; color:#fff; }
+.ch-head.core { background:linear-gradient(135deg,#1d4ed8,#3b82f6); }
+.ch-head.user { background:linear-gradient(135deg,#047857,#10b981); }
+.ch-head h2 { margin:8px 0 4px; font-size:1.35rem; }
+.ch-sub { margin:0; opacity:.9; font-size:.85rem; }
+.tag { background:rgba(255,255,255,.25); border-radius:999px; padding:2px 9px; font-size:.7rem; font-weight:700; }
+.prose { padding: 0 16px; }
+.prose h3 { font-size:1.05rem; color:#1e3a8a; margin:1.8rem 0 .6rem; padding-top:1rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { border-top:none; padding-top:0; margin-top:1rem; }
+.prose p { margin:0 0 1rem; }
+.prose ul,.prose ol { padding-left:1.4rem; margin:0 0 1rem; }
+.prose li { margin-bottom:.4rem; }
+.kv-box,.warn-box,.tip-box { padding:12px 14px; border-radius:0 8px 8px 0; margin:1.2rem 0; font-size:.94rem; }
+.kv-box { background:#eff6ff; border-left:4px solid #3b82f6; }
+.warn-box { background:#fff7ed; border-left:4px solid #f97316; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; }
+.ex-box { background:#faf5ff; border:2px dashed #7c3aed; border-radius:10px; padding:12px 14px; margin:1.2rem 0; }
+.ex-title { font-weight:700; color:#5b21b6; margin:0 0 .4rem; }
+.ex-box p:last-child { margin:0; }
+.chk-item { display:flex; gap:8px; padding:5px 0; font-size:.88rem; }
+.chk-item::before { content:"☐"; color:#f97316; flex:none; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas,Monaco,monospace; font-size:.8rem;
+  line-height:1.65; border-radius:8px; padding:12px 14px; overflow-x:auto; margin:1.1rem 0; }
+.kw-panel { margin:16px; padding:12px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; }
+.kw-title { font-weight:700; font-size:.85rem; color:#1e3a8a; margin:0 0 8px; }
+.kw { font-size:.8rem; color:#64748b; margin-bottom:7px; }
+.kw-term { display:block; font-weight:700; color:#334155; }
+.quiz-wrap { margin:16px; padding-top:12px; border-top:2px solid #e5e7eb; }
+.quiz-title { font-weight:700; color:#6b21a8; margin:0 0 10px; }
+.quiz { margin-bottom:16px; }
+.quiz-q { font-weight:600; margin:0 0 6px; }
+.quiz-opts { list-style:none; padding:0; margin:0 0 6px; }
+.quiz-opts li { border:2px solid #e5e7eb; border-radius:8px; padding:7px 12px; margin:5px 0; font-size:.9rem; }
+details { border:1px solid #e5e7eb; border-radius:8px; padding:8px 12px; background:#fafafa; }
+summary { cursor:pointer; font-weight:600; font-size:.88rem; color:#4b5563; }
+details[open] summary { margin-bottom:8px; }
+details p { margin:.4rem 0; font-size:.88rem; }
+.quiz-a { color:#065f46; }
+.teaching { margin:16px 16px 0; background:#fffbeb; border-color:#fde68a; }
+.teaching summary { color:#92400e; }
+.to-top { text-align:right; margin:12px 16px 0; }
+.to-top a { font-size:.8rem; color:#9ca3af; text-decoration:none; }
+@media (prefers-color-scheme: dark) {
+  body { background:#0f172a; color:#e2e8f0; }
+  #toc,.chapter { background:#1e293b; border-color:#334155; }
+  #toc li a { color:#e2e8f0; border-color:#334155; }
+  .prose h3 { color:#93c5fd; border-color:#334155; }
+  .kv-box { background:#1e3a5f; } .warn-box { background:#42230c; } .tip-box { background:#0d3b2e; }
+  .ex-box { background:#2e1065; } .ex-title { color:#c4b5fd; }
+  .kw-panel { background:#0f172a; border-color:#334155; } .kw-term { color:#cbd5e1; }
+  .quiz-opts li { border-color:#334155; }
+  details { background:#0f172a; border-color:#334155; } summary { color:#cbd5e1; }
+  .teaching { background:#422006; border-color:#a16207; } .teaching summary { color:#fcd34d; }
+}
+@media print {
+  .to-top,#toc { display:none; }
+  details { open: true; }
+  .chapter { page-break-before: always; border:none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <p style="font-size:.75rem;letter-spacing:.15em;opacity:.9;margin:0">🐯 WEB DEVELOPMENT PLAYBOOK</p>
+    <h1>Web開発の虎の巻</h1>
+    <p>リモート・2人・1日1時間で、Web開発を教えるためのガイド。全9章・確認問題18問。</p>
+    <div class="badges">
+      <span>👥 生徒2人</span><span>🏠 リモート</span><span>⏰ 1日1時間</span><span>🗓 目安 4〜6か月</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<nav id="toc">
+  <h2>目次</h2>
+  <ul><li><a href="#ch01"><span class="toc-n">1</span> 🏗️ HTML<span class="toc-sub">ページの骨組みを作る</span></a></li><li><a href="#ch02"><span class="toc-n">2</span> 🎨 CSS<span class="toc-sub">見た目とレイアウトを整える</span></a></li><li><a href="#ch03"><span class="toc-n">3</span> ⚡ JavaScript<span class="toc-sub">ページに動きをつける</span></a></li><li><a href="#ch04"><span class="toc-n">4</span> 🌿 Git<span class="toc-sub">コードの履歴を管理する</span></a></li><li><a href="#ch05"><span class="toc-n">5</span> 🔷 TypeScript<span class="toc-sub">型でコードを安全にする</span></a></li><li><a href="#ch06"><span class="toc-n">6</span> ⚛️ React<span class="toc-sub">画面を部品で組み立てる</span></a></li><li><a href="#ch07"><span class="toc-n">7</span> 🔌 API<span class="toc-sub">データをやり取りする窓口</span></a></li><li><a href="#ch08"><span class="toc-n">8</span> 🗄️ DB<span class="toc-sub">データの保存先を知る</span></a></li><li><a href="#ch09"><span class="toc-n">9</span> 🚀 デプロイ<span class="toc-sub">世界に公開する</span></a></li></ul>
+</nav>
+
+<section id="ch01" class="chapter">
+  <div class="ch-head core">
+    <span class="tag">第1章 · 知識</span>
+    <h2>🏗️ HTML</h2>
+    <p class="ch-sub">ページの骨組みを作る</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（2コマ）</summary>
+  <p><strong>ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。</p>
+  <p><strong>つまずき:</strong> 見た目を整えたがるので「それは次章」と切る。閉じタグ忘れは自分で気付かせる。</p>
+  <p><strong>問いかけ:</strong> 「なぜここは div ではなく h1 にした？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、基本のタグでページの骨組みを作れるようになる。</div>
+<h3>HTMLとは何か</h3>
+<p>HTML（HyperText Markup Language）は、Webページの<strong>構造（骨組み）</strong>を記述する言語です。「ここは見出し」「ここは段落」「ここはリスト」と、内容に意味を与えていきます。色や配置などの見た目は次章のCSSが担当します。</p>
+<h3>要素とタグ</h3>
+<p>HTMLは「要素」の積み重ねでできています。要素は開始タグと終了タグで内容を挟んで書きます。</p>
+<pre class="code-block">&lt;h1&gt;今日の献立&lt;/h1&gt;
+&lt;p&gt;今日はカレーを作ります。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;じゃがいも&lt;/li&gt;
+  &lt;li&gt;にんじん&lt;/li&gt;
+  &lt;li&gt;玉ねぎ&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href="https://example.com"&gt;レシピを見る&lt;/a&gt;</pre>
+<h3>まず覚えるタグ</h3>
+<ul><li><strong>h1〜h6</strong> … 見出し（h1が最上位）</li><li><strong>p</strong> … 段落</li><li><strong>ul / ol / li</strong> … リスト（黒丸 / 番号つき）</li><li><strong>a</strong> … リンク（href属性で行き先を指定）</li><li><strong>img</strong> … 画像（src属性でファイルを指定）</li><li><strong>div / span</strong> … 意味を持たないグループ化の入れ物</li></ul>
+<div class="tip-box"><strong>💡 コツ:</strong> ブラウザで右クリック →「検証」（開発者ツール）を開くと、どんなページもHTMLの構造を見られます。好きなサイトの骨組みを覗いてみるのが一番の教材です。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>自己紹介ページを作ってみましょう。名前（h1）・趣味のリスト（ul）・好きなサイトへのリンク（a）を入れて、ブラウザで開いて確認します。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">HTMLの役割は「構造」だと説明できる</div><div class="chk-item">開始タグ・終了タグ・属性の書き方が分かる</div><div class="chk-item">開発者ツールで他のページの構造を見たことがある</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">HTML</span>Webページの構造（骨組み）を記述する言語</div><div class="kw"><span class="kw-term">タグ</span>要素の始まりと終わりを示す目印。&lt;p&gt;〜&lt;/p&gt; のように書く</div><div class="kw"><span class="kw-term">要素</span>タグで挟まれたページの構成単位。見出し・段落など</div><div class="kw"><span class="kw-term">属性</span>要素に追加する情報。href や src など</div><div class="kw"><span class="kw-term">開発者ツール</span>ブラウザ内蔵の解析ツール。右クリック→検証で開く</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. HTMLの役割として最も適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>ページの構造（骨組み）を記述する</li><li>ページの見た目を装飾する</li><li>ページに動きをつける</li><li>データベースを操作する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>ページの構造（骨組み）を記述する</strong></p>
+    <p>正しくは「ページの構造（骨組み）を記述する」。構造はHTML・見た目はCSS・動きはJavaScriptと役割が分かれている。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. ページ内で最上位の見出しを表すHTMLタグはどれか。</p>
+  <ul class="quiz-opts"><li>p</li><li>div</li><li>span</li><li>h1</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>h1</strong></p>
+    <p>見出しはh1〜h6で表しh1が最上位。pは段落・div/spanは意味を持たないグループ化の入れ物である。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch02" class="chapter">
+  <div class="ch-head core">
+    <span class="tag">第2章 · 知識</span>
+    <h2>🎨 CSS</h2>
+    <p class="ch-sub">見た目とレイアウトを整える</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（3コマ）</summary>
+  <p><strong>ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</p>
+  <p><strong>つまずき:</strong> レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。</p>
+  <p><strong>問いかけ:</strong> 「この余白は padding と margin どっちが正しい？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、Flexboxで簡単なレイアウトを組めるようになる。</div>
+<h3>CSSとは何か</h3>
+<p>CSS（Cascading Style Sheets）は、HTMLで作った骨組みに<strong>見た目（色・大きさ・配置）</strong>を与える言語です。「どの要素に」「どんなスタイルを」の2つをセットで書きます。</p>
+<pre class="code-block">/* セレクタ { プロパティ: 値; } */
+h1 {
+  color: #1e3a8a;
+  font-size: 2rem;
+}
+.card {          /* class="card" の要素に当たる */
+  padding: 16px;
+  border-radius: 8px;
+}</pre>
+<h3>セレクタの基本</h3>
+<ul><li><strong>h1</strong> … タグ名で選ぶ</li><li><strong>.card</strong> … class属性で選ぶ（先頭にドット）。最もよく使う</li><li><strong>#header</strong> … id属性で選ぶ（先頭にシャープ）</li></ul>
+<h3>ボックスモデル</h3>
+<p>すべての要素は箱（ボックス）として描画されます。内側から <strong>content → padding → border → margin</strong> の層になっていて、レイアウト崩れの原因の大半はここの理解不足です。</p>
+<h3>Flexboxで並べる</h3>
+<pre class="code-block">.row {
+  display: flex;        /* 子要素を横に並べる */
+  gap: 12px;            /* 要素間の隙間 */
+  justify-content: center;  /* 水平方向の揃え */
+  align-items: center;      /* 垂直方向の揃え */
+}</pre>
+<div class="tip-box"><strong>💡 コツ:</strong> 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>前章の自己紹介ページにCSSを当ててみましょう。見出しに色を付け、カード風の枠（padding + border-radius + 影）を作り、Flexboxで2枚並べます。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">セレクタとプロパティの書き方が分かる</div><div class="chk-item">ボックスモデルの4層を言える</div><div class="chk-item">display:flex で要素を横に並べられる</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">CSS</span>HTMLに見た目（色・大きさ・配置）を与える言語</div><div class="kw"><span class="kw-term">セレクタ</span>スタイルを当てる対象を選ぶ書き方。.card や h1 など</div><div class="kw"><span class="kw-term">ボックスモデル</span>content→padding→border→margin の4層構造</div><div class="kw"><span class="kw-term">Flexbox</span>要素を柔軟に並べるレイアウト機能。display:flex</div><div class="kw"><span class="kw-term">開発者ツール</span>要素のボックスモデルを色付きで確認できる</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. class属性が「card」の要素を選ぶCSSセレクタはどれか。</p>
+  <ul class="quiz-opts"><li>.card</li><li>#card</li><li>card()</li><li>@card</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>.card</strong></p>
+    <p>classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. 子要素を横一列に並べたいとき親要素に指定するCSSはどれか。</p>
+  <ul class="quiz-opts"><li>color: red;</li><li>font-size: 2rem;</li><li>content: row;</li><li>display: flex;</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>display: flex;</strong></p>
+    <p>「display: flex;」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch03" class="chapter">
+  <div class="ch-head core">
+    <span class="tag">第3章 · 知識</span>
+    <h2>⚡ JavaScript</h2>
+    <p class="ch-sub">ページに動きをつける</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（6コマ）</summary>
+  <p><strong>ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</p>
+  <p><strong>つまずき:</strong> 詰まる人が一番多い。ここで30分ルールを本格的に運用開始する。答えを言わずコンソールを見せる。</p>
+  <p><strong>問いかけ:</strong> 「console.log を入れるならどこ？なぜそこ？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> 変数・条件分岐・繰り返し・関数・配列を使えるようになり、ボタンクリックでページが変わる体験をする。</div>
+<h3>JavaScriptとは何か</h3>
+<p>JavaScriptは、ページに<strong>動き（ロジック）</strong>を与えるプログラミング言語です。「ボタンを押したら表示を変える」「入力内容をチェックする」など、ユーザーの操作に反応する部分を担当します。</p>
+<h3>基本文法</h3>
+<pre class="code-block">const name = '田中';            // 変数（再代入しないなら const）
+let count = 0;                  // 再代入するなら let
+
+if (count &gt; 10) {               // 条件分岐
+  console.log('多いですね');
+} else {
+  console.log('まだ少ない');
+}
+
+const fruits = ['りんご', 'みかん', 'バナナ'];  // 配列
+for (const f of fruits) {       // 繰り返し
+  console.log(f);
+}
+
+function greet(who) {           // 関数
+  return 'こんにちは、' + who + 'さん';
+}</pre>
+<h3>DOM操作 — HTMLとつなぐ</h3>
+<pre class="code-block">const btn = document.querySelector('#myButton');
+btn.addEventListener('click', () =&gt; {
+  document.querySelector('#message').textContent = '押されました！';
+});</pre>
+<div class="warn-box"><strong>⚠️ ここが本番:</strong> JavaScriptからは<strong>必ずエラーに出会います</strong>。エラーが出たら「エラー文を読む → 原因の仮説を立てる → 調べる → 修正する」。この流れを毎回意識してください。エラー文はコンソール（開発者ツールのConsoleタブ）に出ます。</div>
+<div class="tip-box"><strong>💡 コツ:</strong> 困ったらまず <strong>console.log()</strong> で変数の中身を表示して確認する癖をつけましょう。「思っていた値と違う」がバグの正体であることがほとんどです。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>カウンターを作ってみましょう。「+1」ボタンを押すと数字が増え、10を超えたら「よく頑張りました」と表示します。（変数・イベント・条件分岐の総合練習）</p></div>
+<h3>チェックリスト</h3><div class="chk-item">const と let の使い分けが分かる</div><div class="chk-item">if / for / 関数 / 配列を組み合わせて書ける</div><div class="chk-item">エラーが出たらコンソールを読む習慣がある</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">変数</span>値に名前を付けて保存する。const（再代入不可）と let</div><div class="kw"><span class="kw-term">条件分岐</span>if / else で条件に応じて処理を切り替える</div><div class="kw"><span class="kw-term">配列</span>複数の値を順番に持つ入れ物。length で要素数</div><div class="kw"><span class="kw-term">DOM操作</span>JavaScriptからHTML要素を取得・変更すること</div><div class="kw"><span class="kw-term">console.log</span>変数の中身をコンソールに表示するデバッグの基本</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. JavaScriptの主な役割はどれか。</p>
+  <ul class="quiz-opts"><li>ページに動き（ロジック）をつける</li><li>ページの構造を定義する</li><li>ページの配色を決める</li><li>サーバーの電源を管理する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>ページに動き（ロジック）をつける</strong></p>
+    <p>構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. JavaScriptで配列fruitsの要素数を調べる書き方はどれか。</p>
+  <ul class="quiz-opts"><li>fruits.size()</li><li>count(fruits)</li><li>fruits.total</li><li>fruits.length</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>fruits.length</strong></p>
+    <p>JavaScriptの配列はlengthプロパティで要素数を取得する。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch04" class="chapter">
+  <div class="ch-head user">
+    <span class="tag">第4章 · 実践</span>
+    <h2>🌿 Git</h2>
+    <p class="ch-sub">コードの履歴を管理する</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（2コマ）</summary>
+  <p><strong>ねらい:</strong> 5コマンドだけ。ここから先の演習は全部Gitで履歴を残す運用に切り替える。</p>
+  <p><strong>つまずき:</strong> branch や rebase を聞かれても後回しでよいと伝える。秘密情報のcommitだけは強く注意する。</p>
+  <p><strong>問いかけ:</strong> 「このcommitメッセージで、3か月後の自分に何をしたか伝わる？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> 「保存のたびに履歴が残る」感覚を身につけ、5つの基本コマンドで自分のコードをGitHubに置けるようになる。</div>
+<h3>なぜ今Gitを学ぶのか</h3>
+<p>Gitはコードの<strong>変更履歴を記録する</strong>道具です。TypeScriptやReactより先に学ぶのは、実際の開発では<strong>早い段階からGitを使う習慣</strong>をつけたほうが自然だからです。ここから先の演習はすべてGitで履歴を残しながら進めます。</p>
+<h3>まず覚える5コマンド</h3>
+<pre class="code-block">git clone &lt;URL&gt;     # リモートのリポジトリを手元に複製する
+git add .           # 変更をステージに載せる（コミット対象にする）
+git commit -m "メッセージ"   # 変更を履歴として記録する
+git push            # 手元の履歴をGitHubに送る
+git pull            # GitHubの最新を手元に取り込む</pre>
+<p>日々の流れは「書く → add → commit → push」の繰り返しです。<strong>この5つだけで十分</strong>。branchやrebaseは後回しで構いません（チーム開発に入る段階で学びます）。</p>
+<div class="tip-box"><strong>💡 コツ:</strong> commitメッセージは「何をしたか」を短く書きます（例:「カウンター機能を追加」）。1日の終わりにまとめて1回ではなく、<strong>キリのいい単位でこまめに</strong>commitするのがおすすめです。</div>
+<div class="warn-box"><strong>⚠️ 注意:</strong> パスワードやAPIキーを書いたファイルをcommitしないこと。一度pushした履歴は簡単には消せません。秘密情報は .gitignore で除外します。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>GitHubにリポジトリを作り、前章までの自己紹介ページとカウンターをpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">clone / add / commit / push / pull の役割を言える</div><div class="chk-item">自分のコードをGitHubにpushできる</div><div class="chk-item">こまめにcommitする習慣がついている</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">リポジトリ</span>コードと履歴をまとめて管理する保管庫</div><div class="kw"><span class="kw-term">commit</span>変更を履歴として記録する操作</div><div class="kw"><span class="kw-term">push / pull</span>手元の履歴をGitHubへ送る / 最新を取り込む</div><div class="kw"><span class="kw-term">GitHub</span>リポジトリをネット上に置いて共有するサービス</div><div class="kw"><span class="kw-term">.gitignore</span>履歴に含めないファイルを指定する設定</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. git commitが行うことはどれか。</p>
+  <ul class="quiz-opts"><li>変更を履歴として記録する</li><li>ファイルを削除する</li><li>コードを自動で修正する</li><li>サーバーにアプリを公開する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>変更を履歴として記録する</strong></p>
+    <p>commitは「この時点の変更」を履歴として記録する操作でありpushでその履歴をGitHubに送る。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. 学習の最初の段階で覚えるべきGitコマンドの組み合わせはどれか。</p>
+  <ul class="quiz-opts"><li>rebase・cherry-pick・stash</li><li>merge・tag・bisect</li><li>reset・revert・reflog</li><li>clone・add・commit・push・pull</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>clone・add・commit・push・pull</strong></p>
+    <p>最初は基本5コマンド（clone・add・commit・push・pull）で十分でありbranchやrebaseはチーム開発に入る段階で学べばよい。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch05" class="chapter">
+  <div class="ch-head core">
+    <span class="tag">第5章 · 知識</span>
+    <h2>🔷 TypeScript</h2>
+    <p class="ch-sub">型でコードを安全にする</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（4コマ）</summary>
+  <p><strong>ねらい:</strong> 型のありがたみを体感させる。JSで書いたコードを型付きに直す作業が一番効く。</p>
+  <p><strong>つまずき:</strong> 型エラーの文面に怯む。長いエラーも「何が」「どの型と」合わないかだけ読めばよいと教える。</p>
+  <p><strong>問いかけ:</strong> 「この関数、引数に何が来たら壊れる？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。</div>
+<h3>TypeScriptとは何か</h3>
+<p>TypeScriptは、JavaScriptに<strong>型</strong>を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。</p>
+<h3>型注釈の基本</h3>
+<pre class="code-block">let count: number = 0;
+let name: string = '田中';
+let done: boolean = false;
+let tags: string[] = ['html', 'css'];
+
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+add(1, 2);      // OK
+add('1', '2');  // ← 実行する前にエラーで教えてくれる！</pre>
+<h3>interface — データの形を決める</h3>
+<pre class="code-block">interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+function showUser(user: User) {
+  console.log(user.name);
+  console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
+}</pre>
+<div class="kv-box"><strong>📌 なぜ型が大事か:</strong> JavaScriptだけだと、間違いは<strong>実行して初めて</strong>分かります。TypeScriptなら<strong>書いた瞬間にエディタが教えてくれる</strong>。バグ探しの時間が大幅に減り、あとで学ぶReactやAPI連携でも「データの形」が明確になります。</div>
+<div class="tip-box"><strong>💡 コツ:</strong> VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。TypeScriptのエラー文は最初は長く感じますが「何が」「どの型と」合わないかが必ず書いてあります。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>カウンターのコードをTypeScriptに書き換えてみましょう。さらに User interface を定義して、ユーザーの配列から名前一覧を表示する関数を書きます。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">number / string / boolean / 配列の型注釈が書ける</div><div class="chk-item">interfaceでデータの形を定義できる</div><div class="chk-item">エディタの型エラーを読んで直せる</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">TypeScript</span>JavaScriptに型を追加した言語。JSに変換されて動く</div><div class="kw"><span class="kw-term">型注釈</span>変数や引数に「: number」のように型を書くこと</div><div class="kw"><span class="kw-term">interface</span>オブジェクト（データ）の形を定義する仕組み</div><div class="kw"><span class="kw-term">コンパイル</span>TypeScriptをJavaScriptに変換すること</div><div class="kw"><span class="kw-term">型エラー</span>型が合わないときにエディタが出す警告。実行前に気付ける</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. TypeScriptの説明として正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>JavaScriptに型を追加した言語でJavaScriptに変換されて動く</li><li>JavaScriptとは無関係の全く新しい言語</li><li>HTMLの新しいバージョン</li><li>データベース専用の言語</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>JavaScriptに型を追加した言語でJavaScriptに変換されて動く</strong></p>
+    <p>TypeScriptはJavaScriptの上位互換でありコンパイルするとJavaScriptになるため既存の知識がそのまま活きる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. 型注釈がある一番の利点はどれか。</p>
+  <ul class="quiz-opts"><li>コードの実行速度が2倍になる</li><li>デザインが自動で良くなる</li><li>サーバー代が安くなる</li><li>実行する前に間違いに気付ける</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>実行する前に間違いに気付ける</strong></p>
+    <p>型があるとエディタが書いた瞬間に間違いを指摘してくれるため実行して初めてバグに気付くことが減る。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch06" class="chapter">
+  <div class="ch-head user">
+    <span class="tag">第6章 · 実践</span>
+    <h2>⚛️ React</h2>
+    <p class="ch-sub">画面を部品で組み立てる</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（8コマ）</summary>
+  <p><strong>ねらい:</strong> 「画面=stateの反映結果」の理解。TODOアプリを完成させる。</p>
+  <p><strong>つまずき:</strong> DOMを直接触ろうとしたら止める。まず画面を部品に分解させてから書き始めさせる。</p>
+  <p><strong>問いかけ:</strong> 「この画面はどんな部品に分けられる？その部品に何を渡す？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。</div>
+<h3>Reactとは何か</h3>
+<p>Reactは、画面を<strong>コンポーネント（部品）</strong>として分割して組み立てるライブラリです。「ボタン」「カード」「一覧」を部品として作り、組み合わせて画面にします。部品は再利用できるので、大きなアプリでも整理された状態を保てます。</p>
+<h3>コンポーネントとJSX</h3>
+<pre class="code-block">function Hello(props) {
+  return &lt;h1&gt;こんにちは、{props.name}さん&lt;/h1&gt;;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Hello name="田中" /&gt;
+      &lt;Hello name="佐藤" /&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+<p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。</p>
+<h3>state — 画面が変わる仕組み</h3>
+<pre class="code-block">function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+      {count} 回押しました
+    &lt;/button&gt;
+  );
+}</pre>
+<div class="kv-box"><strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。</div>
+<div class="tip-box"><strong>💡 コツ:</strong> 迷ったら「この画面はどんな部品に分けられるか？」から考えます。ヘッダー・一覧・一覧の1行・ボタン…と分解してから作り始めると設計が楽になります。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>TODOアプリを作ってみましょう。入力欄に文字を入れて追加ボタンを押すと一覧に増え、クリックで完了線が引かれる。（state・props・イベントの総合練習）</p></div>
+<h3>チェックリスト</h3><div class="chk-item">コンポーネント・props・stateの役割を説明できる</div><div class="chk-item">useStateで画面が変わるアプリを作れる</div><div class="chk-item">画面を部品に分解してから作り始められる</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">コンポーネント</span>画面を構成する再利用可能な部品</div><div class="kw"><span class="kw-term">JSX</span>HTMLに似た書き方でコンポーネントの見た目を書く記法</div><div class="kw"><span class="kw-term">props</span>親から部品に渡すデータ。渡す値で表示が変わる</div><div class="kw"><span class="kw-term">state</span>部品が持つ状態。変わると画面が自動で再描画される</div><div class="kw"><span class="kw-term">useState</span>stateを作るReactの関数（フック）</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. Reactの「コンポーネント」とは何か。</p>
+  <ul class="quiz-opts"><li>画面を構成する再利用可能な部品</li><li>データベースのテーブル</li><li>CSSのアニメーション機能</li><li>サーバーの設定ファイル</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>画面を構成する再利用可能な部品</strong></p>
+    <p>Reactでは画面をコンポーネント（部品）に分割して作る。部品は再利用できpropsで渡すデータを変えれば表示も変わる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. ReactのuseStateの役割はどれか。</p>
+  <ul class="quiz-opts"><li>外部のCSSを読み込む</li><li>HTMLファイルを圧縮する</li><li>Gitのcommitを自動化する</li><li>状態を保持し変更されると画面を再描画する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>状態を保持し変更されると画面を再描画する</strong></p>
+    <p>stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch07" class="chapter">
+  <div class="ch-head user">
+    <span class="tag">第7章 · 実践</span>
+    <h2>🔌 API</h2>
+    <p class="ch-sub">データをやり取りする窓口</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（6コマ）</summary>
+  <p><strong>ねらい:</strong> フロントとサーバーが分かれていること、その間をHTTPとJSONが流れていることの実感。</p>
+  <p><strong>つまずき:</strong> 通信が失敗したとき想像で直そうとする。必ずNetworkタブを開かせて事実を見せる。</p>
+  <p><strong>問いかけ:</strong> 「いまリクエストは飛んでる？何が返ってきた？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> フロントエンドとサーバーがHTTPとJSONでやり取りする仕組みを理解し、fetchでAPIを呼び、簡単なAPIを自作できるようになる。</div>
+<h3>APIとは何か</h3>
+<p>API（Application Programming Interface）は、プログラム同士が<strong>データをやり取りする窓口</strong>です。Reactで作った画面（フロントエンド）は、APIを通じてサーバーからデータをもらい、サーバーにデータを送ります。</p>
+<pre class="code-block">[ブラウザ / React]  ←── HTTP + JSON ──→  [サーバー / API]
+
+GET  /api/todos      … 一覧が欲しい
+POST /api/todos      … 新しく追加したい
+PUT  /api/todos/1    … 1番を更新したい
+DELETE /api/todos/1  … 1番を削除したい</pre>
+<h3>JSONとfetch</h3>
+<p>やり取りするデータは<strong>JSON</strong>という形式で書きます。JavaScriptからAPIを呼ぶには fetch を使います。</p>
+<pre class="code-block">// APIからデータを取得して表示する
+const res = await fetch('/api/todos');
+const todos = await res.json();
+// → [{ "id": 1, "title": "牛乳を買う", "done": false }, ...]
+
+// APIにデータを送る
+await fetch('/api/todos', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ title: '掃除をする' }),
+});</pre>
+<h3>自分でAPIを作る（Node.js）</h3>
+<pre class="code-block">import express from 'express';
+const app = express();
+app.use(express.json());
+
+const todos = [{ id: 1, title: '牛乳を買う', done: false }];
+
+app.get('/api/todos', (req, res) =&gt; {
+  res.json(todos);
+});
+
+app.listen(3000);</pre>
+<div class="tip-box"><strong>💡 コツ:</strong> 開発者ツールの<strong>Networkタブ</strong>を開くと、ページが実際にどんなAPIを呼んでいるか全部見えます。うまく動かないときは「リクエストは飛んだか」「何が返ってきたか」をここで確認します。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>前章のTODOアプリを進化させましょう。TODOの一覧をAPI（自作のNode.jsサーバー）から取得し、追加もAPI経由にします。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">GET / POST / PUT / DELETE の使い分けが分かる</div><div class="chk-item">fetchでAPIを呼んで結果を画面に表示できる</div><div class="chk-item">Networkタブで通信内容を確認できる</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">API</span>プログラム同士がデータをやり取りする窓口</div><div class="kw"><span class="kw-term">HTTPメソッド</span>GET=取得 / POST=追加 / PUT=更新 / DELETE=削除</div><div class="kw"><span class="kw-term">JSON</span>データ交換の標準的なテキスト形式</div><div class="kw"><span class="kw-term">fetch</span>JavaScriptからAPIを呼び出す関数</div><div class="kw"><span class="kw-term">エンドポイント</span>APIの窓口となるURL。/api/todos など</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. APIの役割として最も適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>プログラム同士がデータをやり取りする窓口</li><li>画像を圧縮する機能</li><li>CSSを自動生成する機能</li><li>パソコンの電源を管理する仕組み</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>プログラム同士がデータをやり取りする窓口</strong></p>
+    <p>フロントエンドはAPIという窓口を通じてサーバーとデータをやり取りする。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. JSONの説明として正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>画像ファイルの形式</li><li>JavaScriptを高速化する機能</li><li>データベース製品の名前</li><li>データをやり取りするためのテキスト形式</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>データをやり取りするためのテキスト形式</strong></p>
+    <p>JSONはキーと値の組でデータを表すテキスト形式でありAPIのやり取りの標準として使われている。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch08" class="chapter">
+  <div class="ch-head core">
+    <span class="tag">第8章 · 知識</span>
+    <h2>🗄️ DB</h2>
+    <p class="ch-sub">データの保存先を知る</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（5コマ）</summary>
+  <p><strong>ねらい:</strong> React→API→DB の3層が描けること。SQLで仕組みを見せてからORMに進む。</p>
+  <p><strong>つまずき:</strong> いきなりORMに行きたがるが、まず生SQLを触らせる。SQLインジェクションは必ず触れる。</p>
+  <p><strong>問いかけ:</strong> 「もしデータが100万件あったら、このクエリはどうなる？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> データベースの役割とSQLの基本4操作を理解し、「APIがアプリとDBの橋渡しをしている」全体像をつかむ。</div>
+<h3>なぜデータベースが要るのか</h3>
+<p>前章のAPIは、データを変数（メモリ）に持っていたため、サーバーを再起動すると消えてしまいます。データを<strong>永続的に保存する</strong>場所がデータベース（DB）です。</p>
+<pre class="code-block">[React] ←→ [API / Node.js] ←→ [DB / PostgreSQLなど]
+ 画面        橋渡し・入り口       データの保存先</pre>
+<p>この3層の絵が、Webアプリの基本形です。<strong>APIがアプリとDBの橋渡し</strong>をしている、と理解できればこの章の半分は達成です。</p>
+<h3>テーブルとSQL</h3>
+<p>リレーショナルDBでは、データをExcelのような<strong>テーブル（表）</strong>で管理します。操作にはSQLという言語を使います。</p>
+<pre class="code-block">-- 取得（Read）
+SELECT * FROM todos WHERE done = false;
+
+-- 追加（Create）
+INSERT INTO todos (title, done) VALUES ('牛乳を買う', false);
+
+-- 更新（Update）
+UPDATE todos SET done = true WHERE id = 1;
+
+-- 削除（Delete）
+DELETE FROM todos WHERE id = 1;</pre>
+<p>この4操作をまとめて<strong>CRUD</strong>（Create / Read / Update / Delete）と呼びます。APIのGET / POST / PUT / DELETEときれいに対応します。</p>
+<h3>ORM — コードからDBを扱う</h3>
+<pre class="code-block">// ORM（例: Prisma）を使うとSQLをコードで書ける
+const todos = await prisma.todo.findMany({ where: { done: false } });
+await prisma.todo.create({ data: { title: '牛乳を買う' } });</pre>
+<p>ORMを使うとTypeScriptの型とDBがつながり、安全にデータを扱えます。まずはSQLで仕組みを理解してからORMに進むのがおすすめです。</p>
+<div class="warn-box"><strong>⚠️ 注意:</strong> ユーザーの入力をそのままSQL文字列に埋め込むと、SQLインジェクションという攻撃を受けます。必ずプレースホルダやORMを使いましょう。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習</p><p>TODOアプリのデータをDBに保存しましょう。SQLiteやPostgreSQLにtodosテーブルを作り、APIの各エンドポイントをDB読み書きに置き換えます。再起動してもデータが残ることを確認します。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">React → API → DB の3層の絵を描ける</div><div class="chk-item">SELECT / INSERT / UPDATE / DELETE を書ける</div><div class="chk-item">CRUDとHTTPメソッドの対応が分かる</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">データベース（DB）</span>データを永続的に保存する場所</div><div class="kw"><span class="kw-term">テーブル</span>Excelの表のようにデータを行と列で管理する単位</div><div class="kw"><span class="kw-term">SQL</span>DBを操作する言語。SELECT / INSERT / UPDATE / DELETE</div><div class="kw"><span class="kw-term">CRUD</span>Create・Read・Update・Delete の4基本操作</div><div class="kw"><span class="kw-term">ORM</span>SQLをコードで書ける道具。型とDBがつながる</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. SQLのSELECT文が行うことはどれか。</p>
+  <ul class="quiz-opts"><li>テーブルからデータを取得する</li><li>テーブルにデータを追加する</li><li>テーブルを削除する</li><li>サーバーを再起動する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>テーブルからデータを取得する</strong></p>
+    <p>SELECTは取得・INSERTは追加・UPDATEは更新・DELETEは削除であり4つをまとめてCRUDと呼ぶ。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. Webアプリの3層構成におけるAPIの位置づけはどれか。</p>
+  <ul class="quiz-opts"><li>DBの中に保存されるデータの一種</li><li>画面のデザインを決める層</li><li>インターネット回線そのもの</li><li>画面（フロントエンド）とDBの橋渡しをする</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>画面（フロントエンド）とDBの橋渡しをする</strong></p>
+    <p>React（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+<section id="ch09" class="chapter">
+  <div class="ch-head user">
+    <span class="tag">第9章 · 実践</span>
+    <h2>🚀 デプロイ</h2>
+    <p class="ch-sub">世界に公開する</p>
+  </div>
+  <details class="teaching"><summary>👤 講師用メモ（3コマ）</summary>
+  <p><strong>ねらい:</strong> 公開URLを人に渡すところまで。「動くものを世界に出した」経験が次の燃料になる。</p>
+  <p><strong>つまずき:</strong> 公開前に環境変数・秘密情報のチェックを一緒にやる。ここは講師が必ず確認する。</p>
+  <p><strong>問いかけ:</strong> 「このリポジトリ、いま公開して困るものは入ってない？」</p>
+</details>
+  <div class="prose">
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> 自分の作ったWebアプリをインターネットに公開し、「自分でWebサービスを作った」を実感する。</div>
+<h3>デプロイとは何か</h3>
+<p>デプロイとは、手元で動いているアプリを<strong>インターネット上のサーバーに配置して、誰でも使える状態にする</strong>ことです。ここまで学んだ全部の総仕上げです。</p>
+<pre class="code-block">コードを書く
+   ↓
+GitHubへ push
+   ↓
+ホスティングサービスが自動でビルド・公開
+   ↓
+https://あなたのアプリ.vercel.app  ← 世界中からアクセスできる</pre>
+<h3>今どきのデプロイはGit連携</h3>
+<p>VercelやNetlify、Render などのホスティングサービスは、<strong>GitHubのリポジトリを連携するだけ</strong>で、pushのたびに自動で最新版を公開してくれます。第4章で身につけたGitの習慣がここで直接活きます。</p>
+<ul><li>フロントエンド（React）… Vercel / Netlify などが定番</li><li>API + DB … Render / Railway など、DBも一緒に提供するサービスが手軽</li></ul>
+<div class="warn-box"><strong>⚠️ 公開前チェック:</strong> APIキーやパスワードを環境変数にしたか。誰でも触れる状態になるので、秘密情報がコードに残っていないか必ず確認します。</div>
+<div class="tip-box"><strong>💡 なぜデプロイが大事か:</strong> 公開URLを人に送って使ってもらえると、学習のモチベーションが一気に変わります。「動くものを世界に出した」経験が、次の学習の最大の燃料になります。</div>
+<div class="ex-box"><p class="ex-title">✏️ 演習（卒業制作）</p><p>TODOアプリ（React + API + DB）をデプロイして、公開URLをもう1人の学習仲間に送って使ってもらいましょう。感想をもらって1つ改善したら卒業です。</p></div>
+<h3>チェックリスト</h3><div class="chk-item">デプロイの意味を説明できる</div><div class="chk-item">push → 自動公開の流れを体験した</div><div class="chk-item">公開URLを人に共有して使ってもらった</div>
+  </div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">デプロイ</span>アプリを公開して誰でも使える状態にすること</div><div class="kw"><span class="kw-term">ホスティング</span>アプリを動かすサーバーを貸してくれるサービス</div><div class="kw"><span class="kw-term">Vercel / Netlify</span>GitHub連携でフロントを自動公開する定番サービス</div><div class="kw"><span class="kw-term">環境変数</span>APIキーなど秘密の設定をコード外に置く仕組み</div><div class="kw"><span class="kw-term">自動デプロイ</span>pushのたびに最新版が自動で公開される仕組み</div></div>
+  <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
+  <p class="quiz-q">Q1. 「デプロイ」の意味として正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>アプリを公開して誰でも使える状態にすること</li><li>コードを削除すること</li><li>デザインを修正すること</li><li>パソコンを初期化すること</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>アプリを公開して誰でも使える状態にすること</strong></p>
+    <p>デプロイは作ったアプリをサーバーに配置して公開することであり学習の総仕上げにあたる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q2. 今どきの典型的なWebアプリ公開の流れはどれか。</p>
+  <ul class="quiz-opts"><li>USBメモリでサーバー室に運ぶ</li><li>コードを印刷して郵送する</li><li>HTMLをメールで全員に送る</li><li>GitHubへpushするとホスティングサービスが自動で公開する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>GitHubへpushするとホスティングサービスが自動で公開する</strong></p>
+    <p>VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。</p>
+  </details>
+</div></div>
+  <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
+</section>
+
+</div>
+</body>
+</html>

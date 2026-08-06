@@ -62,10 +62,16 @@ git commit && git push
 
 ### スマホで確認する
 
-**公開版を見る**（push 済みの内容）
-[https://sasakiyusuke2017015.github.io/cot/](https://sasakiyusuke2017015.github.io/cot/) を開くだけ。
+用途に応じて 3 通り。
 
-**push 前の手元の内容を見る**
+**1. 公開版を開く**（push 済みの内容・いちばん手軽）
+[https://sasakiyusuke2017015.github.io/cot/](https://sasakiyusuke2017015.github.io/cot/)
+
+**2. ファイルを送る**（サーバも通信も不要）
+`output/toranomaki-all.html` は**全 9 章 + 講師用メモ + 確認問題を 1 ファイルにまとめた版**（53KB・外部依存なし）。
+メールに添付するかクラウド経由でスマホに送れば、そのまま読める。オフラインでも見られる。
+
+**3. push 前の手元の内容を見る**
 
 ```bash
 npm run preview
@@ -82,7 +88,11 @@ input/          著者が書く YAML（唯一の元データ）
   questions/    chNN.yaml（問題）
 scripts/        YAML → HTML / CSV の変換
 validators/     生成物の検証
-output/         生成物（HTML / CSV）
+output/         生成物
+  toranomaki.html       講師用ハブ（章一覧・カンペ。公開サイトの入口）
+  toranomaki-all.html   全章を1ファイルにまとめた版（送付・オフライン用）
+  materials/web/        章ページ chNN.html
+  questions/web/        問題 CSV chNN-check.csv
 ```
 
 詳しいルールは [CLAUDE.md](CLAUDE.md) と `.claude/rules/` を参照。
