@@ -111,7 +111,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
   <div class="inner">
     <p style="font-size:.75rem;letter-spacing:.15em;opacity:.9;margin:0">🐯 WEB DEVELOPMENT PLAYBOOK — 講師用</p>
     <h1>Web開発の虎の巻</h1>
-    <p>リモート・2人・1日1時間で、Web開発を教えるためのガイド。全11章・確認問題22問。</p>
+    <p>リモート・2人・1日1時間で、Web開発を教えるためのガイド。全11章・確認問題55問。</p>
     <div class="badges">
       <span>👥 生徒2人</span><span>🏠 リモート</span><span>⏰ 1日1時間</span><span>🗓 目安 4〜6か月</span>
     </div>
@@ -138,6 +138,30 @@ details p { margin:.4rem 0; font-size:.88rem; }
 </details>
   <div class="prose">
 <div class="kv-box"><strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、意味に合ったタグを選んでページの骨組みを作れるようになる。最終的にオセロの盤面もHTMLで組みます。</div>
+<h3>はじめに — 道具をそろえる</h3>
+<p>本題に入る前に、開発に使う道具を用意します。<strong>ここは一度やれば以降ずっと使うもの</strong>なので、面倒でも最初にきちんと整えてください。必要なのは「エディタ」と「ブラウザ」の2つだけです。</p>
+<h3>① VS Code を入れる</h3>
+<p>コードを書くための専用エディタです。メモ帳でも書けますが、色分け・入力補完・エラー表示があるかどうかで学習効率がまるで変わります。<strong>現場で最も使われているエディタ</strong>でもあります。</p>
+<ol><li>`Visual Studio Code` で検索し、公式サイトからダウンロードする（無料）</li><li>インストーラを実行する。選択肢はすべて既定のままでよい</li><li>起動して、真っ黒な画面が出れば成功</li></ol>
+<p>起動したら、<strong>拡張機能</strong>を入れます。左側の四角が4つ並んだアイコン（Extensions）をクリックし、名前で検索してインストールしてください。</p>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">拡張機能</th><th class="tbl-th">何ができるか</th><th class="tbl-th">必須度</th></tr></thead><tbody><tr><td class="tbl-td">Japanese Language Pack</td><td class="tbl-td">VS Code のメニューが日本語になる</td><td class="tbl-td">好みで</td></tr><tr><td class="tbl-td">Live Server</td><td class="tbl-td"><strong>保存すると自動でブラウザが更新される</strong></td><td class="tbl-td">ほぼ必須</td></tr><tr><td class="tbl-td">HTML CSS Support</td><td class="tbl-td">HTMLの中でCSSクラス名を補完してくれる</td><td class="tbl-td">あると楽</td></tr></tbody></table></div>
+<div class="kv-box"><strong>📌 Live Server がいちばん効く:</strong> これを入れると、HTMLファイルを右クリック →「Open with Live Server」で開けます。<strong>以降はファイルを保存するだけでブラウザが自動更新される</strong>ので、「保存 → ブラウザに切り替え → 再読み込み」の繰り返しが不要になります。地味ですが学習速度がかなり変わります。</div>
+<h3>② 作業フォルダを作る</h3>
+<p>作ったファイルが散らからないよう、専用のフォルダを決めます。<strong>日本語やスペースを含まない場所</strong>にするのが無難です（後々ツールが誤動作する原因になります）。</p>
+<pre class="code-block">C:\dev\web-study\          ← ここを作業フォルダにする
+  ├─ profile.html          ← 第1章で作る
+  ├─ style.css             ← 第2章で追加
+  └─ script.js             ← 第3章で追加</pre>
+<p>フォルダを作ったら、VS Code の「ファイル → フォルダーを開く」でそのフォルダを開いてください。左側にファイル一覧が出れば準備完了です。</p>
+<div class="warn-box"><strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると
+<strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。
+
+エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。
+</div>
+<h3>③ ブラウザと開発者ツール</h3>
+<p>ブラウザは <strong>Chrome か Edge</strong> を使ってください。どちらも同じ仕組みで動いており、開発者向けの機能が充実しています。</p>
+<p>準備できたら、いま見ているこのページで <strong>F12キー</strong> を押してみてください。画面が分割されて、コードのようなものが出れば成功です。これが<strong>開発者ツール</strong>で、この先ずっと使います（詳しい使い方はこの章の後半で説明します）。</p>
+<div class="tip-box"><strong>💡 これで準備完了:</strong> 道具はこれだけです。<strong>Web開発は最初の一歩の敷居が低い</strong>のが良いところで、エディタとブラウザさえあれば始められます。Gitやサーバは必要になったときに入れます（第4章・第5章）。</div>
 <h3>そもそもWebページとは何でできているか</h3>
 <p>普段見ているWebページは、実は<strong>ただのテキストファイル</strong>です。ブラウザがそのテキストを読んで、解釈して、画面に描いています。魔法は何もありません。</p>
 <p>そのテキストは3種類の役割に分かれています。この分担がWeb開発の土台なので、最初に頭に入れてください。</p>
@@ -211,7 +235,22 @@ details p { margin:.4rem 0; font-size:.88rem; }
 &lt;h2&gt;会社概要&lt;/h2&gt;
 &lt;h2&gt;お問い合わせ&lt;/h2&gt;</pre>
 <p>意味に合ったタグを選ぶことを<strong>セマンティック</strong>なHTMLと言います。なぜ大事かというと、HTMLを読むのは人間の目だけではないからです。</p>
-<ul><li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する</li><li><strong>スクリーンリーダー</strong> … 目の不自由な人が使う読み上げソフト。見出しを辿って移動する</li><li><strong>将来の自分と仲間</strong> … 構造が意味を持っていれば、コードを読むだけで内容が分かる</li></ul>
+<ul><li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する。検索結果での見え方が変わる</li><li><strong>スクリーンリーダー</strong> … 目の不自由な人が使う読み上げソフト。「見出しだけ拾って移動」ができるのは h1〜h6 が正しく付いているページだけ</li><li><strong>あとで直す人</strong> … 下の例を見てください</li></ul>
+<p>3つ目が分かりにくいので、具体例を出します。次の2つは<strong>画面上はまったく同じに見えます</strong>。半年後にこのコードを開いて、どこを直せばいいか分かるのはどちらでしょうか。</p>
+<pre class="code-block">❌ 全部 div で書いた場合
+&lt;div class="t1"&gt;料金プラン&lt;/div&gt;
+&lt;div class="b1"&gt;
+  &lt;div class="t2"&gt;無料プラン&lt;/div&gt;
+  &lt;div class="x"&gt;月0円&lt;/div&gt;
+&lt;/div&gt;
+
+⭕ 意味のあるタグで書いた場合
+&lt;h2&gt;料金プラン&lt;/h2&gt;
+&lt;section&gt;
+  &lt;h3&gt;無料プラン&lt;/h3&gt;
+  &lt;p&gt;月0円&lt;/p&gt;
+&lt;/section&gt;</pre>
+<p>上は `t1` `b1` `x` が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
 <div class="tip-box"><strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。</div>
 <h3>なぜ「構造」と「見た目」を分けるのか</h3>
 <p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（`&lt;font&gt;` など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
@@ -248,7 +287,31 @@ details p { margin:.4rem 0; font-size:.88rem; }
   <ul class="quiz-opts"><li>p</li><li>div</li><li>span</li><li>h1</li></ul>
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>h1</strong></p>
-    <p>見出しはh1〜h6で表しh1が最上位。pは段落・div/spanは意味を持たないグループ化の入れ物である。</p>
+    <p>見出しはh1〜h6で表しh1が最上位。1ページにh1は1つが基本である。pは段落・div/spanは意味を持たないグループ化の入れ物。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. 次のうち、入れ子の閉じ方が正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>&lt;p&gt;これは&lt;strong&gt;大事です&lt;/p&gt;</li><li>&lt;strong&gt;&lt;p&gt;これは大事&lt;/strong&gt;&lt;/p&gt;</li><li>&lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;</li><li>&lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>&lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;</strong></p>
+    <p>入れ子は「後に開けたものを先に閉じる」のが原則。順番が入れ替わると表示が崩れる原因になる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. div と span の違いとして正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>divはCSSが使えるが、spanは使えない</li><li>divは前後で改行されるが、spanは文章の流れの中に収まる</li><li>divは見出し用、spanは段落用である</li><li>divは文字を大きく、spanは小さく表示する</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>divは前後で改行されるが、spanは文章の流れの中に収まる</strong></p>
+    <p>divはブロック要素で縦に積まれ、spanはインライン要素で改行されない。どちらも意味を持たない入れ物という点は同じ。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. 「文字を大きくしたいので h1 を使う」という選び方が推奨されない理由はどれか。</p>
+  <ul class="quiz-opts"><li>タグは見た目ではなく意味で選ぶべきで、文字サイズはCSSで指定するため</li><li>h1はページの先頭でしか使えない決まりがあるため</li><li>h1は表示速度が遅くなるため</li><li>h1は古い書き方で廃止予定であるため</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>タグは見た目ではなく意味で選ぶべきで、文字サイズはCSSで指定するため</strong></p>
+    <p>意味に合ったタグを選ぶことをセマンティックなHTMLと呼ぶ。検索エンジンや読み上げソフト、後からコードを読む人が構造を理解できるようになる。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
@@ -318,6 +381,30 @@ h1 {
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>display: flex;</strong></p>
     <p>「display: flex;」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. ボックスモデルにおいて、内側から外側への正しい順序はどれか。</p>
+  <ul class="quiz-opts"><li>padding → content → margin → border</li><li>border → padding → content → margin</li><li>content → padding → border → margin</li><li>content → margin → border → padding</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>content → padding → border → margin</strong></p>
+    <p>要素は箱として描画され内側からこの4層になる。レイアウト崩れの原因の多くはpaddingとmarginの取り違えである。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. CSSをHTMLに直接書かず、別ファイルに分ける主な利点はどれか。</p>
+  <ul class="quiz-opts"><li>JavaScriptが不要になる</li><li>1つのCSSファイルを複数ページで使い回せ、見た目を1か所で変えられる</li><li>ファイルサイズが必ず小さくなる</li><li>CSSの書き方が簡単になる</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>1つのCSSファイルを複数ページで使い回せ、見た目を1か所で変えられる</strong></p>
+    <p>構造と見た目を分けることで、サイト全体の見た目を1か所の修正で変更できる。HTMLに直接書くとページ数だけ同じ指定をコピーすることになる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. HTMLからCSSファイルを読み込む正しい書き方はどれか。</p>
+  <ul class="quiz-opts"><li>&lt;link rel="stylesheet" href="style.css"&gt;</li><li>&lt;script src="style.css"&gt;&lt;/script&gt;</li><li>&lt;style src="style.css"&gt;&lt;/style&gt;</li><li>&lt;css href="style.css"&gt;</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>&lt;link rel="stylesheet" href="style.css"&gt;</strong></p>
+    <p>外部CSSはlinkタグでhead内に書く。scriptタグはJavaScriptの読み込みに使うものである。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
@@ -393,6 +480,30 @@ btn.addEventListener('click', () =&gt; {
     <p class="quiz-a">正解: <strong>fruits.length</strong></p>
     <p>JavaScriptの配列はlengthプロパティで要素数を取得する。</p>
   </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. const と let の使い分けとして正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>関数の外では const、中では let を使う</li><li>どちらも同じなので好きなほうを使う</li><li>再代入しないなら const、する必要があるなら let</li><li>数値には const、文字列には let を使う</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>再代入しないなら const、する必要があるなら let</strong></p>
+    <p>まずconstで書き、再代入が必要になったときだけletに変えるのが基本。何が変化する値なのかがコードから読み取れるようになる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. ボタンがクリックされたときに処理を実行する書き方はどれか。</p>
+  <ul class="quiz-opts"><li>btn.listen('click')</li><li>btn.addEventListener('click', () =&gt; { ... })</li><li>btn.onClick = { ... }</li><li>btn.click.run(() =&gt; { ... })</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>btn.addEventListener('click', () =&gt; { ... })</strong></p>
+    <p>addEventListenerで「どのイベントが起きたとき」「何をするか」を登録する。clickのほかinputやsubmitなど様々なイベントがある。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. 思った通りに動かないとき、最初にやるべきこととして最も適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>コンソールを開いてエラー文を読み、console.logで変数の中身を確認する</li><li>コードを最初から全部書き直す</li><li>とりあえず動くまでいろいろな書き方を試す</li><li>詰まったらすぐ人に聞く</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>コンソールを開いてエラー文を読み、console.logで変数の中身を確認する</strong></p>
+    <p>「エラー文を読む→原因の仮説を立てる→調べる→修正する」という流れを身につけることが、文法の暗記より重要である。</p>
+  </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
 </section>
@@ -460,6 +571,30 @@ git pull            # GitHubの最新を手元に取り込む</pre>
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>clone・add・commit・push・pull</strong></p>
     <p>最初は基本5コマンド（clone・add・commit・push・pull）で十分でありbranchやrebaseはチーム開発に入る段階で学べばよい。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. 2人が同じ箇所を変更してpushしたときに起きるコンフリクトについて、正しい説明はどれか。</p>
+  <ul class="quiz-opts"><li>片方がpushをやめれば絶対に起きない</li><li>リポジトリが壊れるので作り直す必要がある</li><li>Gitがどちらを採用すべきか判断できないため止まる。正常な動作である</li><li>どちらかのコードが自動的に消えてしまう不具合である</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>Gitがどちらを採用すべきか判断できないため止まる。正常な動作である</strong></p>
+    <p>コンフリクトは事故ではなくGitの正しい動作。2人で確認しながらどちらを残すか決めれば解決できる。担当ファイルを分けておくと発生を減らせる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. 大きな課題に取りかかるとき、最初にやるべきこととして最も適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>設計せずにまず全部書いてみる</li><li>必要な機能を洗い出し、1日程度で終わる大きさに分解する</li><li>いちばん難しい機能から着手する</li><li>全体が完成するまで動作確認をしない</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>必要な機能を洗い出し、1日程度で終わる大きさに分解する</strong></p>
+    <p>機能分解が実務の第一歩。難所から始めると何も動かない期間が長くなり心が折れる。まず動く最小限を作ってから積み上げる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. リポジトリにcommitしてはいけないものはどれか。</p>
+  <ul class="quiz-opts"><li>パスワードやAPIキーなどの秘密情報</li><li>HTMLやCSSのファイル</li><li>READMEなどの説明文書</li><li>過去に書いた古いコード</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>パスワードやAPIキーなどの秘密情報</strong></p>
+    <p>一度pushした履歴は簡単には消せない。秘密情報は .gitignore で除外する。公開リポジトリなら全世界から見えてしまう。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
@@ -581,6 +716,30 @@ pip list                     # 入っているものを確認</pre>
     <p class="quiz-a">正解: <strong>プロジェクトごとにライブラリを分けて管理するため</strong></p>
     <p>仮想環境はプロジェクト専用のライブラリ置き場を作る仕組みで、別プロジェクトとの混在を防ぐ。venvフォルダは .gitignore に入れてcommitしない。</p>
   </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. JavaScriptの配列にあたるPythonのデータ構造はどれか。</p>
+  <ul class="quiz-opts"><li>セット</li><li>モジュール</li><li>リスト</li><li>タプル</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>リスト</strong></p>
+    <p>JSの配列がPythonではリスト、JSのオブジェクトが辞書にあたる。リストはappendで追加し、lenで個数を取得する。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. ここでフロントエンドとは別の言語を学ぶ理由として最も適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>HTMLを自動生成するため</li><li>データを保存するにはブラウザの外側であるサーバが必要になるため</li><li>JavaScriptでは複雑な計算ができないため</li><li>ブラウザの表示速度を上げるため</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>データを保存するにはブラウザの外側であるサーバが必要になるため</strong></p>
+    <p>ブラウザの中だけで動くアプリはページを閉じるとデータが消える。戦績の保存やユーザー管理にはサーバ側のプログラムが要る。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. Pythonのコードを実行したら IndentationError が出た。最初に疑うべきものはどれか。</p>
+  <ul class="quiz-opts"><li>行頭の空白の数が揃っていない</li><li>セミコロンの付け忘れ</li><li>変数名のスペルミス</li><li>ライブラリのバージョン違い</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>行頭の空白の数が揃っていない</strong></p>
+    <p>Pythonはインデントでブロックを表すため、空白の数がずれるとエラーになる。タブとスペースの混在も原因になるのでエディタの設定を確認する。</p>
+  </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
 </section>
@@ -686,6 +845,30 @@ ORDER BY g.played_at DESC;</pre>
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>WHERE を忘れると全行が消えてしまう</strong></p>
     <p>WHERE無しのDELETEやUPDATEは全行が対象になる。実行前に同じ条件でSELECTして対象を確認する癖をつけるとよい。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. 主キー（PRIMARY KEY）の説明として正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>検索を高速にするためだけの設定</li><li>必ず名前を「key」にする決まりの列</li><li>その行を一意に特定するための列。重複した値は入れられない</li><li>最初に作らなければならない列のこと</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>その行を一意に特定するための列。重複した値は入れられない</strong></p>
+    <p>主キーは行を特定するための列で、重複や空を許さない。他のテーブルからこの値を参照して表同士を繋ぐ（外部キー）。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. プレイヤー名を games テーブルに直接書かず、players テーブルに分ける利点はどれか。</p>
+  <ul class="quiz-opts"><li>JOINを書かずに済むようになる</li><li>名前を変更したいとき1行直すだけで済む</li><li>SQLの実行速度が必ず速くなる</li><li>データベースの容量が必ず小さくなる</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>名前を変更したいとき1行直すだけで済む</strong></p>
+    <p>同じ情報を複数箇所に持つと変更時に全部直す必要がある。表を分けてidで参照すれば、元の1行を直すだけで反映される。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. 分けた2つのテーブルを繋いで1つの結果として取り出すSQLの機能はどれか。</p>
+  <ul class="quiz-opts"><li>JOIN</li><li>MERGE</li><li>CONNECT</li><li>LINK</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>JOIN</strong></p>
+    <p>JOINで複数のテーブルを繋ぐ。games と players を繋げば、プレイヤー名つきの対戦一覧を取り出せる。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
@@ -803,6 +986,30 @@ app.add_middleware(
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>ブラウザが安全のため別オリジンへの通信を既定で止めている</strong></p>
     <p>CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. 一覧を取得するときに使うHTTPメソッドはどれか。</p>
+  <ul class="quiz-opts"><li>DELETE</li><li>PUT</li><li>GET</li><li>POST</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>GET</strong></p>
+    <p>GET=取得、POST=追加、PUT=更新、DELETE=削除。SQLのSELECT/INSERT/UPDATE/DELETEときれいに対応する。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. FastAPIでサーバを起動したあと、ブラウザ側を書く前に動作確認できる場所はどこか。</p>
+  <ul class="quiz-opts"><li>GitHubのリポジトリページ</li><li>自動生成される /docs のページ</li><li>サーバのログファイル</li><li>データベースの管理画面</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>自動生成される /docs のページ</strong></p>
+    <p>FastAPIは自動でAPIの操作画面を作る。ここでサーバ単体を試せるため、詰まったときブラウザ側とサーバ側を切り分けられる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. APIを呼んだら404が返ってきた。最も可能性が高い原因はどれか。</p>
+  <ul class="quiz-opts"><li>呼び出しているURLが間違っている</li><li>送ったJSONの形式が違う</li><li>サーバ側のコードでエラーが起きている</li><li>ブラウザのキャッシュが残っている</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>呼び出しているURLが間違っている</strong></p>
+    <p>404はURLが見つからない意味。422は送ったデータの形が違う、500はサーバ側でエラーが起きている。ステータスコードで原因の見当がつく。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
@@ -922,6 +1129,30 @@ session.commit()</pre>
     <p class="quiz-a">正解: <strong>文字列連結だとSQLインジェクションで乗っ取られる危険があるため</strong></p>
     <p>ユーザー入力を文字列連結でSQLに埋め込むと、入力次第で条件を無意味にされたりテーブルを削除されたりする。入力値は必ずプレースホルダで渡す。</p>
   </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. APIをDBに繋いだことで変わる点として正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>CORSの設定が不要になる</li><li>JavaScriptを書かなくてよくなる</li><li>サーバを再起動してもデータが残るようになる</li><li>通信速度が必ず速くなる</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>サーバを再起動してもデータが残るようになる</strong></p>
+    <p>変数（メモリ）に置いたデータは実行が終われば消える。DBに保存することで初めて「保存した」と言える状態になる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. name の値に  ' OR '1'='1  を入れられたとき、文字列連結で組み立てたSQLはどうなるか。</p>
+  <ul class="quiz-opts"><li>自動でエスケープされ問題は起きない</li><li>条件が常に真になり、全件が返ってしまう</li><li>構文エラーになって安全に停止する</li><li>該当0件として何も返らない</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>条件が常に真になり、全件が返ってしまう</strong></p>
+    <p>入力がSQLの一部として解釈されるため条件が無意味になる。さらに悪意ある入力ではテーブルの削除も可能になる。プレースホルダを使えば値として扱われるため安全。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. ORMを使う前に生のSQLを学んでおくべき理由はどれか。</p>
+  <ul class="quiz-opts"><li>詰まったときにORMが出しているSQLを確認して原因を追えるため</li><li>ORMは生SQLより動作が遅いため</li><li>ORMは実務では使われないため</li><li>生SQLのほうが記述量が少なくなるため</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>詰まったときにORMが出しているSQLを確認して原因を追えるため</strong></p>
+    <p>ORMは便利だが中で何が起きているか分からないまま使うと問題解決ができない。仕組みを理解してから道具を使う順番が大事。</p>
+  </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
 </section>
@@ -975,7 +1206,31 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
   <ul class="quiz-opts"><li>USBメモリでサーバー室に運ぶ</li><li>コードを印刷して郵送する</li><li>HTMLをメールで全員に送る</li><li>GitHubへpushするとホスティングサービスが自動で公開する</li></ul>
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>GitHubへpushするとホスティングサービスが自動で公開する</strong></p>
-    <p>VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。</p>
+    <p>VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。Gitの習慣がここで直接活きる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. 公開する前に必ず確認すべきことはどれか。</p>
+  <ul class="quiz-opts"><li>変数名が英語になっているか</li><li>ファイル数が少なくまとまっているか</li><li>APIキーやパスワードがコードに残っていないか</li><li>コメントが日本語で書かれているか</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>APIキーやパスワードがコードに残っていないか</strong></p>
+    <p>公開すると誰でもアクセスできる状態になる。秘密情報は環境変数に移し、コードやリポジトリに残さない。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. フロントエンドを公開したあと、APIに繋がらなくなった。確認すべき点として適切な組み合わせはどれか。</p>
+  <ul class="quiz-opts"><li>ブラウザのバージョンと画面サイズ</li><li>フロント側のAPI接続先URLと、サーバ側のCORS許可設定</li><li>HTMLの文法エラーとCSSの読み込み順</li><li>データベースの容量とテーブル名</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>フロント側のAPI接続先URLと、サーバ側のCORS許可設定</strong></p>
+    <p>ローカルのURLのままだと繋がらず、公開したフロントのURLをCORSで許可していないとブラウザに止められる。第7章の切り分け手順がそのまま使える。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. 学習においてデプロイまで行う意義として最も適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>公開URLを人に使ってもらう経験が次の学習の原動力になる</li><li>デプロイしないとコードが保存されないため</li><li>公開しないとプログラムが動作しないため</li><li>就職活動で必須の資格になるため</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>公開URLを人に使ってもらう経験が次の学習の原動力になる</strong></p>
+    <p>動くものを世界に出した経験は学習のモチベーションを大きく変える。作って終わりではなく、使ってもらって感想をもらうところまでが一区切りになる。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
@@ -1045,6 +1300,30 @@ function showUser(user: User) {
     <p class="quiz-a">正解: <strong>実行する前に間違いに気付ける</strong></p>
     <p>型があるとエディタが書いた瞬間に間違いを指摘してくれるため実行して初めてバグに気付くことが減る。</p>
   </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. オブジェクトの形（どんな項目を持つか）を定義するTypeScriptの仕組みはどれか。</p>
+  <ul class="quiz-opts"><li>const</li><li>import</li><li>interface</li><li>function</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>interface</strong></p>
+    <p>interfaceでデータの形を決めておくと、存在しない項目を参照したときにエディタが警告してくれる。APIから受け取るデータの形を定義するのに使う。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. 石の色のように取りうる値が決まっているものに string 型を使うと起きる問題はどれか。</p>
+  <ul class="quiz-opts"><li>実行速度が極端に遅くなる</li><li>「黒」でも「くろ」でも「BLACK」でも通ってしまう</li><li>文字列が長すぎるとエラーになる</li><li>日本語が使えなくなる</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>「黒」でも「くろ」でも「BLACK」でも通ってしまう</strong></p>
+    <p>取りうる値が限られているものは専用の型を作ると、想定外の値をエディタが弾いてくれる。型を細かく決めるほど間違いを早く見つけられる。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. すでに動いているオセロをTypeScriptに書き換える学習効果として適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>動くものがある状態で型を入れるため、型の効果が差分として分かりやすい</li><li>書き換えると必ずバグがなくなるため</li><li>TypeScriptでないとオセロは作れないため</li><li>JavaScriptのコードが不要になるため</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>動くものがある状態で型を入れるため、型の効果が差分として分かりやすい</strong></p>
+    <p>ゼロから型付きで書くより、動くコードに型を足すほうが「型があると何が変わるか」を体感しやすい。発展章として位置づけている理由でもある。</p>
+  </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>
 </section>
@@ -1112,6 +1391,30 @@ function App() {
   <details><summary>答えと解説</summary>
     <p class="quiz-a">正解: <strong>状態を保持し変更されると画面を再描画する</strong></p>
     <p>stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q3. propsの説明として正しいものはどれか。</p>
+  <ul class="quiz-opts"><li>CSSのクラス名を管理する仕組み</li><li>サーバーから取得したJSONの別名</li><li>親から子のコンポーネントに渡すデータ</li><li>コンポーネントが内部で持つ変化する状態</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>親から子のコンポーネントに渡すデータ</strong></p>
+    <p>propsは部品に渡すデータで、同じ部品でも渡す値を変えれば表示が変わる。内部で変化する状態はstateが担当する。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q4. Reactで画面を更新するときの正しい考え方はどれか。</p>
+  <ul class="quiz-opts"><li>ページ全体を再読み込みする</li><li>stateを変更すると、その結果として画面が再描画される</li><li>DOMを直接書き換えて画面を更新する</li><li>CSSのdisplayを切り替えて表示を変える</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>stateを変更すると、その結果として画面が再描画される</strong></p>
+    <p>素のJavaScriptのようにDOMを直接触るのではなく、stateを変えることで画面を変える。「画面=stateの反映結果」と考えるのがReactの発想である。</p>
+  </details>
+</div>
+<div class="quiz">
+  <p class="quiz-q">Q5. Reactでオセロを作るとき、最初にやるべきこととして適切なものはどれか。</p>
+  <ul class="quiz-opts"><li>画面をどんな部品に分けられるか考える</li><li>まず全部を1つのコンポーネントに書く</li><li>CSSを先に完成させる</li><li>APIの設計から始める</li></ul>
+  <details><summary>答えと解説</summary>
+    <p class="quiz-a">正解: <strong>画面をどんな部品に分けられるか考える</strong></p>
+    <p>盤面・マス・石数表示・戦績一覧などに分解してから書き始めると設計が楽になる。分解せずに書くと巨大なコンポーネントができて手が付けられなくなる。</p>
   </details>
 </div></div>
   <p class="to-top"><a href="#toc">↑ 目次へ</a></p>

@@ -19,3 +19,30 @@ questions:
       - "content: row;"
     explanation: 「${正答1}」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。
     keywords: [CSS, Flexbox, レイアウト]
+  - learning_item: CSS
+    stem: ボックスモデルにおいて、内側から外側への正しい順序はどれか。
+    correct: content → padding → border → margin
+    wrongs:
+      - content → margin → border → padding
+      - padding → content → margin → border
+      - border → padding → content → margin
+    explanation: 要素は箱として描画され内側からこの4層になる。レイアウト崩れの原因の多くはpaddingとmarginの取り違えである。
+    keywords: [CSS, ボックスモデル, padding]
+  - learning_item: CSS
+    stem: CSSをHTMLに直接書かず、別ファイルに分ける主な利点はどれか。
+    correct: 1つのCSSファイルを複数ページで使い回せ、見た目を1か所で変えられる
+    wrongs:
+      - ファイルサイズが必ず小さくなる
+      - CSSの書き方が簡単になる
+      - JavaScriptが不要になる
+    explanation: 構造と見た目を分けることで、サイト全体の見た目を1か所の修正で変更できる。HTMLに直接書くとページ数だけ同じ指定をコピーすることになる。
+    keywords: [CSS, 外部ファイル, 保守性]
+  - learning_item: CSS
+    stem: HTMLからCSSファイルを読み込む正しい書き方はどれか。
+    correct: <link rel="stylesheet" href="style.css">
+    wrongs:
+      - <script src="style.css"></script>
+      - <style src="style.css"></style>
+      - <css href="style.css">
+    explanation: 外部CSSはlinkタグでhead内に書く。scriptタグはJavaScriptの読み込みに使うものである。
+    keywords: [CSS, link, head]

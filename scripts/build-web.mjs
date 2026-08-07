@@ -144,6 +144,38 @@ ${jsConst('KEYWORDS', chapter.keywords ?? [])}
 
 ${jsConst('QUIZ', quizData)}
 
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch${pad2(chapter.id)}';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
   return (

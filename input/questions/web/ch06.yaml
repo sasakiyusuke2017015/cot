@@ -19,3 +19,30 @@ questions:
       - 削除したデータは自動でバックアップされる
     explanation: WHERE無しのDELETEやUPDATEは全行が対象になる。実行前に同じ条件でSELECTして対象を確認する癖をつけるとよい。
     keywords: [SQL, DELETE, WHERE]
+  - learning_item: SQL
+    stem: 主キー（PRIMARY KEY）の説明として正しいものはどれか。
+    correct: その行を一意に特定するための列。重複した値は入れられない
+    wrongs:
+      - 最初に作らなければならない列のこと
+      - 検索を高速にするためだけの設定
+      - 必ず名前を「key」にする決まりの列
+    explanation: 主キーは行を特定するための列で、重複や空を許さない。他のテーブルからこの値を参照して表同士を繋ぐ（外部キー）。
+    keywords: [SQL, 主キー, 外部キー]
+  - learning_item: SQL
+    stem: プレイヤー名を games テーブルに直接書かず、players テーブルに分ける利点はどれか。
+    correct: 名前を変更したいとき1行直すだけで済む
+    wrongs:
+      - SQLの実行速度が必ず速くなる
+      - データベースの容量が必ず小さくなる
+      - JOINを書かずに済むようになる
+    explanation: 同じ情報を複数箇所に持つと変更時に全部直す必要がある。表を分けてidで参照すれば、元の1行を直すだけで反映される。
+    keywords: [SQL, 正規化, 外部キー]
+  - learning_item: SQL
+    stem: 分けた2つのテーブルを繋いで1つの結果として取り出すSQLの機能はどれか。
+    correct: JOIN
+    wrongs:
+      - MERGE
+      - CONNECT
+      - LINK
+    explanation: JOINで複数のテーブルを繋ぐ。games と players を繋げば、プレイヤー名つきの対戦一覧を取り出せる。
+    keywords: [SQL, JOIN, テーブル結合]

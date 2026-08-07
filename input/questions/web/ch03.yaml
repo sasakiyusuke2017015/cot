@@ -19,3 +19,30 @@ questions:
       - fruits.total
     explanation: JavaScriptの配列はlengthプロパティで要素数を取得する。
     keywords: [JavaScript, 配列, length]
+  - learning_item: JavaScript
+    stem: const と let の使い分けとして正しいものはどれか。
+    correct: 再代入しないなら const、する必要があるなら let
+    wrongs:
+      - 数値には const、文字列には let を使う
+      - 関数の外では const、中では let を使う
+      - どちらも同じなので好きなほうを使う
+    explanation: まずconstで書き、再代入が必要になったときだけletに変えるのが基本。何が変化する値なのかがコードから読み取れるようになる。
+    keywords: [JavaScript, const, let]
+  - learning_item: JavaScript
+    stem: ボタンがクリックされたときに処理を実行する書き方はどれか。
+    correct: btn.addEventListener('click', () => { ... })
+    wrongs:
+      - btn.onClick = { ... }
+      - btn.click.run(() => { ... })
+      - btn.listen('click')
+    explanation: addEventListenerで「どのイベントが起きたとき」「何をするか」を登録する。clickのほかinputやsubmitなど様々なイベントがある。
+    keywords: [JavaScript, イベント, addEventListener]
+  - learning_item: JavaScript
+    stem: 思った通りに動かないとき、最初にやるべきこととして最も適切なものはどれか。
+    correct: コンソールを開いてエラー文を読み、console.logで変数の中身を確認する
+    wrongs:
+      - コードを最初から全部書き直す
+      - とりあえず動くまでいろいろな書き方を試す
+      - 詰まったらすぐ人に聞く
+    explanation: 「エラー文を読む→原因の仮説を立てる→調べる→修正する」という流れを身につけることが、文法の暗記より重要である。
+    keywords: [JavaScript, デバッグ, console.log]

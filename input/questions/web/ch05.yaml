@@ -19,3 +19,30 @@ questions:
       - 複数の言語を同時に動かすため
     explanation: 仮想環境はプロジェクト専用のライブラリ置き場を作る仕組みで、別プロジェクトとの混在を防ぐ。venvフォルダは .gitignore に入れてcommitしない。
     keywords: [Python, venv, 仮想環境]
+  - learning_item: Python
+    stem: JavaScriptの配列にあたるPythonのデータ構造はどれか。
+    correct: リスト
+    wrongs:
+      - タプル
+      - セット
+      - モジュール
+    explanation: JSの配列がPythonではリスト、JSのオブジェクトが辞書にあたる。リストはappendで追加し、lenで個数を取得する。
+    keywords: [Python, リスト, 辞書]
+  - learning_item: Python
+    stem: ここでフロントエンドとは別の言語を学ぶ理由として最も適切なものはどれか。
+    correct: データを保存するにはブラウザの外側であるサーバが必要になるため
+    wrongs:
+      - JavaScriptでは複雑な計算ができないため
+      - ブラウザの表示速度を上げるため
+      - HTMLを自動生成するため
+    explanation: ブラウザの中だけで動くアプリはページを閉じるとデータが消える。戦績の保存やユーザー管理にはサーバ側のプログラムが要る。
+    keywords: [Python, サーバ, バックエンド]
+  - learning_item: Python
+    stem: Pythonのコードを実行したら IndentationError が出た。最初に疑うべきものはどれか。
+    correct: 行頭の空白の数が揃っていない
+    wrongs:
+      - セミコロンの付け忘れ
+      - 変数名のスペルミス
+      - ライブラリのバージョン違い
+    explanation: Pythonはインデントでブロックを表すため、空白の数がずれるとエラーになる。タブとスペースの混在も原因になるのでエディタの設定を確認する。
+    keywords: [Python, IndentationError, デバッグ]

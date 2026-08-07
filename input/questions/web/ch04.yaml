@@ -19,3 +19,30 @@ questions:
       - reset・revert・reflog
     explanation: 最初は基本5コマンド（${正答1}）で十分でありbranchやrebaseはチーム開発に入る段階で学べばよい。
     keywords: [Git, 基本コマンド, GitHub]
+  - learning_item: Git
+    stem: 2人が同じ箇所を変更してpushしたときに起きるコンフリクトについて、正しい説明はどれか。
+    correct: Gitがどちらを採用すべきか判断できないため止まる。正常な動作である
+    wrongs:
+      - どちらかのコードが自動的に消えてしまう不具合である
+      - 片方がpushをやめれば絶対に起きない
+      - リポジトリが壊れるので作り直す必要がある
+    explanation: コンフリクトは事故ではなくGitの正しい動作。2人で確認しながらどちらを残すか決めれば解決できる。担当ファイルを分けておくと発生を減らせる。
+    keywords: [Git, コンフリクト, 共同開発]
+  - learning_item: Git
+    stem: 大きな課題に取りかかるとき、最初にやるべきこととして最も適切なものはどれか。
+    correct: 必要な機能を洗い出し、1日程度で終わる大きさに分解する
+    wrongs:
+      - いちばん難しい機能から着手する
+      - 全体が完成するまで動作確認をしない
+      - 設計せずにまず全部書いてみる
+    explanation: 機能分解が実務の第一歩。難所から始めると何も動かない期間が長くなり心が折れる。まず動く最小限を作ってから積み上げる。
+    keywords: [Git, 機能分解, 進め方]
+  - learning_item: Git
+    stem: リポジトリにcommitしてはいけないものはどれか。
+    correct: パスワードやAPIキーなどの秘密情報
+    wrongs:
+      - HTMLやCSSのファイル
+      - READMEなどの説明文書
+      - 過去に書いた古いコード
+    explanation: 一度pushした履歴は簡単には消せない。秘密情報は .gitignore で除外する。公開リポジトリなら全世界から見えてしまう。
+    keywords: [Git, gitignore, セキュリティ]

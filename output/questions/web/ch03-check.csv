@@ -1,3 +1,6 @@
 ﻿問題番号,学習項目,問題文,正答1,誤答1,誤答2,誤答3,解説,関連キーワード
-5,JavaScript,JavaScriptの主な役割はどれか。,ページに動き（ロジック）をつける,ページの構造を定義する,ページの配色を決める,サーバーの電源を管理する,構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。,JavaScript・ロジック・イベント
-6,JavaScript,JavaScriptで配列fruitsの要素数を調べる書き方はどれか。,fruits.length,fruits.size(),count(fruits),fruits.total,JavaScriptの配列はlengthプロパティで要素数を取得する。,JavaScript・配列・length
+11,JavaScript,JavaScriptの主な役割はどれか。,ページに動き（ロジック）をつける,ページの構造を定義する,ページの配色を決める,サーバーの電源を管理する,構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。,JavaScript・ロジック・イベント
+12,JavaScript,JavaScriptで配列fruitsの要素数を調べる書き方はどれか。,fruits.length,fruits.size(),count(fruits),fruits.total,JavaScriptの配列はlengthプロパティで要素数を取得する。,JavaScript・配列・length
+13,JavaScript,const と let の使い分けとして正しいものはどれか。,再代入しないなら const、する必要があるなら let,数値には const、文字列には let を使う,関数の外では const、中では let を使う,どちらも同じなので好きなほうを使う,まずconstで書き、再代入が必要になったときだけletに変えるのが基本。何が変化する値なのかがコードから読み取れるようになる。,JavaScript・const・let
+14,JavaScript,ボタンがクリックされたときに処理を実行する書き方はどれか。,"btn.addEventListener('click', () => { ... })",btn.onClick = { ... },btn.click.run(() => { ... }),btn.listen('click'),addEventListenerで「どのイベントが起きたとき」「何をするか」を登録する。clickのほかinputやsubmitなど様々なイベントがある。,JavaScript・イベント・addEventListener
+15,JavaScript,思った通りに動かないとき、最初にやるべきこととして最も適切なものはどれか。,コンソールを開いてエラー文を読み、console.logで変数の中身を確認する,コードを最初から全部書き直す,とりあえず動くまでいろいろな書き方を試す,詰まったらすぐ人に聞く,「エラー文を読む→原因の仮説を立てる→調べる→修正する」という流れを身につけることが、文法の暗記より重要である。,JavaScript・デバッグ・console.log

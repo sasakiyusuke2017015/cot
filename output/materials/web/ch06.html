@@ -22,8 +22,11 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
 .ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
 .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
-.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
-.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
 .quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
 .quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
 .quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
@@ -79,9 +82,9 @@ const QUIZ = [
   {
     "q": "テーブルを設計するとき、最初に決めるべき最も大事なことはどれか。",
     "options": [
-      "列の並び順をどうするか",
-      "その表の1行が何を表しているか",
       "テーブル名を英語にするか日本語にするか",
+      "その表の1行が何を表しているか",
+      "列の並び順をどうするか",
       "何件のデータが入る予定か"
     ],
     "answer": 1,
@@ -91,14 +94,79 @@ const QUIZ = [
     "q": "DELETE 文を書くときに特に注意すべきことはどれか。",
     "options": [
       "削除したデータは自動でバックアップされる",
-      "WHERE を忘れると全行が消えてしまう",
       "実行に時間がかかるので夜間に実行する",
+      "WHERE を忘れると全行が消えてしまう",
       "1度に1行しか削除できない"
     ],
-    "answer": 1,
+    "answer": 2,
     "explain": "WHERE無しのDELETEやUPDATEは全行が対象になる。実行前に同じ条件でSELECTして対象を確認する癖をつけるとよい。"
+  },
+  {
+    "q": "主キー（PRIMARY KEY）の説明として正しいものはどれか。",
+    "options": [
+      "その行を一意に特定するための列。重複した値は入れられない",
+      "検索を高速にするためだけの設定",
+      "必ず名前を「key」にする決まりの列",
+      "最初に作らなければならない列のこと"
+    ],
+    "answer": 0,
+    "explain": "主キーは行を特定するための列で、重複や空を許さない。他のテーブルからこの値を参照して表同士を繋ぐ（外部キー）。"
+  },
+  {
+    "q": "プレイヤー名を games テーブルに直接書かず、players テーブルに分ける利点はどれか。",
+    "options": [
+      "データベースの容量が必ず小さくなる",
+      "SQLの実行速度が必ず速くなる",
+      "JOINを書かずに済むようになる",
+      "名前を変更したいとき1行直すだけで済む"
+    ],
+    "answer": 3,
+    "explain": "同じ情報を複数箇所に持つと変更時に全部直す必要がある。表を分けてidで参照すれば、元の1行を直すだけで反映される。"
+  },
+  {
+    "q": "分けた2つのテーブルを繋いで1つの結果として取り出すSQLの機能はどれか。",
+    "options": [
+      "MERGE",
+      "JOIN",
+      "CONNECT",
+      "LINK"
+    ],
+    "answer": 1,
+    "explain": "JOINで複数のテーブルを繋ぐ。games と players を繋げば、プレイヤー名つきの対戦一覧を取り出せる。"
   }
 ];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch06';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
@@ -275,21 +343,14 @@ ORDER BY g.played_at DESC;`}</div>
                       <li>プレイヤーを別テーブルに分け、JOINで名前つきの一覧を出す</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">「この表の1行は何を表すか」を一言で説明できる</div>
-                      <div className="chk-item">CRUD の4操作をすべて自分で書いて実行した</div>
-                      <div className="chk-item">JOIN で2つの表を繋いだ結果を取り出せた</div>
-                      <div className="chk-item">後から項目を足したくなったとき、どう直すか説明できる</div>
+                    <CheckList items={["「この表の1行は何を表すか」を一言で説明できる","CRUD の4操作をすべて自分で書いて実行した","JOIN で2つの表を繋いだ結果を取り出せた","後から項目を足したくなったとき、どう直すか説明できる"]} />
                     <p className="assign-hint">💡 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 次章への橋渡し:</strong> データの置き場所ができました。ただ、ブラウザで動くオセロからは<strong>まだこのDBに触れません</strong>。次章では両者をつなぐ窓口（API）を作ります。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">「1行が何を表すか」を意識してテーブルを設計できる</div>
-                  <div className="chk-item">SELECT / INSERT / UPDATE / DELETE が書ける</div>
-                  <div className="chk-item">WHERE を忘れる危険を理解している</div>
-                  <div className="chk-item">主キーと外部キーの役割を説明できる</div>
-                  <div className="chk-item">JOIN で複数テーブルを繋げる</div>
+                  <CheckList items={["「1行が何を表すか」を意識してテーブルを設計できる","SELECT / INSERT / UPDATE / DELETE が書ける","WHERE を忘れる危険を理解している","主キーと外部キーの役割を説明できる","JOIN で複数テーブルを繋げる"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

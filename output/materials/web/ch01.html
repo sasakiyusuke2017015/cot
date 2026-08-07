@@ -22,8 +22,11 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
 .ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
 .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
-.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
-.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
 .quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
 .quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
 .quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
@@ -104,9 +107,74 @@ const QUIZ = [
       "p"
     ],
     "answer": 1,
-    "explain": "見出しはh1〜h6で表しh1が最上位。pは段落・div/spanは意味を持たないグループ化の入れ物である。"
+    "explain": "見出しはh1〜h6で表しh1が最上位。1ページにh1は1つが基本である。pは段落・div/spanは意味を持たないグループ化の入れ物。"
+  },
+  {
+    "q": "次のうち、入れ子の閉じ方が正しいものはどれか。",
+    "options": [
+      "<strong><p>これは大事</strong></p>",
+      "<p>これは<strong>大事です</p>",
+      "<p>これは<strong>大事</p></strong>",
+      "<p>これは<strong>大事</strong>です</p>"
+    ],
+    "answer": 3,
+    "explain": "入れ子は「後に開けたものを先に閉じる」のが原則。順番が入れ替わると表示が崩れる原因になる。"
+  },
+  {
+    "q": "div と span の違いとして正しいものはどれか。",
+    "options": [
+      "divは前後で改行されるが、spanは文章の流れの中に収まる",
+      "divは見出し用、spanは段落用である",
+      "divは文字を大きく、spanは小さく表示する",
+      "divはCSSが使えるが、spanは使えない"
+    ],
+    "answer": 0,
+    "explain": "divはブロック要素で縦に積まれ、spanはインライン要素で改行されない。どちらも意味を持たない入れ物という点は同じ。"
+  },
+  {
+    "q": "「文字を大きくしたいので h1 を使う」という選び方が推奨されない理由はどれか。",
+    "options": [
+      "h1は表示速度が遅くなるため",
+      "タグは見た目ではなく意味で選ぶべきで、文字サイズはCSSで指定するため",
+      "h1は古い書き方で廃止予定であるため",
+      "h1はページの先頭でしか使えない決まりがあるため"
+    ],
+    "answer": 1,
+    "explain": "意味に合ったタグを選ぶことをセマンティックなHTMLと呼ぶ。検索エンジンや読み上げソフト、後からコードを読む人が構造を理解できるようになる。"
   }
 ];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch01';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
@@ -183,6 +251,49 @@ function Page() {
                 <div className="prose">
                   <div className="kv-box">
                     <strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、意味に合ったタグを選んでページの骨組みを作れるようになる。最終的にオセロの盤面もHTMLで組みます。
+                  </div>
+                  <h3>はじめに — 道具をそろえる</h3>
+                  <p>本題に入る前に、開発に使う道具を用意します。<strong>ここは一度やれば以降ずっと使うもの</strong>なので、面倒でも最初にきちんと整えてください。必要なのは「エディタ」と「ブラウザ」の2つだけです。</p>
+                  <h3>① VS Code を入れる</h3>
+                  <p>コードを書くための専用エディタです。メモ帳でも書けますが、色分け・入力補完・エラー表示があるかどうかで学習効率がまるで変わります。<strong>現場で最も使われているエディタ</strong>でもあります。</p>
+                  <ol>
+                    <li>`Visual Studio Code` で検索し、公式サイトからダウンロードする（無料）</li>
+                    <li>インストーラを実行する。選択肢はすべて既定のままでよい</li>
+                    <li>起動して、真っ黒な画面が出れば成功</li>
+                  </ol>
+                  <p>起動したら、<strong>拡張機能</strong>を入れます。左側の四角が4つ並んだアイコン（Extensions）をクリックし、名前で検索してインストールしてください。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">拡張機能</th><th className="tbl-th">何ができるか</th><th className="tbl-th">必須度</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">Japanese Language Pack</td><td className="tbl-td">VS Code のメニューが日本語になる</td><td className="tbl-td">好みで</td></tr>
+                        <tr><td className="tbl-td">Live Server</td><td className="tbl-td"><strong>保存すると自動でブラウザが更新される</strong></td><td className="tbl-td">ほぼ必須</td></tr>
+                        <tr><td className="tbl-td">HTML CSS Support</td><td className="tbl-td">HTMLの中でCSSクラス名を補完してくれる</td><td className="tbl-td">あると楽</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 Live Server がいちばん効く:</strong> これを入れると、HTMLファイルを右クリック →「Open with Live Server」で開けます。<strong>以降はファイルを保存するだけでブラウザが自動更新される</strong>ので、「保存 → ブラウザに切り替え → 再読み込み」の繰り返しが不要になります。地味ですが学習速度がかなり変わります。
+                  </div>
+                  <h3>② 作業フォルダを作る</h3>
+                  <p>作ったファイルが散らからないよう、専用のフォルダを決めます。<strong>日本語やスペースを含まない場所</strong>にするのが無難です（後々ツールが誤動作する原因になります）。</p>
+                  <div className="code-block">{`C:\\dev\\web-study\\          ← ここを作業フォルダにする
+  ├─ profile.html          ← 第1章で作る
+  ├─ style.css             ← 第2章で追加
+  └─ script.js             ← 第3章で追加`}</div>
+                  <p>フォルダを作ったら、VS Code の「ファイル → フォルダーを開く」でそのフォルダを開いてください。左側にファイル一覧が出れば準備完了です。</p>
+                  <div className="warn-box">
+                    <strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると
+<strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。
+
+エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。
+
+                  </div>
+                  <h3>③ ブラウザと開発者ツール</h3>
+                  <p>ブラウザは <strong>Chrome か Edge</strong> を使ってください。どちらも同じ仕組みで動いており、開発者向けの機能が充実しています。</p>
+                  <p>準備できたら、いま見ているこのページで <strong>F12キー</strong> を押してみてください。画面が分割されて、コードのようなものが出れば成功です。これが<strong>開発者ツール</strong>で、この先ずっと使います（詳しい使い方はこの章の後半で説明します）。</p>
+                  <div className="tip-box">
+                    <strong>💡 これで準備完了:</strong> 道具はこれだけです。<strong>Web開発は最初の一歩の敷居が低い</strong>のが良いところで、エディタとブラウザさえあれば始められます。Gitやサーバは必要になったときに入れます（第4章・第5章）。
                   </div>
                   <h3>そもそもWebページとは何でできているか</h3>
                   <p>普段見ているWebページは、実は<strong>ただのテキストファイル</strong>です。ブラウザがそのテキストを読んで、解釈して、画面に描いています。魔法は何もありません。</p>
@@ -313,10 +424,25 @@ function Page() {
 <h2>お問い合わせ</h2>`}</div>
                   <p>意味に合ったタグを選ぶことを<strong>セマンティック</strong>なHTMLと言います。なぜ大事かというと、HTMLを読むのは人間の目だけではないからです。</p>
                   <ul>
-                    <li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する</li>
-                    <li><strong>スクリーンリーダー</strong> … 目の不自由な人が使う読み上げソフト。見出しを辿って移動する</li>
-                    <li><strong>将来の自分と仲間</strong> … 構造が意味を持っていれば、コードを読むだけで内容が分かる</li>
+                    <li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する。検索結果での見え方が変わる</li>
+                    <li><strong>スクリーンリーダー</strong> … 目の不自由な人が使う読み上げソフト。「見出しだけ拾って移動」ができるのは h1〜h6 が正しく付いているページだけ</li>
+                    <li><strong>あとで直す人</strong> … 下の例を見てください</li>
                   </ul>
+                  <p>3つ目が分かりにくいので、具体例を出します。次の2つは<strong>画面上はまったく同じに見えます</strong>。半年後にこのコードを開いて、どこを直せばいいか分かるのはどちらでしょうか。</p>
+                  <div className="code-block">{`❌ 全部 div で書いた場合
+<div class="t1">料金プラン</div>
+<div class="b1">
+  <div class="t2">無料プラン</div>
+  <div class="x">月0円</div>
+</div>
+
+⭕ 意味のあるタグで書いた場合
+<h2>料金プラン</h2>
+<section>
+  <h3>無料プラン</h3>
+  <p>月0円</p>
+</section>`}</div>
+                  <p>上は `t1` `b1` `x` が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
                   <div className="tip-box">
                     <strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。
                   </div>
@@ -365,11 +491,7 @@ function Page() {
                       <li>ブラウザで開いて表示を確認し、開発者ツールで構造を見る</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">ブラウザで開くと内容が表示される</div>
-                      <div className="chk-item">開発者ツールで見たとき、意図した入れ子になっている</div>
-                      <div className="chk-item">なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）</div>
-                      <div className="chk-item">文字化けしていない</div>
-                      <div className="chk-item">h1 が1つだけになっている</div>
+                    <CheckList items={["ブラウザで開くと内容が表示される","開発者ツールで見たとき、意図した入れ子になっている","なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）","文字化けしていない","h1 が1つだけになっている"]} />
                     <p className="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、`a` タグの属性を調べてみてください。</p>
                   </div>
                   <div className="ex-box">
@@ -380,13 +502,7 @@ function Page() {
                     <strong>💡 次章への橋渡し:</strong> 骨組みができました。ただ、いまは真っ白で味気ないはずです。次章のCSSで<strong>同じHTMLのまま見た目だけを変えられる</strong>ことを体験します。HTMLを書き直す必要はありません——それが構造と見た目を分ける利点です。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">HTMLの役割は「構造」だと説明できる</div>
-                  <div className="chk-item">開始タグ・終了タグ・属性の書き方が分かる</div>
-                  <div className="chk-item">入れ子を正しい順番で閉じられる</div>
-                  <div className="chk-item">div と span の違いを説明できる</div>
-                  <div className="chk-item">見た目ではなく意味でタグを選べる</div>
-                  <div className="chk-item">開発者ツールで他のページの構造を見たことがある</div>
-                  <div className="chk-item">profile.html を作ってブラウザで表示できた</div>
+                  <CheckList items={["HTMLの役割は「構造」だと説明できる","開始タグ・終了タグ・属性の書き方が分かる","入れ子を正しい順番で閉じられる","div と span の違いを説明できる","見た目ではなく意味でタグを選べる","開発者ツールで他のページの構造を見たことがある","profile.html を作ってブラウザで表示できた"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

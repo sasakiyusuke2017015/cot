@@ -19,3 +19,30 @@ questions:
       - サーバー代が安くなる
     explanation: 型があるとエディタが書いた瞬間に間違いを指摘してくれるため実行して初めてバグに気付くことが減る。
     keywords: [TypeScript, 型注釈, エラー検出]
+  - learning_item: TypeScript
+    stem: オブジェクトの形（どんな項目を持つか）を定義するTypeScriptの仕組みはどれか。
+    correct: interface
+    wrongs:
+      - function
+      - const
+      - import
+    explanation: interfaceでデータの形を決めておくと、存在しない項目を参照したときにエディタが警告してくれる。APIから受け取るデータの形を定義するのに使う。
+    keywords: [TypeScript, interface, 型定義]
+  - learning_item: TypeScript
+    stem: 石の色のように取りうる値が決まっているものに string 型を使うと起きる問題はどれか。
+    correct: "「黒」でも「くろ」でも「BLACK」でも通ってしまう"
+    wrongs:
+      - 文字列が長すぎるとエラーになる
+      - 日本語が使えなくなる
+      - 実行速度が極端に遅くなる
+    explanation: 取りうる値が限られているものは専用の型を作ると、想定外の値をエディタが弾いてくれる。型を細かく決めるほど間違いを早く見つけられる。
+    keywords: [TypeScript, 型設計, リテラル型]
+  - learning_item: TypeScript
+    stem: すでに動いているオセロをTypeScriptに書き換える学習効果として適切なものはどれか。
+    correct: 動くものがある状態で型を入れるため、型の効果が差分として分かりやすい
+    wrongs:
+      - 書き換えると必ずバグがなくなるため
+      - TypeScriptでないとオセロは作れないため
+      - JavaScriptのコードが不要になるため
+    explanation: ゼロから型付きで書くより、動くコードに型を足すほうが「型があると何が変わるか」を体感しやすい。発展章として位置づけている理由でもある。
+    keywords: [TypeScript, 学習法, 移植]

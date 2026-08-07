@@ -1,3 +1,6 @@
 ﻿問題番号,学習項目,問題文,正答1,誤答1,誤答2,誤答3,解説,関連キーワード
-3,CSS,class属性が「card」の要素を選ぶCSSセレクタはどれか。,.card,#card,card(),@card,classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。,CSS・セレクタ・class
-4,CSS,子要素を横一列に並べたいとき親要素に指定するCSSはどれか。,display: flex;,color: red;,font-size: 2rem;,content: row;,「${正答1}」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。,CSS・Flexbox・レイアウト
+6,CSS,class属性が「card」の要素を選ぶCSSセレクタはどれか。,.card,#card,card(),@card,classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。,CSS・セレクタ・class
+7,CSS,子要素を横一列に並べたいとき親要素に指定するCSSはどれか。,display: flex;,color: red;,font-size: 2rem;,content: row;,「${正答1}」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。,CSS・Flexbox・レイアウト
+8,CSS,ボックスモデルにおいて、内側から外側への正しい順序はどれか。,content → padding → border → margin,content → margin → border → padding,padding → content → margin → border,border → padding → content → margin,要素は箱として描画され内側からこの4層になる。レイアウト崩れの原因の多くはpaddingとmarginの取り違えである。,CSS・ボックスモデル・padding
+9,CSS,CSSをHTMLに直接書かず、別ファイルに分ける主な利点はどれか。,1つのCSSファイルを複数ページで使い回せ、見た目を1か所で変えられる,ファイルサイズが必ず小さくなる,CSSの書き方が簡単になる,JavaScriptが不要になる,構造と見た目を分けることで、サイト全体の見た目を1か所の修正で変更できる。HTMLに直接書くとページ数だけ同じ指定をコピーすることになる。,CSS・外部ファイル・保守性
+10,CSS,HTMLからCSSファイルを読み込む正しい書き方はどれか。,"<link rel=""stylesheet"" href=""style.css"">","<script src=""style.css""></script>","<style src=""style.css""></style>","<css href=""style.css"">",外部CSSはlinkタグでhead内に書く。scriptタグはJavaScriptの読み込みに使うものである。,CSS・link・head

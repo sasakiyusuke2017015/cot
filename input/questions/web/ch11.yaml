@@ -19,3 +19,30 @@ questions:
       - Gitのcommitを自動化する
     explanation: stateが変わるとReactが自動で画面を再描画する。「画面=stateの反映結果」がReactの核心である。
     keywords: [React, useState, state]
+  - learning_item: React
+    stem: propsの説明として正しいものはどれか。
+    correct: 親から子のコンポーネントに渡すデータ
+    wrongs:
+      - コンポーネントが内部で持つ変化する状態
+      - CSSのクラス名を管理する仕組み
+      - サーバーから取得したJSONの別名
+    explanation: propsは部品に渡すデータで、同じ部品でも渡す値を変えれば表示が変わる。内部で変化する状態はstateが担当する。
+    keywords: [React, props, コンポーネント]
+  - learning_item: React
+    stem: Reactで画面を更新するときの正しい考え方はどれか。
+    correct: stateを変更すると、その結果として画面が再描画される
+    wrongs:
+      - DOMを直接書き換えて画面を更新する
+      - CSSのdisplayを切り替えて表示を変える
+      - ページ全体を再読み込みする
+    explanation: 素のJavaScriptのようにDOMを直接触るのではなく、stateを変えることで画面を変える。「画面=stateの反映結果」と考えるのがReactの発想である。
+    keywords: [React, state, 再描画]
+  - learning_item: React
+    stem: Reactでオセロを作るとき、最初にやるべきこととして適切なものはどれか。
+    correct: 画面をどんな部品に分けられるか考える
+    wrongs:
+      - まず全部を1つのコンポーネントに書く
+      - CSSを先に完成させる
+      - APIの設計から始める
+    explanation: 盤面・マス・石数表示・戦績一覧などに分解してから書き始めると設計が楽になる。分解せずに書くと巨大なコンポーネントができて手が付けられなくなる。
+    keywords: [React, 設計, コンポーネント分割]

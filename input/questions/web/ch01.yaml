@@ -17,5 +17,32 @@ questions:
       - p
       - div
       - span
-    explanation: 見出しはh1〜h6で表しh1が最上位。pは段落・div/spanは意味を持たないグループ化の入れ物である。
+    explanation: 見出しはh1〜h6で表しh1が最上位。1ページにh1は1つが基本である。pは段落・div/spanは意味を持たないグループ化の入れ物。
     keywords: [HTML, 見出し, h1]
+  - learning_item: HTML
+    stem: "次のうち、入れ子の閉じ方が正しいものはどれか。"
+    correct: "<p>これは<strong>大事</strong>です</p>"
+    wrongs:
+      - "<p>これは<strong>大事</p></strong>"
+      - "<p>これは<strong>大事です</p>"
+      - "<strong><p>これは大事</strong></p>"
+    explanation: 入れ子は「後に開けたものを先に閉じる」のが原則。順番が入れ替わると表示が崩れる原因になる。
+    keywords: [HTML, 入れ子, ネスト]
+  - learning_item: HTML
+    stem: div と span の違いとして正しいものはどれか。
+    correct: divは前後で改行されるが、spanは文章の流れの中に収まる
+    wrongs:
+      - divは見出し用、spanは段落用である
+      - divは文字を大きく、spanは小さく表示する
+      - divはCSSが使えるが、spanは使えない
+    explanation: divはブロック要素で縦に積まれ、spanはインライン要素で改行されない。どちらも意味を持たない入れ物という点は同じ。
+    keywords: [HTML, div, span]
+  - learning_item: HTML
+    stem: 「文字を大きくしたいので h1 を使う」という選び方が推奨されない理由はどれか。
+    correct: タグは見た目ではなく意味で選ぶべきで、文字サイズはCSSで指定するため
+    wrongs:
+      - h1はページの先頭でしか使えない決まりがあるため
+      - h1は表示速度が遅くなるため
+      - h1は古い書き方で廃止予定であるため
+    explanation: 意味に合ったタグを選ぶことをセマンティックなHTMLと呼ぶ。検索エンジンや読み上げソフト、後からコードを読む人が構造を理解できるようになる。
+    keywords: [HTML, セマンティック, タグの選び方]

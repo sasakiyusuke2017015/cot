@@ -22,8 +22,11 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
 .ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
 .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
-.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
-.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
 .quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
 .quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
 .quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
@@ -79,10 +82,10 @@ const QUIZ = [
   {
     "q": "Webアプリの3層構成におけるAPIの位置づけはどれか。",
     "options": [
-      "DBの中に保存されるデータの一種",
+      "インターネット回線そのもの",
       "画面のデザインを決める層",
       "ブラウザとDBの橋渡しをする",
-      "インターネット回線そのもの"
+      "DBの中に保存されるデータの一種"
     ],
     "answer": 2,
     "explain": "ブラウザ（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。この絵が描ければ全体像を理解できたと言える。"
@@ -90,15 +93,80 @@ const QUIZ = [
   {
     "q": "SQLに値を埋め込むとき、プレースホルダ（? など）を使う理由はどれか。",
     "options": [
-      "文字列連結よりも実行速度が速くなるため",
-      "文字列連結だとSQLインジェクションで乗っ取られる危険があるため",
       "データベースの容量を節約するため",
-      "SQLの文字数制限を回避するため"
+      "文字列連結よりも実行速度が速くなるため",
+      "SQLの文字数制限を回避するため",
+      "文字列連結だとSQLインジェクションで乗っ取られる危険があるため"
+    ],
+    "answer": 3,
+    "explain": "ユーザー入力を文字列連結でSQLに埋め込むと、入力次第で条件を無意味にされたりテーブルを削除されたりする。入力値は必ずプレースホルダで渡す。"
+  },
+  {
+    "q": "APIをDBに繋いだことで変わる点として正しいものはどれか。",
+    "options": [
+      "JavaScriptを書かなくてよくなる",
+      "通信速度が必ず速くなる",
+      "サーバを再起動してもデータが残るようになる",
+      "CORSの設定が不要になる"
+    ],
+    "answer": 2,
+    "explain": "変数（メモリ）に置いたデータは実行が終われば消える。DBに保存することで初めて「保存した」と言える状態になる。"
+  },
+  {
+    "q": "name の値に  ' OR '1'='1  を入れられたとき、文字列連結で組み立てたSQLはどうなるか。",
+    "options": [
+      "自動でエスケープされ問題は起きない",
+      "条件が常に真になり、全件が返ってしまう",
+      "該当0件として何も返らない",
+      "構文エラーになって安全に停止する"
     ],
     "answer": 1,
-    "explain": "ユーザー入力を文字列連結でSQLに埋め込むと、入力次第で条件を無意味にされたりテーブルを削除されたりする。入力値は必ずプレースホルダで渡す。"
+    "explain": "入力がSQLの一部として解釈されるため条件が無意味になる。さらに悪意ある入力ではテーブルの削除も可能になる。プレースホルダを使えば値として扱われるため安全。"
+  },
+  {
+    "q": "ORMを使う前に生のSQLを学んでおくべき理由はどれか。",
+    "options": [
+      "ORMは実務では使われないため",
+      "生SQLのほうが記述量が少なくなるため",
+      "ORMは生SQLより動作が遅いため",
+      "詰まったときにORMが出しているSQLを確認して原因を追えるため"
+    ],
+    "answer": 3,
+    "explain": "ORMは便利だが中で何が起きているか分からないまま使うと問題解決ができない。仕組みを理解してから道具を使う順番が大事。"
   }
 ];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch08';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
@@ -271,21 +339,14 @@ session.commit()`}</div>
                       <li>余裕があれば、プレイヤー名も保存してJOINで一覧を出す</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">サーバを再起動しても戦績が消えない</div>
-                      <div className="chk-item">ブラウザ → API → DB の3層を自分で図に描いて説明できる</div>
-                      <div className="chk-item">なぜプレースホルダを使うのか説明できる</div>
-                      <div className="chk-item">実際にDBファイルを開いて、中のデータを確認した</div>
+                    <CheckList items={["サーバを再起動しても戦績が消えない","ブラウザ → API → DB の3層を自分で図に描いて説明できる","なぜプレースホルダを使うのか説明できる","実際にDBファイルを開いて、中のデータを確認した"]} />
                     <p className="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 次章への橋渡し:</strong> これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを<strong>誰でもアクセスできる場所に置きます</strong>。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">ブラウザ → API → DB の3層を説明できる</div>
-                  <div className="chk-item">PythonからDBに接続してSQLを実行できる</div>
-                  <div className="chk-item">サーバを再起動してもデータが残ることを確認した</div>
-                  <div className="chk-item">プレースホルダを使う理由を説明できる</div>
-                  <div className="chk-item">SQLインジェクションがどう起きるか説明できる</div>
+                  <CheckList items={["ブラウザ → API → DB の3層を説明できる","PythonからDBに接続してSQLを実行できる","サーバを再起動してもデータが残ることを確認した","プレースホルダを使う理由を説明できる","SQLインジェクションがどう起きるか説明できる"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

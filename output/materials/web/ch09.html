@@ -22,8 +22,11 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
 .ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
 .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
-.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
-.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
 .quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
 .quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
 .quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
@@ -79,26 +82,91 @@ const QUIZ = [
   {
     "q": "「デプロイ」の意味として正しいものはどれか。",
     "options": [
+      "コードを削除すること",
       "アプリを公開して誰でも使える状態にすること",
       "デザインを修正すること",
-      "パソコンを初期化すること",
-      "コードを削除すること"
+      "パソコンを初期化すること"
     ],
-    "answer": 0,
+    "answer": 1,
     "explain": "デプロイは作ったアプリをサーバーに配置して公開することであり学習の総仕上げにあたる。"
   },
   {
     "q": "今どきの典型的なWebアプリ公開の流れはどれか。",
     "options": [
+      "GitHubへpushするとホスティングサービスが自動で公開する",
       "HTMLをメールで全員に送る",
       "USBメモリでサーバー室に運ぶ",
-      "コードを印刷して郵送する",
-      "GitHubへpushするとホスティングサービスが自動で公開する"
+      "コードを印刷して郵送する"
+    ],
+    "answer": 0,
+    "explain": "VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。Gitの習慣がここで直接活きる。"
+  },
+  {
+    "q": "公開する前に必ず確認すべきことはどれか。",
+    "options": [
+      "変数名が英語になっているか",
+      "ファイル数が少なくまとまっているか",
+      "APIキーやパスワードがコードに残っていないか",
+      "コメントが日本語で書かれているか"
+    ],
+    "answer": 2,
+    "explain": "公開すると誰でもアクセスできる状態になる。秘密情報は環境変数に移し、コードやリポジトリに残さない。"
+  },
+  {
+    "q": "フロントエンドを公開したあと、APIに繋がらなくなった。確認すべき点として適切な組み合わせはどれか。",
+    "options": [
+      "HTMLの文法エラーとCSSの読み込み順",
+      "ブラウザのバージョンと画面サイズ",
+      "データベースの容量とテーブル名",
+      "フロント側のAPI接続先URLと、サーバ側のCORS許可設定"
     ],
     "answer": 3,
-    "explain": "VercelなどのサービスはGitHub連携によりpushのたびに自動でビルド・公開してくれる。"
+    "explain": "ローカルのURLのままだと繋がらず、公開したフロントのURLをCORSで許可していないとブラウザに止められる。第7章の切り分け手順がそのまま使える。"
+  },
+  {
+    "q": "学習においてデプロイまで行う意義として最も適切なものはどれか。",
+    "options": [
+      "デプロイしないとコードが保存されないため",
+      "公開しないとプログラムが動作しないため",
+      "公開URLを人に使ってもらう経験が次の学習の原動力になる",
+      "就職活動で必須の資格になるため"
+    ],
+    "answer": 2,
+    "explain": "動くものを世界に出した経験は学習のモチベーションを大きく変える。作って終わりではなく、使ってもらって感想をもらうところまでが一区切りになる。"
   }
 ];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch09';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
@@ -210,16 +278,11 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
                       <li>家族や友人にURLを送って遊んでもらう</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">公開URLにアクセスして対戦できる</div>
-                      <div className="chk-item">対戦結果が保存され、再訪しても残っている</div>
-                      <div className="chk-item">自分以外の誰かに遊んでもらった</div>
-                      <div className="chk-item">APIキーやパスワードがコードに残っていないか確認した</div>
+                    <CheckList items={["公開URLにアクセスして対戦できる","対戦結果が保存され、再訪しても残っている","自分以外の誰かに遊んでもらった","APIキーやパスワードがコードに残っていないか確認した"]} />
                     <p className="assign-hint">💡 フロントとAPIは別々のサービスにデプロイすることになります。「フロントは動くがAPIに繋がらない」ときは、接続先URLとCORS設定の2つを疑ってください。第7章で学んだ切り分けがそのまま使えます。</p>
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">デプロイの意味を説明できる</div>
-                  <div className="chk-item">push → 自動公開の流れを体験した</div>
-                  <div className="chk-item">公開URLを人に共有して使ってもらった</div>
+                  <CheckList items={["デプロイの意味を説明できる","push → 自動公開の流れを体験した","公開URLを人に共有して使ってもらった"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

@@ -22,8 +22,11 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
 .ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
 .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
-.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
-.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
 .quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
 .quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
 .quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
@@ -79,10 +82,10 @@ const QUIZ = [
   {
     "q": "APIの役割として最も適切なものはどれか。",
     "options": [
-      "CSSを自動生成する機能",
+      "画像を圧縮する機能",
       "パソコンの電源を管理する仕組み",
       "ブラウザとサーバがデータをやり取りする窓口",
-      "画像を圧縮する機能"
+      "CSSを自動生成する機能"
     ],
     "answer": 2,
     "explain": "ブラウザのJavaScriptからサーバのPython関数を直接呼ぶことはできない。間にHTTPとJSONを挟んでやり取りする窓口がAPIである。"
@@ -90,15 +93,80 @@ const QUIZ = [
   {
     "q": "ブラウザから別のサーバへ通信したとき「CORS policy」というエラーが出た。この原因として正しいものはどれか。",
     "options": [
+      "ブラウザが安全のため別オリジンへの通信を既定で止めている",
       "JSONの書き方が間違っている",
       "インターネット回線が切断されている",
-      "サーバのプログラムに文法エラーがある",
-      "ブラウザが安全のため別オリジンへの通信を既定で止めている"
+      "サーバのプログラムに文法エラーがある"
+    ],
+    "answer": 0,
+    "explain": "CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。"
+  },
+  {
+    "q": "一覧を取得するときに使うHTTPメソッドはどれか。",
+    "options": [
+      "PUT",
+      "DELETE",
+      "POST",
+      "GET"
     ],
     "answer": 3,
-    "explain": "CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。"
+    "explain": "GET=取得、POST=追加、PUT=更新、DELETE=削除。SQLのSELECT/INSERT/UPDATE/DELETEときれいに対応する。"
+  },
+  {
+    "q": "FastAPIでサーバを起動したあと、ブラウザ側を書く前に動作確認できる場所はどこか。",
+    "options": [
+      "サーバのログファイル",
+      "データベースの管理画面",
+      "自動生成される /docs のページ",
+      "GitHubのリポジトリページ"
+    ],
+    "answer": 2,
+    "explain": "FastAPIは自動でAPIの操作画面を作る。ここでサーバ単体を試せるため、詰まったときブラウザ側とサーバ側を切り分けられる。"
+  },
+  {
+    "q": "APIを呼んだら404が返ってきた。最も可能性が高い原因はどれか。",
+    "options": [
+      "ブラウザのキャッシュが残っている",
+      "呼び出しているURLが間違っている",
+      "送ったJSONの形式が違う",
+      "サーバ側のコードでエラーが起きている"
+    ],
+    "answer": 1,
+    "explain": "404はURLが見つからない意味。422は送ったデータの形が違う、500はサーバ側でエラーが起きている。ステータスコードで原因の見当がつく。"
   }
 ];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch07';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
@@ -285,22 +353,14 @@ app.add_middleware(
                       <li>CORSエラーを解決する</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">オセロで対戦を終えると、サーバにデータが届く</div>
-                      <div className="chk-item">一覧ボタンで過去の戦績が表示される</div>
-                      <div className="chk-item">Networkタブでリクエストとレスポンスの中身を説明できる</div>
-                      <div className="chk-item">サーバを止めると画面側でどうなるか確認した</div>
+                    <CheckList items={["オセロで対戦を終えると、サーバにデータが届く","一覧ボタンで過去の戦績が表示される","Networkタブでリクエストとレスポンスの中身を説明できる","サーバを止めると画面側でどうなるか確認した"]} />
                     <p className="assign-hint">💡 いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
                   </div>
                   <div className="warn-box">
                     <strong>⚠️ まだデータは消えます:</strong> いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。<strong>サーバを再起動すると全部消えます</strong>。次章でDBに繋いで、本当に保存されるようにします。
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">GET / POST / PUT / DELETE の使い分けが分かる</div>
-                  <div className="chk-item">FastAPIでエンドポイントを作れる</div>
-                  <div className="chk-item">/docs でサーバ単体の動作確認ができる</div>
-                  <div className="chk-item">fetchでAPIを呼んで結果を画面に出せる</div>
-                  <div className="chk-item">CORSエラーの原因を説明できる</div>
-                  <div className="chk-item">ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる</div>
+                  <CheckList items={["GET / POST / PUT / DELETE の使い分けが分かる","FastAPIでエンドポイントを作れる","/docs でサーバ単体の動作確認ができる","fetchでAPIを呼んで結果を画面に出せる","CORSエラーの原因を説明できる","ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

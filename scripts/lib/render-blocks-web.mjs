@@ -46,10 +46,10 @@ function renderExBox(b) {
   return `${P}<div className="ex-box">\n${P}  <p className="ex-title">✏️ ${inline(b.title ?? '演習')}</p>\n${P}  <p>${inline(b.text)}</p>\n${P}</div>`
 }
 
-// checklist: <h3>チェックリスト</h3> + chk-item の列
+// checklist: <h3>チェックリスト</h3> + クリックで実際にチェックできるリスト
 function renderChecklist(b) {
-  const items = (b.items ?? []).map((s) => `${P}<div className="chk-item">${inline(s)}</div>`).join('\n')
-  return `${P}<h3>${inline(b.title ?? 'チェックリスト')}</h3>\n${items}`
+  const items = JSON.stringify(b.items ?? [])
+  return `${P}<h3>${inline(b.title ?? 'チェックリスト')}</h3>\n${P}<CheckList items={${items}} />`
 }
 
 function renderCode(b) {
@@ -65,14 +65,14 @@ function renderAssignment(b) {
   const steps = (b.steps ?? [])
     .map((s, i) => `${P}    <li>${inline(s)}</li>`)
     .join('\n')
-  const done = (b.done ?? [])
-    .map((s) => `${P}    <div className="chk-item">${inline(s)}</div>`)
-    .join('\n')
+  const done = (b.done ?? []).length
+    ? `${P}  <p className="assign-h">できたと言える条件</p>\n${P}  <CheckList items={${JSON.stringify(b.done)}} />`
+    : ''
   return `${P}<div className="assign-box">
 ${P}  <p className="assign-title">🛠 課題: ${inline(b.title)}</p>
 ${P}  ${b.goal ? `<p className="assign-goal">${inline(b.goal)}</p>` : ''}
 ${steps ? `${P}  <p className="assign-h">作るもの</p>\n${P}  <ol className="assign-steps">\n${steps}\n${P}  </ol>` : ''}
-${done ? `${P}  <p className="assign-h">できたと言える条件</p>\n${done}` : ''}
+${done}
 ${P}  ${b.hint ? `<p className="assign-hint">💡 ${inline(b.hint)}</p>` : ''}
 ${P}</div>`
 }

@@ -19,3 +19,30 @@ questions:
       - JSONの書き方が間違っている
     explanation: CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。
     keywords: [CORS, API, セキュリティ]
+  - learning_item: API
+    stem: 一覧を取得するときに使うHTTPメソッドはどれか。
+    correct: GET
+    wrongs:
+      - POST
+      - DELETE
+      - PUT
+    explanation: GET=取得、POST=追加、PUT=更新、DELETE=削除。SQLのSELECT/INSERT/UPDATE/DELETEときれいに対応する。
+    keywords: [API, HTTPメソッド, CRUD]
+  - learning_item: API
+    stem: FastAPIでサーバを起動したあと、ブラウザ側を書く前に動作確認できる場所はどこか。
+    correct: 自動生成される /docs のページ
+    wrongs:
+      - サーバのログファイル
+      - データベースの管理画面
+      - GitHubのリポジトリページ
+    explanation: FastAPIは自動でAPIの操作画面を作る。ここでサーバ単体を試せるため、詰まったときブラウザ側とサーバ側を切り分けられる。
+    keywords: [FastAPI, docs, 切り分け]
+  - learning_item: API
+    stem: APIを呼んだら404が返ってきた。最も可能性が高い原因はどれか。
+    correct: 呼び出しているURLが間違っている
+    wrongs:
+      - 送ったJSONの形式が違う
+      - サーバ側のコードでエラーが起きている
+      - ブラウザのキャッシュが残っている
+    explanation: 404はURLが見つからない意味。422は送ったデータの形が違う、500はサーバ側でエラーが起きている。ステータスコードで原因の見当がつく。
+    keywords: [API, ステータスコード, デバッグ]

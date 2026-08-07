@@ -22,8 +22,11 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
 .ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
 .ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
-.chk-item { display:flex; gap:0.5rem; padding:0.4rem 0; font-size:0.875rem; color:#374151; align-items:flex-start; }
-.chk-item::before { content:"☐"; color:#f97316; font-size:1rem; flex-shrink:0; margin-top:-1px; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
 .quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
 .quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
 .quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
@@ -79,9 +82,9 @@ const QUIZ = [
   {
     "q": "class属性が「card」の要素を選ぶCSSセレクタはどれか。",
     "options": [
-      "@card",
-      "card()",
       "#card",
+      "card()",
+      "@card",
       ".card"
     ],
     "answer": 3,
@@ -90,15 +93,80 @@ const QUIZ = [
   {
     "q": "子要素を横一列に並べたいとき親要素に指定するCSSはどれか。",
     "options": [
-      "display: flex;",
       "color: red;",
+      "display: flex;",
       "font-size: 2rem;",
       "content: row;"
     ],
-    "answer": 0,
+    "answer": 1,
     "explain": "「display: flex;」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。"
+  },
+  {
+    "q": "ボックスモデルにおいて、内側から外側への正しい順序はどれか。",
+    "options": [
+      "border → padding → content → margin",
+      "content → margin → border → padding",
+      "content → padding → border → margin",
+      "padding → content → margin → border"
+    ],
+    "answer": 2,
+    "explain": "要素は箱として描画され内側からこの4層になる。レイアウト崩れの原因の多くはpaddingとmarginの取り違えである。"
+  },
+  {
+    "q": "CSSをHTMLに直接書かず、別ファイルに分ける主な利点はどれか。",
+    "options": [
+      "1つのCSSファイルを複数ページで使い回せ、見た目を1か所で変えられる",
+      "JavaScriptが不要になる",
+      "CSSの書き方が簡単になる",
+      "ファイルサイズが必ず小さくなる"
+    ],
+    "answer": 0,
+    "explain": "構造と見た目を分けることで、サイト全体の見た目を1か所の修正で変更できる。HTMLに直接書くとページ数だけ同じ指定をコピーすることになる。"
+  },
+  {
+    "q": "HTMLからCSSファイルを読み込む正しい書き方はどれか。",
+    "options": [
+      "<style src=\"style.css\"></style>",
+      "<css href=\"style.css\">",
+      "<script src=\"style.css\"></script>",
+      "<link rel=\"stylesheet\" href=\"style.css\">"
+    ],
+    "answer": 3,
+    "explain": "外部CSSはlinkタグでhead内に書く。scriptタグはJavaScriptの読み込みに使うものである。"
   }
 ];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch02';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
 
 function KeywordsPanel({ keywords }) {
   if (!keywords || keywords.length === 0) return null;
@@ -224,16 +292,11 @@ h1 {
                       <li><strong>HTMLファイルには style 属性を1つも書かない</strong></li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                      <div className="chk-item">style.css を削除すると、見た目だけが消えて内容は残る</div>
-                      <div className="chk-item">HTMLに style="..." が1つも書かれていない</div>
-                      <div className="chk-item">開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる</div>
+                    <CheckList items={["style.css を削除すると、見た目だけが消えて内容は残る","HTMLに style=\"...\" が1つも書かれていない","開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる"]} />
                     <p className="assign-hint">💡 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。</p>
                   </div>
                   <h3>チェックリスト</h3>
-                  <div className="chk-item">セレクタとプロパティの書き方が分かる</div>
-                  <div className="chk-item">ボックスモデルの4層を言える</div>
-                  <div className="chk-item">display:flex で要素を横に並べられる</div>
-                  <div className="chk-item">CSSを別ファイルに分ける理由を説明できる</div>
+                  <CheckList items={["セレクタとプロパティの書き方が分かる","ボックスモデルの4層を言える","display:flex で要素を横に並べられる","CSSを別ファイルに分ける理由を説明できる"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>
