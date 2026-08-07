@@ -7,92 +7,342 @@ subtitle: 見た目とレイアウトを整える
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 teaching:
-  sessions: 3
-  goal: セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。
-  watch: レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。
-  ask: この余白は padding と margin どっちが正しい？
+  sessions: 4
+  goal: セレクタで要素を選ぶ感覚と、Flexbox/Gridで並べる感覚。「HTMLは触らずCSSだけで見た目が変わる」を体験させる。
+  watch: レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。margin と padding の取り違えが最多。色やフォントに凝りすぎて時間を溶かす人がいるので配分を見る。
+  ask: この余白は padding と margin どっちが正しい？なぜそう思った？
 keywords:
   - term: CSS
     desc: HTMLに見た目（色・大きさ・配置）を与える言語
   - term: セレクタ
     desc: スタイルを当てる対象を選ぶ書き方。.card や h1 など
+  - term: プロパティ
+    desc: 何を変えるか。color、font-size など
   - term: ボックスモデル
     desc: content→padding→border→margin の4層構造
   - term: Flexbox
-    desc: 要素を柔軟に並べるレイアウト機能。display:flex
-  - term: 開発者ツール
-    desc: 要素のボックスモデルを色付きで確認できる
+    desc: 要素を1方向に並べるレイアウト機能。display:flex
+  - term: Grid
+    desc: 格子状に並べるレイアウト機能。オセロの盤面に最適
+  - term: 詳細度
+    desc: 複数の指定が競合したときどれが勝つかの優先順位
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、Flexboxで簡単なレイアウトを組めるようになる。
+    text: セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、FlexboxとGridでレイアウトを組めるようになる。**HTMLを一切変えずに見た目だけを変えられる**ことを体験します。
   - kind: h3
     text: CSSとは何か
   - kind: paragraph
-    text: CSS（Cascading Style Sheets）は、HTMLで作った骨組みに**見た目（色・大きさ・配置）**を与える言語です。「どの要素に」「どんなスタイルを」の2つをセットで書きます。
+    text: CSS（Cascading Style Sheets）は、HTMLで作った骨組みに**見た目（色・大きさ・配置）**を与える言語です。前章で作ったページは真っ白で味気なかったはずですが、HTMLは一行も変えずに見違えるようにできます。
+  - kind: paragraph
+    text: 書き方はいたって単純で、「**どの要素に**」「**何を**」「**どうする**」の3つを並べるだけです。
   - kind: code
     text: |
-      /* セレクタ { プロパティ: 値; } */
+      セレクタ {
+        プロパティ: 値;
+      }
+
+      /* 実例 */
       h1 {
-        color: #1e3a8a;
-        font-size: 2rem;
+        color: #1e3a8a;      /* 文字色を紺色に */
+        font-size: 2rem;     /* 文字の大きさを2倍に */
       }
-      .card {          /* class="card" の要素に当たる */
-        padding: 16px;
-        border-radius: 8px;
-      }
-  - kind: h3
-    text: セレクタの基本
   - kind: ul
     items:
-      - "**h1** … タグ名で選ぶ"
-      - "**.card** … class属性で選ぶ（先頭にドット）。最もよく使う"
-      - "**#header** … id属性で選ぶ（先頭にシャープ）"
+      - "**セレクタ** … どの要素に当てるか（h1、.card など）"
+      - "**プロパティ** … 何を変えるか（color、font-size など）"
+      - "**値** … どうするか（#1e3a8a、2rem など）"
+      - "行の終わりには必ず**セミコロン `;`** を付ける"
+      - "`/* */` で囲むとコメント（メモ書き）になる"
   - kind: h3
-    text: ボックスモデル
+    text: CSSファイルを分けて読み込む
   - kind: paragraph
-    text: すべての要素は箱（ボックス）として描画されます。内側から **content → padding → border → margin** の層になっていて、レイアウト崩れの原因の大半はここの理解不足です。
-  - kind: h3
-    text: Flexboxで並べる
+    text: CSSはHTMLの中に直接書くこともできますが、**別ファイルにするのが基本**です。まず `style.css` を作り、HTMLの `<head>` の中で読み込みます。
   - kind: code
     text: |
-      .row {
-        display: flex;        /* 子要素を横に並べる */
-        gap: 12px;            /* 要素間の隙間 */
-        justify-content: center;  /* 水平方向の揃え */
-        align-items: center;      /* 垂直方向の揃え */
-      }
-  - kind: tip-box
-    title: "💡 コツ:"
-    text: 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。
-  - kind: h3
-    text: CSSファイルを分ける
-  - kind: paragraph
-    text: CSSはHTMLの中に直接書くこともできますが、**別ファイルにして読み込む**のが基本です。こう書きます。
-  - kind: code
-    text: |
-      <!-- profile.html の <head> の中 -->
+      <!-- profile.html の <head> の中に書く -->
       <link rel="stylesheet" href="style.css">
   - kind: kv-box
     title: "📌 なぜ分けるのか:"
-    text: 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると、その恩恵がはっきりします。**1つのCSSファイルを複数のページで使い回せる**ので、サイト全体の見た目を1か所で変えられます。逆にHTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。
+    text: 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると恩恵がはっきりします。**1つのCSSファイルを複数ページで使い回せる**ので、サイト全体の見た目を1か所で変えられます。HTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。
+  - kind: h3
+    text: セレクタ — どれを選ぶか
+  - kind: paragraph
+    text: セレクタには種類があります。まずは次の3つを覚えてください。
+  - kind: table
+    headers:
+      - 書き方
+      - 何を選ぶか
+      - 使いどころ
+    rows:
+      - - h1
+        - そのタグ全部
+        - 「見出しは全部この色」など全体の方針
+      - - .card
+        - class="card" の要素
+        - "**最もよく使う**。同じ見た目を複数に当てる"
+      - - "#board"
+        - id="board" の要素
+        - ページに1つしかないものを狙う
+  - kind: code
+    text: |
+      /* タグで選ぶ */
+      p { line-height: 1.8; }
+
+      /* class で選ぶ（先頭にドット） */
+      .card { background: white; }
+
+      /* id で選ぶ（先頭にシャープ） */
+      #board { width: 400px; }
+  - kind: tip-box
+    title: "💡 迷ったら class を使う:"
+    text: idは1ページに1つしか使えず、あとで「他にも同じ見た目にしたい」となったとき困ります。**基本はclass、本当に唯一のものだけid**と考えておけば失敗しません。
+  - kind: h3
+    text: 組み合わせて絞り込む
+  - kind: paragraph
+    text: セレクタは組み合わせられます。これを知っていると「同じclass名でも場所によって見た目を変える」ことができます。
+  - kind: code
+    text: |
+      /* .card の中にある h2 だけ */
+      .card h2 { color: navy; }
+
+      /* card と large の両方を持つ要素 */
+      .card.large { font-size: 1.5rem; }
+
+      /* 複数まとめて同じ指定 */
+      h1, h2, h3 { font-family: sans-serif; }
+  - kind: h3
+    text: 詳細度 — 指定がぶつかったらどうなるか
+  - kind: paragraph
+    text: 同じ要素に複数の指定が当たると、**より具体的なほうが勝ちます**。これを詳細度と言います。CSSが効かないときの原因の多くがこれです。
+  - kind: code
+    text: |
+      p { color: black; }        /* 弱い */
+      .intro { color: blue; }    /* こちらが勝つ */
+      #main { color: red; }      /* さらに強い */
+
+      <p class="intro" id="main">この文字は赤になる</p>
+  - kind: ul
+    items:
+      - "**id**（#）… いちばん強い"
+      - "**class**（.）… 中くらい"
+      - "**タグ名**（p, h1）… いちばん弱い"
+      - 同じ強さなら**後に書いたほうが勝つ**
+  - kind: warn-box
+    title: "⚠️ CSSが効かないときの3大原因:"
+    text: |
+      ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）
+      ② 詳細度で別の指定に負けている
+      ③ そもそもCSSファイルが読み込まれていない
+
+      **開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。** 想像で直さず、まずここを見てください。
+  - kind: h3
+    text: ボックスモデル — すべての要素は箱
+  - kind: paragraph
+    text: レイアウトを理解する上で最重要の概念です。**すべての要素は4層構造の箱**として描画されます。
+  - kind: code
+    text: |
+      ┌─────────────────────────┐
+      │  margin（外側の余白）      │
+      │ ┌─────────────────────┐ │
+      │ │ border（枠線）         │ │
+      │ │ ┌─────────────────┐ │ │
+      │ │ │ padding（内側の余白）│ │ │
+      │ │ │ ┌─────────────┐ │ │ │
+      │ │ │ │  content     │ │ │ │
+      │ │ │ │  （中身）     │ │ │ │
+      │ │ │ └─────────────┘ │ │ │
+      │ │ └─────────────────┘ │ │
+      │ └─────────────────────┘ │
+      └─────────────────────────┘
+  - kind: table
+    headers:
+      - 層
+      - 意味
+      - 使い分け
+    rows:
+      - - content
+        - 文字や画像そのもの
+        - width / height で大きさを指定
+      - - padding
+        - 枠線の**内側**の余白
+        - 「箱の中で中身を窮屈にしたくない」とき
+      - - border
+        - 枠線
+        - 見た目の区切り
+      - - margin
+        - 枠線の**外側**の余白
+        - 「隣の要素と離したい」とき
+  - kind: kv-box
+    title: "📌 padding と margin の使い分け:"
+    text: 迷ったらこう考えてください。**背景色を付けたときに色が付く範囲を広げたいなら padding、要素同士の距離を空けたいなら margin** です。paddingは箱の内側なので背景色が付き、marginは外側なので付きません。
+  - kind: code
+    text: |
+      .card {
+        padding: 16px;              /* 上下左右すべて */
+        padding: 16px 24px;         /* 上下 / 左右 */
+        padding: 8px 16px 24px 32px; /* 上 右 下 左（時計回り） */
+
+        margin: 0 auto;             /* 上下0、左右autoで中央寄せ */
+      }
+  - kind: tip-box
+    title: "💡 box-sizing は最初に書く:"
+    text: |
+      既定では width に padding と border が**含まれません**。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。
+
+      `* { box-sizing: border-box; }`
+  - kind: h3
+    text: Flexbox — 一列に並べる
+  - kind: paragraph
+    text: 要素を横や縦に並べたいときはFlexboxを使います。**並べたい要素の「親」に指定する**のがポイントです。
+  - kind: code
+    text: |
+      <!-- HTML -->
+      <div class="row">
+        <div>A</div>
+        <div>B</div>
+        <div>C</div>
+      </div>
+  - kind: code
+    text: |
+      /* CSS：親に指定する */
+      .row {
+        display: flex;              /* 子要素を横に並べる */
+        gap: 12px;                  /* 要素の間隔 */
+        justify-content: center;    /* 横方向の揃え */
+        align-items: center;        /* 縦方向の揃え */
+      }
+  - kind: table
+    headers:
+      - プロパティ
+      - よく使う値
+      - 効果
+    rows:
+      - - flex-direction
+        - row / column
+        - 横並び / 縦並び
+      - - gap
+        - 8px など
+        - 要素同士の間隔
+      - - justify-content
+        - center / space-between
+        - 並び方向の揃え
+      - - align-items
+        - center / stretch
+        - 交差方向の揃え
+      - - flex-wrap
+        - wrap
+        - 入りきらないとき折り返す
+  - kind: h3
+    text: Grid — 格子状に並べる
+  - kind: paragraph
+    text: Flexboxは一列に並べるのが得意ですが、**縦横の格子**を作るならGridが適しています。オセロの盤面（8×8）にはこちらが最適です。
+  - kind: code
+    text: |
+      .board {
+        display: grid;
+        grid-template-columns: repeat(8, 50px);  /* 50px幅の列を8つ */
+        gap: 2px;
+        background: #333;        /* 隙間が線に見える */
+      }
+      .cell {
+        background: #2d7a4f;     /* マスの緑 */
+        aspect-ratio: 1;         /* 正方形にする */
+      }
+  - kind: paragraph
+    text: これだけで8×8の盤面ができます。`repeat(8, 50px)` は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。
+  - kind: h3
+    text: 色の指定方法
+  - kind: table
+    headers:
+      - 書き方
+      - 例
+      - 補足
+    rows:
+      - - 色名
+        - red, white
+        - 手軽だが種類が限られる
+      - - 16進数
+        - "#1e3a8a"
+        - "**最もよく使う**。RGB各2桁"
+      - - rgb
+        - rgb(30, 58, 138)
+        - 数値で分かりやすい
+      - - rgba
+        - rgba(0, 0, 0, 0.5)
+        - 最後の値は透明度
+  - kind: tip-box
+    title: "💡 色は自分で考えなくていい:"
+    text: 配色は専門的な技術です。**既存の配色パレットから選ぶ**のが早くて確実です。「color palette」で検索すれば、組み合わせが決まった色見本がいくらでも見つかります。開発者ツールで好きなサイトの色を調べるのも有効です。
+  - kind: h3
+    text: よく使うプロパティ
+  - kind: code
+    text: |
+      .card {
+        /* 文字 */
+        color: #374151;              /* 文字色 */
+        font-size: 1rem;             /* 大きさ */
+        font-weight: bold;           /* 太さ */
+        line-height: 1.8;            /* 行間（読みやすさに直結） */
+        text-align: center;          /* 揃え */
+
+        /* 背景と枠 */
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;          /* 角を丸く */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);  /* 影 */
+
+        /* 大きさ */
+        width: 300px;
+        max-width: 100%;             /* 画面が狭いときはみ出さない */
+      }
+  - kind: h3
+    text: スマホでも崩れないようにする
+  - kind: paragraph
+    text: 画面幅に応じてスタイルを変えられます。これを**レスポンシブ対応**と言います。
+  - kind: code
+    text: |
+      /* 通常（PC向け） */
+      .row { display: flex; }
+
+      /* 画面幅が600px以下のとき */
+      @media (max-width: 600px) {
+        .row { flex-direction: column; }  /* 縦積みに変える */
+      }
+  - kind: tip-box
+    title: "💡 確認方法:"
+    text: 開発者ツールを開き、左上のスマホアイコン（Toggle device toolbar）を押すと、スマホ表示を再現できます。実機がなくても確認できます。
   - kind: assignment
     title: プロフィールカード（第2段階 — 見た目を整える）
-    goal: 第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。HTMLファイルは構造だけ、見た目は全部CSSファイル、という分担を体験するのが狙いです。
+    goal: 第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。**HTMLファイルは1文字も変えずに**、見た目だけを変えるのが狙いです（class名の追加は可）。
     steps:
       - "`style.css` を作り、profile.html から link で読み込む"
+      - "`* { box-sizing: border-box; }` を最初に書いておく"
       - カード風の見た目にする（背景色・padding・border-radius・box-shadow）
       - 名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する
-      - Flexbox を使って、リストの項目を横並びのタグ風にする
+      - Flexbox を使って「できること」のリストを横並びのタグ風にする
+      - 画面幅600px以下では縦並びになるようにする
       - "**HTMLファイルには style 属性を1つも書かない**"
     done:
       - style.css を削除すると、見た目だけが消えて内容は残る
       - HTMLに style="..." が1つも書かれていない
       - 開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる
+      - スマホ表示にしても崩れない
+      - padding と margin を使い分けた理由を説明できる
     hint: 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: Gridを使ってオセロの盤面（8×8）を作ってみましょう。マスの色、石を置いたときの丸（border-radiusで円になります）、置ける場所を示すハイライトまでCSSで表現できます。第4章でオセロを作るとき、この見た目がそのまま使えます。
+  - kind: tip-box
+    title: "💡 次章への橋渡し:"
+    text: 構造と見た目がそろいました。ただし**まだ何も動きません**。ボタンを押しても何も起きず、石も置けません。次章のJavaScriptで、ようやく「動くもの」になります。
   - kind: checklist
     items:
       - セレクタとプロパティの書き方が分かる
+      - class と id の使い分けができる
+      - 詳細度で指定が上書きされる仕組みを理解した
       - ボックスモデルの4層を言える
+      - padding と margin を使い分けられる
       - display:flex で要素を横に並べられる
+      - display:grid で格子状に並べられる
       - CSSを別ファイルに分ける理由を説明できる

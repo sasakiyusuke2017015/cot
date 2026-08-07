@@ -7,10 +7,10 @@ subtitle: ページに動きをつける
 source_refs:
   - input/raw/web-dev/mentoring-notes.md
 teaching:
-  sessions: 6
-  goal: エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。
-  watch: 詰まる人が一番多い。ここで30分ルールを本格的に運用開始する。答えを言わずコンソールを見せる。
-  ask: console.log を入れるならどこ？なぜそこ？
+  sessions: 8
+  goal: エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。オセロに必要な配列操作とDOM操作まで到達させる。
+  watch: 詰まる人が一番多い。ここで30分ルールを本格運用する。答えを言わずコンソールを開かせる。console.log を挟む癖がつくまで何度でも促す。2次元配列で必ず一度は混乱するので、紙に書かせるとよい。
+  ask: console.log を入れるならどこ？なぜそこ？いま変数には何が入っていると思う？
 keywords:
   - term: 変数
     desc: 値に名前を付けて保存する。const（再代入不可）と let
@@ -18,84 +18,323 @@ keywords:
     desc: if / else で条件に応じて処理を切り替える
   - term: 配列
     desc: 複数の値を順番に持つ入れ物。length で要素数
-  - term: DOM操作
-    desc: JavaScriptからHTML要素を取得・変更すること
+  - term: 関数
+    desc: 処理をまとめて名前を付けたもの。何度でも呼べる
+  - term: DOM
+    desc: ブラウザがHTMLを扱うための仕組み。JSから操作できる
+  - term: イベント
+    desc: クリックや入力などの「出来事」。それを合図に処理を動かす
   - term: console.log
     desc: 変数の中身をコンソールに表示するデバッグの基本
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: 変数・条件分岐・繰り返し・関数・配列を使えるようになり、ボタンクリックでページが変わる体験をする。
+    text: 変数・条件分岐・繰り返し・関数・配列を使えるようになり、**クリックに反応して画面が変わる**ものを作れるようになる。ここまでできればオセロが作れます。
   - kind: h3
     text: JavaScriptとは何か
   - kind: paragraph
     text: JavaScriptは、ページに**動き（ロジック）**を与えるプログラミング言語です。「ボタンを押したら表示を変える」「入力内容をチェックする」など、ユーザーの操作に反応する部分を担当します。
-  - kind: h3
-    text: 基本文法
-  - kind: code
-    text: |
-      const name = '田中';            // 変数（再代入しないなら const）
-      let count = 0;                  // 再代入するなら let
-
-      if (count > 10) {               // 条件分岐
-        console.log('多いですね');
-      } else {
-        console.log('まだ少ない');
-      }
-
-      const fruits = ['りんご', 'みかん', 'バナナ'];  // 配列
-      for (const f of fruits) {       // 繰り返し
-        console.log(f);
-      }
-
-      function greet(who) {           // 関数
-        return 'こんにちは、' + who + 'さん';
-      }
-  - kind: h3
-    text: DOM操作 — HTMLとつなぐ
-  - kind: code
-    text: |
-      const btn = document.querySelector('#myButton');
-      btn.addEventListener('click', () => {
-        document.querySelector('#message').textContent = '押されました！';
-      });
-  - kind: warn-box
-    title: "⚠️ ここが本番:"
-    text: JavaScriptからは**必ずエラーに出会います**。エラーが出たら「エラー文を読む → 原因の仮説を立てる → 調べる → 修正する」。この流れを毎回意識してください。エラー文はコンソール（開発者ツールのConsoleタブ）に出ます。
-  - kind: tip-box
-    title: "💡 コツ:"
-    text: 困ったらまず **console.log()** で変数の中身を表示して確認する癖をつけましょう。「思っていた値と違う」がバグの正体であることがほとんどです。
-  - kind: h3
-    text: JSファイルも分ける
   - kind: paragraph
-    text: CSSと同じで、JavaScriptも別ファイルにします。`</body>` の直前で読み込むのが基本です。
+    text: HTMLとCSSは「こう表示せよ」と書くものでしたが、JavaScriptは**手順を書く**言語です。ここから本格的なプログラミングが始まります。
+  - kind: h3
+    text: まず動かしてみる
+  - kind: paragraph
+    text: "`script.js` を作り、HTMLの `</body>` の直前で読み込みます。**head ではなく body の最後**に置くのがポイントです（HTMLが読み込まれる前にJSが動くと、要素が見つからずエラーになるため）。"
   - kind: code
     text: |
       <!-- profile.html の </body> の直前 -->
-      <script src="script.js"></script>
+        <script src="script.js"></script>
+      </body>
+  - kind: code
+    text: |
+      // script.js
+      console.log("動いた！");
+  - kind: paragraph
+    text: ブラウザで開いて **F12 → Console タブ** を見てください。「動いた！」と出ていれば成功です。`console.log()` は画面ではなくコンソールに出力する命令で、**この章を通じて最も使う道具**になります。
+  - kind: h3
+    text: 変数 — 値に名前を付ける
+  - kind: code
+    text: |
+      const name = "田中";     // 変えない値
+      let count = 0;           // 後から変える値
+
+      count = 5;               // let なので変更できる
+      // name = "佐藤";        // const なのでエラーになる
   - kind: kv-box
-    title: "📌 3つの役割がそろった:"
-    text: これで **HTML（構造）・CSS（見た目）・JavaScript（動き）** の3ファイル構成になります。この分け方はWeb開発の基本形で、どんな大きなサイトも根っこは同じです。「どのファイルを直せばいいか」が明確になるのが最大の利点です。
+    title: "📌 まず const で書く:"
+    text: 「変わらないもの」として書いておくと、うっかり書き換えるミスを防げます。**まず const で書き、変更が必要になったときだけ let に変える**。これが実務での基本です。var という古い書き方もありますが、いまは使いません。
+  - kind: h3
+    text: データの種類
+  - kind: code
+    text: |
+      const num = 42;              // 数値
+      const text = "こんにちは";    // 文字列（クォートで囲む）
+      const flag = true;           // 真偽値（true / false）
+      const list = [1, 2, 3];      // 配列
+      const obj = { name: "田中", age: 25 };  // オブジェクト
+  - kind: warn-box
+    title: "⚠️ 数値と文字列は違うもの:"
+    text: |
+      `1 + 2` は 3 ですが、`"1" + "2"` は "12" になります。文字列の + は連結だからです。
+      入力欄から取った値は**必ず文字列**なので、計算する前に `Number()` で数値に変換します。
+      「なぜか計算がおかしい」ときはここを疑ってください。
+  - kind: h3
+    text: 条件分岐 — 場合分けする
+  - kind: code
+    text: |
+      const score = 75;
+
+      if (score >= 80) {
+        console.log("優秀");
+      } else if (score >= 60) {
+        console.log("合格");
+      } else {
+        console.log("再挑戦");
+      }
+  - kind: table
+    headers:
+      - 演算子
+      - 意味
+      - 例
+    rows:
+      - - "==="
+        - 等しい
+        - a === b
+      - - "!=="
+        - 等しくない
+        - a !== b
+      - - "> / <"
+        - より大きい / 小さい
+        - a > b
+      - - ">= / <="
+        - 以上 / 以下
+        - a >= b
+      - - "&&"
+        - かつ
+        - a > 0 && b > 0
+      - - "||"
+        - または
+        - a === 1 || a === 2
+  - kind: tip-box
+    title: "💡 = と === は別物:"
+    text: "`=` は代入（値を入れる）、`===` は比較（等しいか調べる）です。`if (a = 1)` と書くと比較ではなく代入になってしまい、意図しない動きをします。**比較は必ず `===` を3つ**と覚えてください。"
+  - kind: h3
+    text: 繰り返し — 同じ処理を何度も
+  - kind: code
+    text: |
+      // 決まった回数だけ繰り返す
+      for (let i = 0; i < 8; i++) {
+        console.log(i);   // 0,1,2,3,4,5,6,7
+      }
+
+      // 配列の中身を1つずつ取り出す
+      const fruits = ["りんご", "みかん", "バナナ"];
+      for (const fruit of fruits) {
+        console.log(fruit);
+      }
+  - kind: kv-box
+    title: "📌 0から数える:"
+    text: プログラミングでは**0から数える**のが基本です。`for (let i = 0; i < 8; i++)` は「0以上8未満」なので0〜7の**8回**回ります。8×8の盤面を扱うとき、この形をそのまま使います。
+  - kind: h3
+    text: 関数 — 処理に名前を付ける
+  - kind: code
+    text: |
+      // 定義する
+      function greet(who) {
+        return "こんにちは、" + who + "さん";
+      }
+
+      // 呼び出す
+      const message = greet("田中");
+      console.log(message);   // こんにちは、田中さん
+
+      // 短い書き方（アロー関数）。同じ意味
+      const greet2 = (who) => "こんにちは、" + who + "さん";
+  - kind: paragraph
+    text: 同じ処理を何度も書かずに済むのが関数の利点ですが、それ以上に**名前を付けることでコードが読みやすくなる**のが大きな価値です。`checkCanPlace()` という名前を見れば、中身を読まなくても何をするか分かります。
+  - kind: h3
+    text: 配列 — オセロで最も使う
+  - kind: code
+    text: |
+      const scores = [10, 25, 8];
+
+      console.log(scores[0]);     // 10（0番目から数える）
+      console.log(scores.length); // 3（個数）
+
+      scores.push(30);            // 末尾に追加 → [10,25,8,30]
+      scores[1] = 99;             // 1番目を書き換え
+
+      // よく使うメソッド
+      const doubled = scores.map(n => n * 2);       // 全部2倍にした新しい配列
+      const big = scores.filter(n => n > 20);       // 20より大きいものだけ
+      const total = scores.reduce((a, b) => a + b); // 合計
+  - kind: h3
+    text: 2次元配列 — 盤面の表現
+  - kind: paragraph
+    text: オセロの盤面のような格子は、**配列の中に配列を入れる**ことで表現します。ここは最初混乱するところなので、丁寧に見ます。
+  - kind: code
+    text: |
+      // 3×3の盤面
+      const board = [
+        ["", "", ""],     // 0行目
+        ["", "黒", ""],   // 1行目
+        ["", "", "白"],   // 2行目
+      ];
+
+      console.log(board[1][1]);   // "黒"  → board[行][列]
+      console.log(board[2][2]);   // "白"
+
+      board[0][0] = "黒";         // 左上に黒を置く
+  - kind: warn-box
+    title: "⚠️ [行][列] の順番:"
+    text: "`board[1][2]` は「1行目の2列目」です。**縦が先、横が後**。ここを逆に覚えると盤面が転置してしまい、原因の分からないバグになります。紙に書いて確かめておくと確実です。"
+  - kind: code
+    text: |
+      // 8×8の空の盤面を作る
+      const board = [];
+      for (let row = 0; row < 8; row++) {
+        board.push(["", "", "", "", "", "", "", ""]);
+      }
+
+      // 全マスを調べる（二重ループ）
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          if (board[row][col] === "黒") {
+            console.log(row + "行" + col + "列に黒があります");
+          }
+        }
+      }
+  - kind: h3
+    text: DOM操作 — HTMLをJavaScriptから触る
+  - kind: paragraph
+    text: ここからがWebらしい部分です。JavaScriptからHTMLの要素を取ってきて、中身を変えたり見た目を変えたりできます。この仕組みを**DOM**と呼びます。
+  - kind: code
+    text: |
+      // 要素を取ってくる（CSSと同じセレクタが使える）
+      const title = document.querySelector("#title");   // idで
+      const cards = document.querySelectorAll(".card"); // 複数まとめて
+
+      // 中身を変える
+      title.textContent = "新しいタイトル";
+
+      // CSSクラスを付け外しする
+      title.classList.add("active");
+      title.classList.remove("active");
+      title.classList.toggle("active");   // 有れば消す、無ければ付ける
+  - kind: kv-box
+    title: "📌 見た目の変更はクラスで:"
+    text: JavaScriptから直接 `style.color = "red"` と書くこともできますが、**CSSにクラスを定義しておいて付け外しするほうが良い**です。見た目の定義がCSSに集まるので、後から変更しやすくなります。第2章で「構造と見た目を分ける」と言ったのと同じ理由です。
+  - kind: h3
+    text: 要素を作って追加する
+  - kind: paragraph
+    text: オセロの盤面のように、**同じものを大量に並べる**場合はHTMLに手で書かずJavaScriptで生成します。
+  - kind: code
+    text: |
+      const boardEl = document.querySelector("#board");
+
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const cell = document.createElement("div");  // div を作る
+          cell.classList.add("cell");                  // クラスを付ける
+          cell.dataset.row = row;                      // 位置を覚えさせる
+          cell.dataset.col = col;
+          boardEl.appendChild(cell);                   // 画面に追加
+        }
+      }
+  - kind: paragraph
+    text: これで64個のマスが生成されます。`dataset` は要素に自作の情報を持たせる仕組みで、「このマスは何行何列か」を覚えさせておくとクリック時に使えます。
+  - kind: h3
+    text: イベント — 操作に反応する
+  - kind: code
+    text: |
+      const btn = document.querySelector("#myButton");
+
+      btn.addEventListener("click", () => {
+        console.log("押された！");
+      });
+  - kind: paragraph
+    text: "`addEventListener` は「**どの要素で**」「**何が起きたとき**」「**何をするか**」を登録します。clickのほか、input（入力）、submit（送信）、keydown（キー押下）などがあります。"
+  - kind: code
+    text: |
+      // マスをクリックしたら、何行何列か分かる
+      cell.addEventListener("click", () => {
+        const row = Number(cell.dataset.row);
+        const col = Number(cell.dataset.col);
+        console.log(row + "行" + col + "列がクリックされた");
+      });
+  - kind: h3
+    text: エラーとの付き合い方
+  - kind: warn-box
+    title: "⚠️ ここがこの章の本題:"
+    text: JavaScriptからは**必ずエラーに出会います**。むしろエラーが出ない日はありません。大事なのは文法を覚えることではなく、**エラーが出たときに自力で直せること**です。
+  - kind: paragraph
+    text: エラーが出たら、次の順番で対処します。この流れを体に入れてください。
+  - kind: ol
+    items:
+      - "**エラー文を読む** — コンソール（F12）に赤い文字で出ている"
+      - "**どこで起きたか見る** — エラー文の右端にファイル名と行番号がある"
+      - "**原因の仮説を立てる** — 「この変数が空なのでは？」など"
+      - "**console.log で確かめる** — 仮説どおりか実際に見る"
+      - "**修正する** — 原因が分かれば直し方も分かる"
+  - kind: table
+    headers:
+      - よく出るエラー
+      - 意味
+      - 主な原因
+    rows:
+      - - "Cannot read properties of null"
+        - nullに対して操作しようとした
+        - querySelectorが要素を見つけられていない
+      - - "xxx is not defined"
+        - その名前のものが無い
+        - 変数名のタイプミス、定義の書き忘れ
+      - - "xxx is not a function"
+        - 関数として呼べない
+        - メソッド名の間違い、対象が想定と違う
+      - - "Unexpected token"
+        - 文法が壊れている
+        - 括弧やクォートの閉じ忘れ
+  - kind: tip-box
+    title: "💡 困ったら console.log:"
+    text: |
+      「思っていた値と違う」がバグの正体であることがほとんどです。怪しい箇所の前後に
+      `console.log(変数名)` を挟んで、**実際に何が入っているか**を見てください。
+
+      想像で直そうとすると遠回りになります。事実を見るのが最短です。
+  - kind: kv-box
+    title: "📌 30分ルール:"
+    text: 詰まったら30分は自分で調べてください。ただし**30分たったら、分かったこと・試したこと・自分の仮説を持って聞く**こと。「動きません」だけでは相手も答えられませんし、何より自分の力になりません。
   - kind: assignment
     title: プロフィールカード（第3段階 — 動かす）
     goal: 第2章までのカードに動きをつけます。3つのファイルがそれぞれ何を担当しているかを、自分の言葉で説明できるようになるのが本当のゴールです。
     steps:
-      - "`script.js` を作り、profile.html から読み込む"
+      - "`script.js` を作り、profile.html の </body> 直前で読み込む"
       - 「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする
-      - もう一度押すと隠れる（トグル）ようにする
+      - もう一度押すと隠れる（classList.toggle を使う）
       - 「いいね」ボタンを作り、押すたびに数が増えるようにする
       - 押した回数が10を超えたら、メッセージを変える
+      - "スキル一覧を配列で持ち、JavaScriptでリストを生成して表示する"
     done:
       - ボタンを押すと表示が変わる
       - script.js を読み込まなくしても、ページ自体は壊れずに表示される
+      - 表示の切り替えを style ではなく classList で行っている
       - "HTML・CSS・JS がそれぞれ何をしているか説明できる"
-    hint: 表示・非表示は CSS のクラスを付け外しする方法（classList.toggle）が定石です。JSから直接スタイルをいじるより、CSSに定義したクラスを切り替えるほうが後から変更しやすくなります。
+      - 一度はエラーを出し、自力で直した
+    hint: "表示・非表示は CSS に `.hidden { display: none; }` を定義しておき、JSでそのクラスを付け外しする方法が定石です。JSから直接スタイルをいじるより、後から変更しやすくなります。"
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: オセロの盤面をJavaScriptで生成し、クリックしたマスに石が置けるところまで作ってみましょう。ルール（裏返し判定）はまだ不要で、「クリックしたら黒石が出る」だけで構いません。2次元配列とDOM生成、イベントの総合練習になります。第4章のオセロ開発がぐっと楽になります。
   - kind: tip-box
     title: "💡 次章への橋渡し:"
-    text: ここまでで **HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態**になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。実はオセロは、ここまでの知識だけで作れます。
+    text: ここまでで **HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態**になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。**オセロはここまでの知識だけで作れます**——新しい技術は必要ありません。
   - kind: checklist
     items:
       - const と let の使い分けが分かる
       - if / for / 関数 / 配列を組み合わせて書ける
+      - 2次元配列で board[行][列] と書ける
+      - querySelector で要素を取得できる
+      - classList でクラスを付け外しできる
+      - createElement で要素を生成して追加できる
+      - addEventListener でクリックに反応できる
       - エラーが出たらコンソールを読む習慣がある
-      - HTML / CSS / JS の3ファイル構成でページを作れた
+      - console.log で変数の中身を確認する癖がついた

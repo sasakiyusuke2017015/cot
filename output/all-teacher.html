@@ -322,51 +322,168 @@ details p { margin:.4rem 0; font-size:.88rem; }
     <h2>🎨 CSS</h2>
     <p class="ch-sub">見た目とレイアウトを整える</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（3コマ）</summary>
-  <p><strong>ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexboxで並べる感覚。</p>
-  <p><strong>つまずき:</strong> レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。</p>
-  <p><strong>問いかけ:</strong> 「この余白は padding と margin どっちが正しい？」</p>
+  <details class="teaching"><summary>👤 講師用メモ（4コマ）</summary>
+  <p><strong>ねらい:</strong> セレクタで要素を選ぶ感覚と、Flexbox/Gridで並べる感覚。「HTMLは触らずCSSだけで見た目が変わる」を体験させる。</p>
+  <p><strong>つまずき:</strong> レイアウト崩れは必ず起きる。開発者ツールでボックスモデルを見せて自力で直させる。margin と padding の取り違えが最多。色やフォントに凝りすぎて時間を溶かす人がいるので配分を見る。</p>
+  <p><strong>問いかけ:</strong> 「この余白は padding と margin どっちが正しい？なぜそう思った？」</p>
 </details>
   <div class="prose">
-<div class="kv-box"><strong>🎯 この章のゴール:</strong> セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、Flexboxで簡単なレイアウトを組めるようになる。</div>
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、FlexboxとGridでレイアウトを組めるようになる。<strong>HTMLを一切変えずに見た目だけを変えられる</strong>ことを体験します。</div>
 <h3>CSSとは何か</h3>
-<p>CSS（Cascading Style Sheets）は、HTMLで作った骨組みに<strong>見た目（色・大きさ・配置）</strong>を与える言語です。「どの要素に」「どんなスタイルを」の2つをセットで書きます。</p>
-<pre class="code-block">/* セレクタ { プロパティ: 値; } */
-h1 {
-  color: #1e3a8a;
-  font-size: 2rem;
+<p>CSS（Cascading Style Sheets）は、HTMLで作った骨組みに<strong>見た目（色・大きさ・配置）</strong>を与える言語です。前章で作ったページは真っ白で味気なかったはずですが、HTMLは一行も変えずに見違えるようにできます。</p>
+<p>書き方はいたって単純で、「<strong>どの要素に</strong>」「<strong>何を</strong>」「<strong>どうする</strong>」の3つを並べるだけです。</p>
+<pre class="code-block">セレクタ {
+  プロパティ: 値;
 }
-.card {          /* class="card" の要素に当たる */
-  padding: 16px;
-  border-radius: 8px;
+
+/* 実例 */
+h1 {
+  color: #1e3a8a;      /* 文字色を紺色に */
+  font-size: 2rem;     /* 文字の大きさを2倍に */
 }</pre>
-<h3>セレクタの基本</h3>
-<ul><li><strong>h1</strong> … タグ名で選ぶ</li><li><strong>.card</strong> … class属性で選ぶ（先頭にドット）。最もよく使う</li><li><strong>#header</strong> … id属性で選ぶ（先頭にシャープ）</li></ul>
-<h3>ボックスモデル</h3>
-<p>すべての要素は箱（ボックス）として描画されます。内側から <strong>content → padding → border → margin</strong> の層になっていて、レイアウト崩れの原因の大半はここの理解不足です。</p>
-<h3>Flexboxで並べる</h3>
-<pre class="code-block">.row {
-  display: flex;        /* 子要素を横に並べる */
-  gap: 12px;            /* 要素間の隙間 */
-  justify-content: center;  /* 水平方向の揃え */
-  align-items: center;      /* 垂直方向の揃え */
-}</pre>
-<div class="tip-box"><strong>💡 コツ:</strong> 開発者ツールで要素を選ぶと、ボックスモデル（padding / margin）が色付きで表示されます。「なぜズレるのか」は目で見て確認するのが最短です。</div>
-<h3>CSSファイルを分ける</h3>
-<p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにして読み込む</strong>のが基本です。こう書きます。</p>
-<pre class="code-block">&lt;!-- profile.html の &lt;head&gt; の中 --&gt;
+<ul><li><strong>セレクタ</strong> … どの要素に当てるか（h1、.card など）</li><li><strong>プロパティ</strong> … 何を変えるか（color、font-size など）</li><li><strong>値</strong> … どうするか（#1e3a8a、2rem など）</li><li>行の終わりには必ず<strong>セミコロン `;`</strong> を付ける</li><li>`/* */` で囲むとコメント（メモ書き）になる</li></ul>
+<h3>CSSファイルを分けて読み込む</h3>
+<p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにするのが基本</strong>です。まず `style.css` を作り、HTMLの `&lt;head&gt;` の中で読み込みます。</p>
+<pre class="code-block">&lt;!-- profile.html の &lt;head&gt; の中に書く --&gt;
 &lt;link rel="stylesheet" href="style.css"&gt;</pre>
-<div class="kv-box"><strong>📌 なぜ分けるのか:</strong> 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると、その恩恵がはっきりします。<strong>1つのCSSファイルを複数のページで使い回せる</strong>ので、サイト全体の見た目を1か所で変えられます。逆にHTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。</div>
+<div class="kv-box"><strong>📌 なぜ分けるのか:</strong> 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると恩恵がはっきりします。<strong>1つのCSSファイルを複数ページで使い回せる</strong>ので、サイト全体の見た目を1か所で変えられます。HTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。</div>
+<h3>セレクタ — どれを選ぶか</h3>
+<p>セレクタには種類があります。まずは次の3つを覚えてください。</p>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">書き方</th><th class="tbl-th">何を選ぶか</th><th class="tbl-th">使いどころ</th></tr></thead><tbody><tr><td class="tbl-td">h1</td><td class="tbl-td">そのタグ全部</td><td class="tbl-td">「見出しは全部この色」など全体の方針</td></tr><tr><td class="tbl-td">.card</td><td class="tbl-td">class="card" の要素</td><td class="tbl-td"><strong>最もよく使う</strong>。同じ見た目を複数に当てる</td></tr><tr><td class="tbl-td">#board</td><td class="tbl-td">id="board" の要素</td><td class="tbl-td">ページに1つしかないものを狙う</td></tr></tbody></table></div>
+<pre class="code-block">/* タグで選ぶ */
+p { line-height: 1.8; }
+
+/* class で選ぶ（先頭にドット） */
+.card { background: white; }
+
+/* id で選ぶ（先頭にシャープ） */
+#board { width: 400px; }</pre>
+<div class="tip-box"><strong>💡 迷ったら class を使う:</strong> idは1ページに1つしか使えず、あとで「他にも同じ見た目にしたい」となったとき困ります。<strong>基本はclass、本当に唯一のものだけid</strong>と考えておけば失敗しません。</div>
+<h3>組み合わせて絞り込む</h3>
+<p>セレクタは組み合わせられます。これを知っていると「同じclass名でも場所によって見た目を変える」ことができます。</p>
+<pre class="code-block">/* .card の中にある h2 だけ */
+.card h2 { color: navy; }
+
+/* card と large の両方を持つ要素 */
+.card.large { font-size: 1.5rem; }
+
+/* 複数まとめて同じ指定 */
+h1, h2, h3 { font-family: sans-serif; }</pre>
+<h3>詳細度 — 指定がぶつかったらどうなるか</h3>
+<p>同じ要素に複数の指定が当たると、<strong>より具体的なほうが勝ちます</strong>。これを詳細度と言います。CSSが効かないときの原因の多くがこれです。</p>
+<pre class="code-block">p { color: black; }        /* 弱い */
+.intro { color: blue; }    /* こちらが勝つ */
+#main { color: red; }      /* さらに強い */
+
+&lt;p class="intro" id="main"&gt;この文字は赤になる&lt;/p&gt;</pre>
+<ul><li><strong>id</strong>（#）… いちばん強い</li><li><strong>class</strong>（.）… 中くらい</li><li><strong>タグ名</strong>（p, h1）… いちばん弱い</li><li>同じ強さなら<strong>後に書いたほうが勝つ</strong></li></ul>
+<div class="warn-box"><strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）
+② 詳細度で別の指定に負けている
+③ そもそもCSSファイルが読み込まれていない
+
+<strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。
+</div>
+<h3>ボックスモデル — すべての要素は箱</h3>
+<p>レイアウトを理解する上で最重要の概念です。<strong>すべての要素は4層構造の箱</strong>として描画されます。</p>
+<pre class="code-block">┌─────────────────────────┐
+│  margin（外側の余白）      │
+│ ┌─────────────────────┐ │
+│ │ border（枠線）         │ │
+│ │ ┌─────────────────┐ │ │
+│ │ │ padding（内側の余白）│ │ │
+│ │ │ ┌─────────────┐ │ │ │
+│ │ │ │  content     │ │ │ │
+│ │ │ │  （中身）     │ │ │ │
+│ │ │ └─────────────┘ │ │ │
+│ │ └─────────────────┘ │ │
+│ └─────────────────────┘ │
+└─────────────────────────┘</pre>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">層</th><th class="tbl-th">意味</th><th class="tbl-th">使い分け</th></tr></thead><tbody><tr><td class="tbl-td">content</td><td class="tbl-td">文字や画像そのもの</td><td class="tbl-td">width / height で大きさを指定</td></tr><tr><td class="tbl-td">padding</td><td class="tbl-td">枠線の<strong>内側</strong>の余白</td><td class="tbl-td">「箱の中で中身を窮屈にしたくない」とき</td></tr><tr><td class="tbl-td">border</td><td class="tbl-td">枠線</td><td class="tbl-td">見た目の区切り</td></tr><tr><td class="tbl-td">margin</td><td class="tbl-td">枠線の<strong>外側</strong>の余白</td><td class="tbl-td">「隣の要素と離したい」とき</td></tr></tbody></table></div>
+<div class="kv-box"><strong>📌 padding と margin の使い分け:</strong> 迷ったらこう考えてください。<strong>背景色を付けたときに色が付く範囲を広げたいなら padding、要素同士の距離を空けたいなら margin</strong> です。paddingは箱の内側なので背景色が付き、marginは外側なので付きません。</div>
+<pre class="code-block">.card {
+  padding: 16px;              /* 上下左右すべて */
+  padding: 16px 24px;         /* 上下 / 左右 */
+  padding: 8px 16px 24px 32px; /* 上 右 下 左（時計回り） */
+
+  margin: 0 auto;             /* 上下0、左右autoで中央寄せ */
+}</pre>
+<div class="tip-box"><strong>💡 box-sizing は最初に書く:</strong> 既定では width に padding と border が<strong>含まれません</strong>。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。
+
+`* { box-sizing: border-box; }`
+</div>
+<h3>Flexbox — 一列に並べる</h3>
+<p>要素を横や縦に並べたいときはFlexboxを使います。<strong>並べたい要素の「親」に指定する</strong>のがポイントです。</p>
+<pre class="code-block">&lt;!-- HTML --&gt;
+&lt;div class="row"&gt;
+  &lt;div&gt;A&lt;/div&gt;
+  &lt;div&gt;B&lt;/div&gt;
+  &lt;div&gt;C&lt;/div&gt;
+&lt;/div&gt;</pre>
+<pre class="code-block">/* CSS：親に指定する */
+.row {
+  display: flex;              /* 子要素を横に並べる */
+  gap: 12px;                  /* 要素の間隔 */
+  justify-content: center;    /* 横方向の揃え */
+  align-items: center;        /* 縦方向の揃え */
+}</pre>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">プロパティ</th><th class="tbl-th">よく使う値</th><th class="tbl-th">効果</th></tr></thead><tbody><tr><td class="tbl-td">flex-direction</td><td class="tbl-td">row / column</td><td class="tbl-td">横並び / 縦並び</td></tr><tr><td class="tbl-td">gap</td><td class="tbl-td">8px など</td><td class="tbl-td">要素同士の間隔</td></tr><tr><td class="tbl-td">justify-content</td><td class="tbl-td">center / space-between</td><td class="tbl-td">並び方向の揃え</td></tr><tr><td class="tbl-td">align-items</td><td class="tbl-td">center / stretch</td><td class="tbl-td">交差方向の揃え</td></tr><tr><td class="tbl-td">flex-wrap</td><td class="tbl-td">wrap</td><td class="tbl-td">入りきらないとき折り返す</td></tr></tbody></table></div>
+<h3>Grid — 格子状に並べる</h3>
+<p>Flexboxは一列に並べるのが得意ですが、<strong>縦横の格子</strong>を作るならGridが適しています。オセロの盤面（8×8）にはこちらが最適です。</p>
+<pre class="code-block">.board {
+  display: grid;
+  grid-template-columns: repeat(8, 50px);  /* 50px幅の列を8つ */
+  gap: 2px;
+  background: #333;        /* 隙間が線に見える */
+}
+.cell {
+  background: #2d7a4f;     /* マスの緑 */
+  aspect-ratio: 1;         /* 正方形にする */
+}</pre>
+<p>これだけで8×8の盤面ができます。`repeat(8, 50px)` は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
+<h3>色の指定方法</h3>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">書き方</th><th class="tbl-th">例</th><th class="tbl-th">補足</th></tr></thead><tbody><tr><td class="tbl-td">色名</td><td class="tbl-td">red, white</td><td class="tbl-td">手軽だが種類が限られる</td></tr><tr><td class="tbl-td">16進数</td><td class="tbl-td">#1e3a8a</td><td class="tbl-td"><strong>最もよく使う</strong>。RGB各2桁</td></tr><tr><td class="tbl-td">rgb</td><td class="tbl-td">rgb(30, 58, 138)</td><td class="tbl-td">数値で分かりやすい</td></tr><tr><td class="tbl-td">rgba</td><td class="tbl-td">rgba(0, 0, 0, 0.5)</td><td class="tbl-td">最後の値は透明度</td></tr></tbody></table></div>
+<div class="tip-box"><strong>💡 色は自分で考えなくていい:</strong> 配色は専門的な技術です。<strong>既存の配色パレットから選ぶ</strong>のが早くて確実です。「color palette」で検索すれば、組み合わせが決まった色見本がいくらでも見つかります。開発者ツールで好きなサイトの色を調べるのも有効です。</div>
+<h3>よく使うプロパティ</h3>
+<pre class="code-block">.card {
+  /* 文字 */
+  color: #374151;              /* 文字色 */
+  font-size: 1rem;             /* 大きさ */
+  font-weight: bold;           /* 太さ */
+  line-height: 1.8;            /* 行間（読みやすさに直結） */
+  text-align: center;          /* 揃え */
+
+  /* 背景と枠 */
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;          /* 角を丸く */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);  /* 影 */
+
+  /* 大きさ */
+  width: 300px;
+  max-width: 100%;             /* 画面が狭いときはみ出さない */
+}</pre>
+<h3>スマホでも崩れないようにする</h3>
+<p>画面幅に応じてスタイルを変えられます。これを<strong>レスポンシブ対応</strong>と言います。</p>
+<pre class="code-block">/* 通常（PC向け） */
+.row { display: flex; }
+
+/* 画面幅が600px以下のとき */
+@media (max-width: 600px) {
+  .row { flex-direction: column; }  /* 縦積みに変える */
+}</pre>
+<div class="tip-box"><strong>💡 確認方法:</strong> 開発者ツールを開き、左上のスマホアイコン（Toggle device toolbar）を押すと、スマホ表示を再現できます。実機がなくても確認できます。</div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: プロフィールカード（第2段階 — 見た目を整える）</p>
-  <p class="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。HTMLファイルは構造だけ、見た目は全部CSSファイル、という分担を体験するのが狙いです。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`style.css` を作り、profile.html から link で読み込む</li><li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li><li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li><li>Flexbox を使って、リストの項目を横並びのタグ風にする</li><li><strong>HTMLファイルには style 属性を1つも書かない</strong></li></ol>
-  <p class="assign-h">できたと言える条件</p><div class="chk-item">style.css を削除すると、見た目だけが消えて内容は残る</div><div class="chk-item">HTMLに style="..." が1つも書かれていない</div><div class="chk-item">開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる</div>
+  <p class="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。<strong>HTMLファイルは1文字も変えずに</strong>、見た目だけを変えるのが狙いです（class名の追加は可）。</p>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`style.css` を作り、profile.html から link で読み込む</li><li>`* { box-sizing: border-box; }` を最初に書いておく</li><li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li><li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li><li>Flexbox を使って「できること」のリストを横並びのタグ風にする</li><li>画面幅600px以下では縦並びになるようにする</li><li><strong>HTMLファイルには style 属性を1つも書かない</strong></li></ol>
+  <p class="assign-h">できたと言える条件</p><div class="chk-item">style.css を削除すると、見た目だけが消えて内容は残る</div><div class="chk-item">HTMLに style="..." が1つも書かれていない</div><div class="chk-item">開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる</div><div class="chk-item">スマホ表示にしても崩れない</div><div class="chk-item">padding と margin を使い分けた理由を説明できる</div>
   <p class="assign-hint">💡 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。</p>
 </div>
-<h3>チェックリスト</h3><div class="chk-item">セレクタとプロパティの書き方が分かる</div><div class="chk-item">ボックスモデルの4層を言える</div><div class="chk-item">display:flex で要素を横に並べられる</div><div class="chk-item">CSSを別ファイルに分ける理由を説明できる</div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>Gridを使ってオセロの盤面（8×8）を作ってみましょう。マスの色、石を置いたときの丸（border-radiusで円になります）、置ける場所を示すハイライトまでCSSで表現できます。第4章でオセロを作るとき、この見た目がそのまま使えます。</p></div>
+<div class="tip-box"><strong>💡 次章への橋渡し:</strong> 構造と見た目がそろいました。ただし<strong>まだ何も動きません</strong>。ボタンを押しても何も起きず、石も置けません。次章のJavaScriptで、ようやく「動くもの」になります。</div>
+<h3>チェックリスト</h3><div class="chk-item">セレクタとプロパティの書き方が分かる</div><div class="chk-item">class と id の使い分けができる</div><div class="chk-item">詳細度で指定が上書きされる仕組みを理解した</div><div class="chk-item">ボックスモデルの4層を言える</div><div class="chk-item">padding と margin を使い分けられる</div><div class="chk-item">display:flex で要素を横に並べられる</div><div class="chk-item">display:grid で格子状に並べられる</div><div class="chk-item">CSSを別ファイルに分ける理由を説明できる</div>
   </div>
-  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">CSS</span>HTMLに見た目（色・大きさ・配置）を与える言語</div><div class="kw"><span class="kw-term">セレクタ</span>スタイルを当てる対象を選ぶ書き方。.card や h1 など</div><div class="kw"><span class="kw-term">ボックスモデル</span>content→padding→border→margin の4層構造</div><div class="kw"><span class="kw-term">Flexbox</span>要素を柔軟に並べるレイアウト機能。display:flex</div><div class="kw"><span class="kw-term">開発者ツール</span>要素のボックスモデルを色付きで確認できる</div></div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">CSS</span>HTMLに見た目（色・大きさ・配置）を与える言語</div><div class="kw"><span class="kw-term">セレクタ</span>スタイルを当てる対象を選ぶ書き方。.card や h1 など</div><div class="kw"><span class="kw-term">プロパティ</span>何を変えるか。color、font-size など</div><div class="kw"><span class="kw-term">ボックスモデル</span>content→padding→border→margin の4層構造</div><div class="kw"><span class="kw-term">Flexbox</span>要素を1方向に並べるレイアウト機能。display:flex</div><div class="kw"><span class="kw-term">Grid</span>格子状に並べるレイアウト機能。オセロの盤面に最適</div><div class="kw"><span class="kw-term">詳細度</span>複数の指定が競合したときどれが勝つかの優先順位</div></div>
   <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
   <p class="quiz-q">Q1. class属性が「card」の要素を選ぶCSSセレクタはどれか。</p>
   <ul class="quiz-opts"><li>.card</li><li>#card</li><li>card()</li><li>@card</li></ul>
@@ -415,56 +532,183 @@ h1 {
     <h2>⚡ JavaScript</h2>
     <p class="ch-sub">ページに動きをつける</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（6コマ）</summary>
-  <p><strong>ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。</p>
-  <p><strong>つまずき:</strong> 詰まる人が一番多い。ここで30分ルールを本格的に運用開始する。答えを言わずコンソールを見せる。</p>
-  <p><strong>問いかけ:</strong> 「console.log を入れるならどこ？なぜそこ？」</p>
+  <details class="teaching"><summary>👤 講師用メモ（8コマ）</summary>
+  <p><strong>ねらい:</strong> エラーとの付き合い方を覚える章。文法より「エラー文→仮説→調査→修正」を体験させる。オセロに必要な配列操作とDOM操作まで到達させる。</p>
+  <p><strong>つまずき:</strong> 詰まる人が一番多い。ここで30分ルールを本格運用する。答えを言わずコンソールを開かせる。console.log を挟む癖がつくまで何度でも促す。2次元配列で必ず一度は混乱するので、紙に書かせるとよい。</p>
+  <p><strong>問いかけ:</strong> 「console.log を入れるならどこ？なぜそこ？いま変数には何が入っていると思う？」</p>
 </details>
   <div class="prose">
-<div class="kv-box"><strong>🎯 この章のゴール:</strong> 変数・条件分岐・繰り返し・関数・配列を使えるようになり、ボタンクリックでページが変わる体験をする。</div>
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> 変数・条件分岐・繰り返し・関数・配列を使えるようになり、<strong>クリックに反応して画面が変わる</strong>ものを作れるようになる。ここまでできればオセロが作れます。</div>
 <h3>JavaScriptとは何か</h3>
 <p>JavaScriptは、ページに<strong>動き（ロジック）</strong>を与えるプログラミング言語です。「ボタンを押したら表示を変える」「入力内容をチェックする」など、ユーザーの操作に反応する部分を担当します。</p>
-<h3>基本文法</h3>
-<pre class="code-block">const name = '田中';            // 変数（再代入しないなら const）
-let count = 0;                  // 再代入するなら let
-
-if (count &gt; 10) {               // 条件分岐
-  console.log('多いですね');
-} else {
-  console.log('まだ少ない');
-}
-
-const fruits = ['りんご', 'みかん', 'バナナ'];  // 配列
-for (const f of fruits) {       // 繰り返し
-  console.log(f);
-}
-
-function greet(who) {           // 関数
-  return 'こんにちは、' + who + 'さん';
-}</pre>
-<h3>DOM操作 — HTMLとつなぐ</h3>
-<pre class="code-block">const btn = document.querySelector('#myButton');
-btn.addEventListener('click', () =&gt; {
-  document.querySelector('#message').textContent = '押されました！';
-});</pre>
-<div class="warn-box"><strong>⚠️ ここが本番:</strong> JavaScriptからは<strong>必ずエラーに出会います</strong>。エラーが出たら「エラー文を読む → 原因の仮説を立てる → 調べる → 修正する」。この流れを毎回意識してください。エラー文はコンソール（開発者ツールのConsoleタブ）に出ます。</div>
-<div class="tip-box"><strong>💡 コツ:</strong> 困ったらまず <strong>console.log()</strong> で変数の中身を表示して確認する癖をつけましょう。「思っていた値と違う」がバグの正体であることがほとんどです。</div>
-<h3>JSファイルも分ける</h3>
-<p>CSSと同じで、JavaScriptも別ファイルにします。`&lt;/body&gt;` の直前で読み込むのが基本です。</p>
+<p>HTMLとCSSは「こう表示せよ」と書くものでしたが、JavaScriptは<strong>手順を書く</strong>言語です。ここから本格的なプログラミングが始まります。</p>
+<h3>まず動かしてみる</h3>
+<p>`script.js` を作り、HTMLの `&lt;/body&gt;` の直前で読み込みます。<strong>head ではなく body の最後</strong>に置くのがポイントです（HTMLが読み込まれる前にJSが動くと、要素が見つからずエラーになるため）。</p>
 <pre class="code-block">&lt;!-- profile.html の &lt;/body&gt; の直前 --&gt;
-&lt;script src="script.js"&gt;&lt;/script&gt;</pre>
-<div class="kv-box"><strong>📌 3つの役割がそろった:</strong> これで <strong>HTML（構造）・CSS（見た目）・JavaScript（動き）</strong> の3ファイル構成になります。この分け方はWeb開発の基本形で、どんな大きなサイトも根っこは同じです。「どのファイルを直せばいいか」が明確になるのが最大の利点です。</div>
+  &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;</pre>
+<pre class="code-block">// script.js
+console.log("動いた！");</pre>
+<p>ブラウザで開いて <strong>F12 → Console タブ</strong> を見てください。「動いた！」と出ていれば成功です。`console.log()` は画面ではなくコンソールに出力する命令で、<strong>この章を通じて最も使う道具</strong>になります。</p>
+<h3>変数 — 値に名前を付ける</h3>
+<pre class="code-block">const name = "田中";     // 変えない値
+let count = 0;           // 後から変える値
+
+count = 5;               // let なので変更できる
+// name = "佐藤";        // const なのでエラーになる</pre>
+<div class="kv-box"><strong>📌 まず const で書く:</strong> 「変わらないもの」として書いておくと、うっかり書き換えるミスを防げます。<strong>まず const で書き、変更が必要になったときだけ let に変える</strong>。これが実務での基本です。var という古い書き方もありますが、いまは使いません。</div>
+<h3>データの種類</h3>
+<pre class="code-block">const num = 42;              // 数値
+const text = "こんにちは";    // 文字列（クォートで囲む）
+const flag = true;           // 真偽値（true / false）
+const list = [1, 2, 3];      // 配列
+const obj = { name: "田中", age: 25 };  // オブジェクト</pre>
+<div class="warn-box"><strong>⚠️ 数値と文字列は違うもの:</strong> `1 + 2` は 3 ですが、`"1" + "2"` は "12" になります。文字列の + は連結だからです。
+入力欄から取った値は<strong>必ず文字列</strong>なので、計算する前に `Number()` で数値に変換します。
+「なぜか計算がおかしい」ときはここを疑ってください。
+</div>
+<h3>条件分岐 — 場合分けする</h3>
+<pre class="code-block">const score = 75;
+
+if (score &gt;= 80) {
+  console.log("優秀");
+} else if (score &gt;= 60) {
+  console.log("合格");
+} else {
+  console.log("再挑戦");
+}</pre>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">演算子</th><th class="tbl-th">意味</th><th class="tbl-th">例</th></tr></thead><tbody><tr><td class="tbl-td">===</td><td class="tbl-td">等しい</td><td class="tbl-td">a === b</td></tr><tr><td class="tbl-td">!==</td><td class="tbl-td">等しくない</td><td class="tbl-td">a !== b</td></tr><tr><td class="tbl-td">&gt; / &lt;</td><td class="tbl-td">より大きい / 小さい</td><td class="tbl-td">a &gt; b</td></tr><tr><td class="tbl-td">&gt;= / &lt;=</td><td class="tbl-td">以上 / 以下</td><td class="tbl-td">a &gt;= b</td></tr><tr><td class="tbl-td">&amp;&amp;</td><td class="tbl-td">かつ</td><td class="tbl-td">a &gt; 0 &amp;&amp; b &gt; 0</td></tr><tr><td class="tbl-td">||</td><td class="tbl-td">または</td><td class="tbl-td">a === 1 || a === 2</td></tr></tbody></table></div>
+<div class="tip-box"><strong>💡 = と === は別物:</strong> `=` は代入（値を入れる）、`===` は比較（等しいか調べる）です。`if (a = 1)` と書くと比較ではなく代入になってしまい、意図しない動きをします。<strong>比較は必ず `===` を3つ</strong>と覚えてください。</div>
+<h3>繰り返し — 同じ処理を何度も</h3>
+<pre class="code-block">// 決まった回数だけ繰り返す
+for (let i = 0; i &lt; 8; i++) {
+  console.log(i);   // 0,1,2,3,4,5,6,7
+}
+
+// 配列の中身を1つずつ取り出す
+const fruits = ["りんご", "みかん", "バナナ"];
+for (const fruit of fruits) {
+  console.log(fruit);
+}</pre>
+<div class="kv-box"><strong>📌 0から数える:</strong> プログラミングでは<strong>0から数える</strong>のが基本です。`for (let i = 0; i &lt; 8; i++)` は「0以上8未満」なので0〜7の<strong>8回</strong>回ります。8×8の盤面を扱うとき、この形をそのまま使います。</div>
+<h3>関数 — 処理に名前を付ける</h3>
+<pre class="code-block">// 定義する
+function greet(who) {
+  return "こんにちは、" + who + "さん";
+}
+
+// 呼び出す
+const message = greet("田中");
+console.log(message);   // こんにちは、田中さん
+
+// 短い書き方（アロー関数）。同じ意味
+const greet2 = (who) =&gt; "こんにちは、" + who + "さん";</pre>
+<p>同じ処理を何度も書かずに済むのが関数の利点ですが、それ以上に<strong>名前を付けることでコードが読みやすくなる</strong>のが大きな価値です。`checkCanPlace()` という名前を見れば、中身を読まなくても何をするか分かります。</p>
+<h3>配列 — オセロで最も使う</h3>
+<pre class="code-block">const scores = [10, 25, 8];
+
+console.log(scores[0]);     // 10（0番目から数える）
+console.log(scores.length); // 3（個数）
+
+scores.push(30);            // 末尾に追加 → [10,25,8,30]
+scores[1] = 99;             // 1番目を書き換え
+
+// よく使うメソッド
+const doubled = scores.map(n =&gt; n * 2);       // 全部2倍にした新しい配列
+const big = scores.filter(n =&gt; n &gt; 20);       // 20より大きいものだけ
+const total = scores.reduce((a, b) =&gt; a + b); // 合計</pre>
+<h3>2次元配列 — 盤面の表現</h3>
+<p>オセロの盤面のような格子は、<strong>配列の中に配列を入れる</strong>ことで表現します。ここは最初混乱するところなので、丁寧に見ます。</p>
+<pre class="code-block">// 3×3の盤面
+const board = [
+  ["", "", ""],     // 0行目
+  ["", "黒", ""],   // 1行目
+  ["", "", "白"],   // 2行目
+];
+
+console.log(board[1][1]);   // "黒"  → board[行][列]
+console.log(board[2][2]);   // "白"
+
+board[0][0] = "黒";         // 左上に黒を置く</pre>
+<div class="warn-box"><strong>⚠️ [行][列] の順番:</strong> `board[1][2]` は「1行目の2列目」です。<strong>縦が先、横が後</strong>。ここを逆に覚えると盤面が転置してしまい、原因の分からないバグになります。紙に書いて確かめておくと確実です。</div>
+<pre class="code-block">// 8×8の空の盤面を作る
+const board = [];
+for (let row = 0; row &lt; 8; row++) {
+  board.push(["", "", "", "", "", "", "", ""]);
+}
+
+// 全マスを調べる（二重ループ）
+for (let row = 0; row &lt; 8; row++) {
+  for (let col = 0; col &lt; 8; col++) {
+    if (board[row][col] === "黒") {
+      console.log(row + "行" + col + "列に黒があります");
+    }
+  }
+}</pre>
+<h3>DOM操作 — HTMLをJavaScriptから触る</h3>
+<p>ここからがWebらしい部分です。JavaScriptからHTMLの要素を取ってきて、中身を変えたり見た目を変えたりできます。この仕組みを<strong>DOM</strong>と呼びます。</p>
+<pre class="code-block">// 要素を取ってくる（CSSと同じセレクタが使える）
+const title = document.querySelector("#title");   // idで
+const cards = document.querySelectorAll(".card"); // 複数まとめて
+
+// 中身を変える
+title.textContent = "新しいタイトル";
+
+// CSSクラスを付け外しする
+title.classList.add("active");
+title.classList.remove("active");
+title.classList.toggle("active");   // 有れば消す、無ければ付ける</pre>
+<div class="kv-box"><strong>📌 見た目の変更はクラスで:</strong> JavaScriptから直接 `style.color = "red"` と書くこともできますが、<strong>CSSにクラスを定義しておいて付け外しするほうが良い</strong>です。見た目の定義がCSSに集まるので、後から変更しやすくなります。第2章で「構造と見た目を分ける」と言ったのと同じ理由です。</div>
+<h3>要素を作って追加する</h3>
+<p>オセロの盤面のように、<strong>同じものを大量に並べる</strong>場合はHTMLに手で書かずJavaScriptで生成します。</p>
+<pre class="code-block">const boardEl = document.querySelector("#board");
+
+for (let row = 0; row &lt; 8; row++) {
+  for (let col = 0; col &lt; 8; col++) {
+    const cell = document.createElement("div");  // div を作る
+    cell.classList.add("cell");                  // クラスを付ける
+    cell.dataset.row = row;                      // 位置を覚えさせる
+    cell.dataset.col = col;
+    boardEl.appendChild(cell);                   // 画面に追加
+  }
+}</pre>
+<p>これで64個のマスが生成されます。`dataset` は要素に自作の情報を持たせる仕組みで、「このマスは何行何列か」を覚えさせておくとクリック時に使えます。</p>
+<h3>イベント — 操作に反応する</h3>
+<pre class="code-block">const btn = document.querySelector("#myButton");
+
+btn.addEventListener("click", () =&gt; {
+  console.log("押された！");
+});</pre>
+<p>`addEventListener` は「<strong>どの要素で</strong>」「<strong>何が起きたとき</strong>」「<strong>何をするか</strong>」を登録します。clickのほか、input（入力）、submit（送信）、keydown（キー押下）などがあります。</p>
+<pre class="code-block">// マスをクリックしたら、何行何列か分かる
+cell.addEventListener("click", () =&gt; {
+  const row = Number(cell.dataset.row);
+  const col = Number(cell.dataset.col);
+  console.log(row + "行" + col + "列がクリックされた");
+});</pre>
+<h3>エラーとの付き合い方</h3>
+<div class="warn-box"><strong>⚠️ ここがこの章の本題:</strong> JavaScriptからは<strong>必ずエラーに出会います</strong>。むしろエラーが出ない日はありません。大事なのは文法を覚えることではなく、<strong>エラーが出たときに自力で直せること</strong>です。</div>
+<p>エラーが出たら、次の順番で対処します。この流れを体に入れてください。</p>
+<ol><li><strong>エラー文を読む</strong> — コンソール（F12）に赤い文字で出ている</li><li><strong>どこで起きたか見る</strong> — エラー文の右端にファイル名と行番号がある</li><li><strong>原因の仮説を立てる</strong> — 「この変数が空なのでは？」など</li><li><strong>console.log で確かめる</strong> — 仮説どおりか実際に見る</li><li><strong>修正する</strong> — 原因が分かれば直し方も分かる</li></ol>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">よく出るエラー</th><th class="tbl-th">意味</th><th class="tbl-th">主な原因</th></tr></thead><tbody><tr><td class="tbl-td">Cannot read properties of null</td><td class="tbl-td">nullに対して操作しようとした</td><td class="tbl-td">querySelectorが要素を見つけられていない</td></tr><tr><td class="tbl-td">xxx is not defined</td><td class="tbl-td">その名前のものが無い</td><td class="tbl-td">変数名のタイプミス、定義の書き忘れ</td></tr><tr><td class="tbl-td">xxx is not a function</td><td class="tbl-td">関数として呼べない</td><td class="tbl-td">メソッド名の間違い、対象が想定と違う</td></tr><tr><td class="tbl-td">Unexpected token</td><td class="tbl-td">文法が壊れている</td><td class="tbl-td">括弧やクォートの閉じ忘れ</td></tr></tbody></table></div>
+<div class="tip-box"><strong>💡 困ったら console.log:</strong> 「思っていた値と違う」がバグの正体であることがほとんどです。怪しい箇所の前後に
+`console.log(変数名)` を挟んで、<strong>実際に何が入っているか</strong>を見てください。
+
+想像で直そうとすると遠回りになります。事実を見るのが最短です。
+</div>
+<div class="kv-box"><strong>📌 30分ルール:</strong> 詰まったら30分は自分で調べてください。ただし<strong>30分たったら、分かったこと・試したこと・自分の仮説を持って聞く</strong>こと。「動きません」だけでは相手も答えられませんし、何より自分の力になりません。</div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: プロフィールカード（第3段階 — 動かす）</p>
   <p class="assign-goal">第2章までのカードに動きをつけます。3つのファイルがそれぞれ何を担当しているかを、自分の言葉で説明できるようになるのが本当のゴールです。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`script.js` を作り、profile.html から読み込む</li><li>「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする</li><li>もう一度押すと隠れる（トグル）ようにする</li><li>「いいね」ボタンを作り、押すたびに数が増えるようにする</li><li>押した回数が10を超えたら、メッセージを変える</li></ol>
-  <p class="assign-h">できたと言える条件</p><div class="chk-item">ボタンを押すと表示が変わる</div><div class="chk-item">script.js を読み込まなくしても、ページ自体は壊れずに表示される</div><div class="chk-item">HTML・CSS・JS がそれぞれ何をしているか説明できる</div>
-  <p class="assign-hint">💡 表示・非表示は CSS のクラスを付け外しする方法（classList.toggle）が定石です。JSから直接スタイルをいじるより、CSSに定義したクラスを切り替えるほうが後から変更しやすくなります。</p>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`script.js` を作り、profile.html の &lt;/body&gt; 直前で読み込む</li><li>「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする</li><li>もう一度押すと隠れる（classList.toggle を使う）</li><li>「いいね」ボタンを作り、押すたびに数が増えるようにする</li><li>押した回数が10を超えたら、メッセージを変える</li><li>スキル一覧を配列で持ち、JavaScriptでリストを生成して表示する</li></ol>
+  <p class="assign-h">できたと言える条件</p><div class="chk-item">ボタンを押すと表示が変わる</div><div class="chk-item">script.js を読み込まなくしても、ページ自体は壊れずに表示される</div><div class="chk-item">表示の切り替えを style ではなく classList で行っている</div><div class="chk-item">HTML・CSS・JS がそれぞれ何をしているか説明できる</div><div class="chk-item">一度はエラーを出し、自力で直した</div>
+  <p class="assign-hint">💡 表示・非表示は CSS に `.hidden { display: none; }` を定義しておき、JSでそのクラスを付け外しする方法が定石です。JSから直接スタイルをいじるより、後から変更しやすくなります。</p>
 </div>
-<div class="tip-box"><strong>💡 次章への橋渡し:</strong> ここまでで <strong>HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態</strong>になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。実はオセロは、ここまでの知識だけで作れます。</div>
-<h3>チェックリスト</h3><div class="chk-item">const と let の使い分けが分かる</div><div class="chk-item">if / for / 関数 / 配列を組み合わせて書ける</div><div class="chk-item">エラーが出たらコンソールを読む習慣がある</div><div class="chk-item">HTML / CSS / JS の3ファイル構成でページを作れた</div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>オセロの盤面をJavaScriptで生成し、クリックしたマスに石が置けるところまで作ってみましょう。ルール（裏返し判定）はまだ不要で、「クリックしたら黒石が出る」だけで構いません。2次元配列とDOM生成、イベントの総合練習になります。第4章のオセロ開発がぐっと楽になります。</p></div>
+<div class="tip-box"><strong>💡 次章への橋渡し:</strong> ここまでで <strong>HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態</strong>になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。<strong>オセロはここまでの知識だけで作れます</strong>——新しい技術は必要ありません。</div>
+<h3>チェックリスト</h3><div class="chk-item">const と let の使い分けが分かる</div><div class="chk-item">if / for / 関数 / 配列を組み合わせて書ける</div><div class="chk-item">2次元配列で board[行][列] と書ける</div><div class="chk-item">querySelector で要素を取得できる</div><div class="chk-item">classList でクラスを付け外しできる</div><div class="chk-item">createElement で要素を生成して追加できる</div><div class="chk-item">addEventListener でクリックに反応できる</div><div class="chk-item">エラーが出たらコンソールを読む習慣がある</div><div class="chk-item">console.log で変数の中身を確認する癖がついた</div>
   </div>
-  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">変数</span>値に名前を付けて保存する。const（再代入不可）と let</div><div class="kw"><span class="kw-term">条件分岐</span>if / else で条件に応じて処理を切り替える</div><div class="kw"><span class="kw-term">配列</span>複数の値を順番に持つ入れ物。length で要素数</div><div class="kw"><span class="kw-term">DOM操作</span>JavaScriptからHTML要素を取得・変更すること</div><div class="kw"><span class="kw-term">console.log</span>変数の中身をコンソールに表示するデバッグの基本</div></div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">変数</span>値に名前を付けて保存する。const（再代入不可）と let</div><div class="kw"><span class="kw-term">条件分岐</span>if / else で条件に応じて処理を切り替える</div><div class="kw"><span class="kw-term">配列</span>複数の値を順番に持つ入れ物。length で要素数</div><div class="kw"><span class="kw-term">関数</span>処理をまとめて名前を付けたもの。何度でも呼べる</div><div class="kw"><span class="kw-term">DOM</span>ブラウザがHTMLを扱うための仕組み。JSから操作できる</div><div class="kw"><span class="kw-term">イベント</span>クリックや入力などの「出来事」。それを合図に処理を動かす</div><div class="kw"><span class="kw-term">console.log</span>変数の中身をコンソールに表示するデバッグの基本</div></div>
   <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
   <p class="quiz-q">Q1. JavaScriptの主な役割はどれか。</p>
   <ul class="quiz-opts"><li>ページに動き（ロジック）をつける</li><li>ページの構造を定義する</li><li>ページの配色を決める</li><li>サーバーの電源を管理する</li></ul>
