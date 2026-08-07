@@ -13,6 +13,7 @@
     "ask": [
       "Bash(npm install*)",
       "Bash(git commit*)",
+      "Bash(git push *)",
       "Write(//c/Users/NT-210174/Desktop/projects/gitea/ai_edu/**)"
     ],
     "deny": [
@@ -21,7 +22,6 @@
       "Read(./secrets/**)",
       "Bash(curl *)",
       "Bash(wget *)",
-      "Bash(git push *)",
       "WebFetch"
     ]
   }
