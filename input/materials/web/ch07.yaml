@@ -14,10 +14,18 @@ teaching:
 keywords:
   - term: API
     desc: プログラム同士がデータをやり取りする窓口
+  - term: HTTP
+    desc: ブラウザとサーバがやり取りするときの約束事
   - term: HTTPメソッド
     desc: GET=取得 / POST=追加 / PUT=更新 / DELETE=削除
+  - term: ステータスコード
+    desc: 結果を表す3桁の番号。200=成功 / 404=無い / 500=サーバ側エラー
   - term: JSON
     desc: データ交換の標準的なテキスト形式
+  - term: エンドポイント
+    desc: 「このURLにこの方法で」という、APIの1つ1つの窓口
+  - term: 非同期 / await
+    desc: 返事を待つ間ほかを止めない仕組み。通信で必ず使う
   - term: FastAPI
     desc: PythonでAPIを作るライブラリ。自動でドキュメントも作る
   - term: CORS
@@ -40,9 +48,36 @@ content_blocks:
   - kind: paragraph
     text: ブラウザのJavaScriptから、サーバのPythonの関数を直接呼ぶことはできません。**間にHTTPという約束事を挟んで、JSONという形式でデータをやり取りします**。その窓口がAPIです。
   - kind: h3
+    text: なぜブラウザから直接DBに繋がないのか
+  - kind: paragraph
+    text: 素朴な疑問として「JavaScriptから直接データベースを触れば早いのでは」と思うはずです。**技術的にできなくはないが、絶対にやってはいけない**——理由は3つあります。
+  - kind: ul
+    items:
+      - "**接続情報が丸見えになる** … ブラウザに送ったコードは誰でも読めます。DBのパスワードを書けば、全世界に公開したのと同じです"
+      - "**何でもできてしまう** … DBに直接繋げるなら、`DELETE FROM games` を打たれても止められません"
+      - "**ルールを置く場所が無くなる** … 「石数は0〜64の範囲」のような検証を、信用できない場所（ブラウザ）でしか行えなくなります"
+  - kind: kv-box
+    title: "📌 APIは「受付」である:"
+    text: APIは、DBの前に立つ受付だと考えてください。**ブラウザからのお願いを受け取り、内容を検査し、問題なければDBに取り次ぐ**。この関所があるから、ブラウザ側が何をしようとサーバのルールを守らせられます。**「ブラウザから来るデータは信用しない」**——これはWeb開発の大原則です。
+  - kind: h3
+    text: HTTP — やり取りの約束事
+  - kind: paragraph
+    text: ブラウザとサーバの会話は、必ず「**リクエスト**を送って、**レスポンス**が返る」の1往復です。1回のやり取りで完結し、サーバは前回のことを覚えていません。
+  - kind: code
+    text: |
+      [リクエスト] ブラウザ → サーバ
+        メソッド:  POST                      ← 何をしたいか
+        URL:      /api/games                ← どこに対して
+        ヘッダ:    Content-Type: application/json   ← 補足情報
+        ボディ:    {"winner": "黒", ...}     ← 送るデータ
+
+      [レスポンス] サーバ → ブラウザ
+        ステータス: 200 OK                   ← 結果
+        ボディ:    {"ok": true}              ← 返すデータ
+  - kind: h3
     text: 窓口の作り方 — URLとメソッド
   - kind: paragraph
-    text: APIは「どのURLに」「どの方法で」アクセスするかで機能が決まります。
+    text: APIは「どのURLに」「どの方法で」アクセスするかで機能が決まります。この組み合わせ1つ1つを**エンドポイント**と呼びます。
   - kind: table
     headers:
       - メソッド
@@ -64,10 +99,63 @@ content_blocks:
   - kind: tip-box
     title: "💡 前章とのつながり:"
     text: この4つは、SQLで学んだ **CRUD**（INSERT / SELECT / UPDATE / DELETE）ときれいに対応します。APIは「外から使えるようにしたCRUD」だと考えると分かりやすくなります。
+  - kind: paragraph
+    text: URLに**同じ `/api/games` が2回出てくる**ことに注目してください。URLは「何を扱うか（戦績というデータ）」を表し、メソッドが「それをどうするか」を表します。この分け方が身につくと、API設計で迷わなくなります。
+  - kind: h3
+    text: ステータスコード — 結果は番号で返る
+  - kind: paragraph
+    text: レスポンスには必ず3桁の番号が付きます。**最初の1桁を見れば、誰のせいかが分かります**。
+  - kind: table
+    headers:
+      - 番号
+      - 意味
+      - 誰の問題か
+    rows:
+      - - 200 OK
+        - 成功
+        - "—"
+      - - 201 Created
+        - 作成に成功
+        - "—"
+      - - 400 Bad Request
+        - 送ったリクエストがおかしい
+        - ブラウザ側
+      - - 404 Not Found
+        - そのURLは無い
+        - ブラウザ側（URLの打ち間違い）
+      - - 422 Unprocessable
+        - データの形が期待と違う
+        - ブラウザ側（送る中身）
+      - - 500 Internal Server Error
+        - サーバの中でエラーが起きた
+        - サーバ側
+  - kind: kv-box
+    title: "📌 4xx と 5xx の切り分けが最重要:"
+    text: "**400番台は「送った側が悪い」、500番台は「受けた側が悪い」**。これだけ覚えておけば、詰まったときにどちらのコードを見るべきかが即座に決まります。想像で直し始める前に、まず番号を見てください。"
+  - kind: h3
+    text: JSON — 共通のデータ形式
+  - kind: paragraph
+    text: PythonとJavaScriptは別の言語なので、そのままではデータを渡せません。そこで**両方が読み書きできるテキスト形式**に変換します。それがJSONです。
+  - kind: code
+    text: |
+      // JSONの実体はただの文字列
+      {"winner": "黒", "black_count": 38, "white_count": 26}
+
+      // JavaScript側
+      JSON.stringify(obj)   // オブジェクト → JSON文字列（送るとき）
+      JSON.parse(text)      // JSON文字列 → オブジェクト（受けるとき）
+
+      # Python側は FastAPI が自動で変換してくれる
+      # 辞書を return するだけでJSONになる
+  - kind: paragraph
+    text: 形はJavaScriptのオブジェクト、Pythonの辞書とほぼ同じです。**キーは必ずダブルクォートで囲む**、末尾にカンマを付けられない、といった細かい制約があります。
   - kind: h3
     text: FastAPIでサーバを書く
   - kind: paragraph
     text: PythonでAPIを作るライブラリはいくつかありますが、ここでは **FastAPI** を使います。書く量が少なく、**自動でAPIの説明ページを作ってくれる**のが大きな利点です。
+  - kind: code
+    text: |
+      pip install fastapi uvicorn
   - kind: code
     text: |
       # main.py
@@ -92,10 +180,18 @@ content_blocks:
       def add_game(game: Game):
           games.append(game)
           return {"ok": True, "count": len(games)}
+  - kind: paragraph
+    text: "`@app.get(\"/api/games\")` の部分が「このURLにGETが来たら、下の関数を動かす」という指定です。関数が返した辞書やリストは、**FastAPIが自動でJSONに変換して**返してくれます。"
+  - kind: kv-box
+    title: "📌 class Game が検査をしている:"
+    text: "`BaseModel` を継承したクラスは、**受け取るデータの形の宣言**です。`black_count: int` と書いておけば、文字列が送られてきた時点でFastAPIが自動で弾き、**422**を返します。さきほどの「ブラウザから来るデータは信用しない」を、書くだけで実現してくれる仕組みです。"
   - kind: code
     text: |
       uvicorn main:app --reload      # サーバを起動する
       # → http://127.0.0.1:8000 で動く
+      # 止めるときは Ctrl + C
+  - kind: paragraph
+    text: "`127.0.0.1` は「自分のPC」を指す特別なアドレスで、`localhost` と書いても同じです。`:8000` は**ポート番号**——1台のPCの中で複数のサーバを区別するための番号です。すでに使われていると `Address already in use` と出るので、その場合は別の番号にします。"
   - kind: kv-box
     title: "📌 まずは /docs を開くこと:"
     text: サーバを起動したら `http://127.0.0.1:8000/docs` を開いてください。**FastAPIが自動で作ったAPIの操作画面**が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に**サーバだけで動作確認できます**。切り分けができるので、詰まったときの強い味方になります。
@@ -126,6 +222,45 @@ content_blocks:
         const games = await res.json();
         return games;
       }
+  - kind: h3
+    text: async と await — 返事を待つということ
+  - kind: paragraph
+    text: 見慣れない `async` と `await` が出てきました。**通信は時間がかかる**——ここまでの処理と決定的に違う点です。
+  - kind: paragraph
+    text: サーバへのリクエストは、返事が来るまで数十ミリ秒〜数秒かかります。その間ブラウザが固まっては困るので、JavaScriptは「**返事は後で来るので、先に進んでおく**」という動き方をします。`await` は「ここは返事を待ってから次に進む」という指示です。
+  - kind: code
+    text: |
+      // ❌ awaitを付け忘れると
+      const res = fetch(url);
+      console.log(res);        // → Promise { <pending> } と出る（まだ返事が来ていない）
+
+      // ⭕ await を付ける
+      const res = await fetch(url);
+      const data = await res.json();   // json() も時間がかかるので await が要る
+      console.log(data);       // → 中身が出る
+  - kind: warn-box
+    title: "⚠️ await は async の中でしか書けません:"
+    text: "`await` を使う関数には必ず `async` を付けます。忘れると `await is only valid in async functions` というエラーになります。**「Promise { pending } と表示された」ときは、ほぼ await の付け忘れ**です。この2つはセットだと覚えてください。"
+  - kind: h3
+    text: 失敗したときの処理も書く
+  - kind: paragraph
+    text: 通信は失敗します。サーバが落ちている、URLが違う、ネットワークが切れている——どれも普通に起きます。**`fetch` は404や500でもエラーにならない**ので、自分で確認する必要があります。
+  - kind: code
+    text: |
+      async function loadHistory() {
+        try {
+          const res = await fetch("http://127.0.0.1:8000/api/games");
+          if (!res.ok) {                       // 404や500はここで捕まえる
+            console.error("失敗:", res.status);
+            return [];
+          }
+          return await res.json();
+        } catch (e) {
+          // サーバが起動していない・ネットが切れている等はこちら
+          console.error("通信できませんでした", e);
+          return [];
+        }
+      }
   - kind: warn-box
     title: "⚠️ ここで必ず CORS エラーが出ます:"
     text: ブラウザは安全のため、**別の場所にあるサーバへの通信を既定で止めます**。コンソールに「CORS policy」というエラーが出たら、これです。バグではなくブラウザの正しい動作なので、サーバ側で「このオリジンからは許可する」と設定します。
@@ -140,6 +275,20 @@ content_blocks:
           allow_methods=["*"],
           allow_headers=["*"],
       )
+  - kind: paragraph
+    text: なぜこんな制限があるのか。もし無ければ、**悪意あるサイトを開いただけで、そのJavaScriptがあなたのログイン中の銀行サイトへ勝手にリクエストを送れてしまう**からです。CORSは「このサイトからのアクセスは許可する」とサーバ側が明示する仕組みで、あなたを守っている側の機能です。
+  - kind: h3
+    text: Networkタブを読む
+  - kind: paragraph
+    text: 通信の問題は、**開発者ツールのNetworkタブを開けば事実が見えます**。想像で直そうとせず、必ずここを見てください。第1章で開いた開発者ツール（F12）の中にあります。
+  - kind: ol
+    items:
+      - F12 で開発者ツールを開き、**Network** タブを選ぶ
+      - 画面を操作してリクエストを発生させる（一覧ボタンを押す等）
+      - 一覧に行が出るか確認する。**出ないならリクエスト自体が飛んでいない**（JSのエラーを疑う）
+      - 行をクリックし、**Headers** で送ったURL・メソッド、**Payload** で送った中身を見る
+      - "**Response** タブで、サーバが返した中身を見る"
+      - ステータス列の番号を見て、4xx か 5xx かを判断する
   - kind: h3
     text: 詰まったときの切り分け
   - kind: paragraph
@@ -150,6 +299,23 @@ content_blocks:
       - ブラウザの Network タブを開く → リクエストが飛んでいるか確認する
       - "飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）"
       - サーバを起動したターミナルを見る → Pythonのエラーが出ていないか
+  - kind: table
+    headers:
+      - 症状
+      - 疑うところ
+    rows:
+      - - Networkに何も出ない
+        - JSがそこまで到達していない。Consoleタブのエラーを見る
+      - - CORS policy と出る
+        - サーバ側にCORS設定を追加する
+      - - Failed to fetch
+        - サーバが起動していない / URLやポート番号の間違い
+      - - 404
+        - URLの綴り。`/api/games` の前後のスラッシュも確認
+      - - 422
+        - 送ったJSONの形。`/docs` の例と見比べる
+      - - 500
+        - サーバのターミナルにPythonのエラーが出ている
   - kind: assignment
     title: オセロの戦績をサーバに送る
     goal: FastAPIでAPIを作り、オセロの画面から実際に呼びます。ブラウザとサーバという**2つのプログラムが通信している**ことを、自分の目で確認するのが狙いです。
@@ -160,20 +326,31 @@ content_blocks:
       - オセロ側で、対戦が終わったら結果を自動でPOSTする
       - 「戦績一覧」ボタンを作り、GETした結果を画面に表示する
       - CORSエラーを解決する
+      - 通信が失敗したときの処理（res.ok の確認）も書く
     done:
       - オセロで対戦を終えると、サーバにデータが届く
       - 一覧ボタンで過去の戦績が表示される
       - Networkタブでリクエストとレスポンスの中身を説明できる
       - サーバを止めると画面側でどうなるか確認した
+      - 404 と 500 を意図的に起こして、違いを見た
     hint: いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: "`DELETE /api/games/{id}` を作って、一覧から1件消せるようにしてみましょう。URLの一部（`{id}`）を受け取る書き方を調べる必要があります。あわせて「存在しないidを指定されたら404を返す」処理も入れてみてください。**正常系だけでなく異常系も設計する**という、実務で最も差が出る部分の練習になります。"
   - kind: warn-box
     title: "⚠️ まだデータは消えます:"
     text: いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。**サーバを再起動すると全部消えます**。次章でDBに繋いで、本当に保存されるようにします。
   - kind: checklist
     items:
+      - ブラウザから直接DBに繋がない理由を説明できる
+      - リクエストとレスポンスの構造が分かる
       - GET / POST / PUT / DELETE の使い分けが分かる
+      - 4xx と 5xx の違いを説明できる
+      - JSONが何のためにあるか説明できる
       - FastAPIでエンドポイントを作れる
       - "/docs でサーバ単体の動作確認ができる"
       - fetchでAPIを呼んで結果を画面に出せる
+      - async / await が必要な理由を説明できる
       - CORSエラーの原因を説明できる
+      - Networkタブでリクエストの中身を確認できる
       - ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる

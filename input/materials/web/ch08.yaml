@@ -16,10 +16,16 @@ keywords:
     desc: ブラウザ → API → DB。Webアプリの基本形
   - term: コネクション
     desc: プログラムからDBへの接続
+  - term: commit
+    desc: DBへの変更を確定させる操作。忘れると保存されない
   - term: プレースホルダ
     desc: SQLに値を安全に埋め込む仕組み。? や %s で書く
   - term: SQLインジェクション
     desc: 入力値でSQLを改ざんされる攻撃。文字列連結が原因
+  - term: 責務の分離
+    desc: 1つのファイル・関数に1つの役割だけを持たせる考え方
+  - term: 環境変数
+    desc: 接続情報などをコードの外に出す仕組み
   - term: ORM
     desc: SQLをコードとして書ける道具。型とDBがつながる
 content_blocks:
@@ -39,10 +45,13 @@ content_blocks:
         fetch()          エンドポイント        SQL
   - kind: paragraph
     text: この3層の絵が描ければ、Webアプリの基本は理解できたと言えます。**APIがブラウザとDBの橋渡しをしている**——これがいちばん大事な理解です。
+  - kind: kv-box
+    title: "📌 それぞれの持ち場:"
+    text: "**ブラウザ**は「見せる・受け取る」だけ。**API**は「検査する・判断する・取り次ぐ」。**DB**は「正しく保管する」。この分担がはっきりしていると、不具合が起きたときどこを見ればいいかが即座に分かります。逆に、ブラウザに判断を書き、DBに検査を任せる——のように混ざると、途端に手に負えなくなります。"
   - kind: h3
     text: PythonからDBに繋ぐ
   - kind: paragraph
-    text: まずは生のSQLで動かします。SQLiteなら追加のインストールも要りません。
+    text: まずは生のSQLで動かします。SQLiteなら追加のインストールも要りません（Pythonに最初から入っています）。
   - kind: code
     text: |
       # db.py
@@ -66,6 +75,31 @@ content_blocks:
           """)
           conn.commit()
           conn.close()
+  - kind: paragraph
+    text: 3つ、意味を確認しておきます。
+  - kind: ul
+    items:
+      - "**`IF NOT EXISTS`** … すでにテーブルがあれば何もしない。起動のたびに呼んでも安全"
+      - "**`row_factory = sqlite3.Row`** … 結果を `row[\"winner\"]` のように名前で取り出せるようにする。これが無いと番号（`row[0]`）でしか取れず、列を足したとき壊れます"
+      - "**`conn.close()`** … 使い終わった接続を閉じる。閉じないと接続が溜まり、いずれ繋がらなくなります"
+  - kind: h3
+    text: なぜファイルを db.py と main.py に分けるのか
+  - kind: paragraph
+    text: 全部 `main.py` に書いても動きます。それでも分けるのは、**1つのファイルに1つの役割**を持たせるためです。これを責務の分離と呼びます。
+  - kind: table
+    headers:
+      - ファイル
+      - 役割
+      - ここに書かないもの
+    rows:
+      - - db.py
+        - DBへの接続とSQL
+        - URLの定義・HTTPの話
+      - - main.py
+        - エンドポイントの定義
+        - SQLの文字列
+  - kind: paragraph
+    text: 分けておくと、あとで「SQLiteをPostgreSQLに変える」となったとき **`db.py` だけ直せば済みます**。混ざっていると、全ファイルからSQLを探し出すことになります。**コードレビューで最初に見られるのもここ**です。
   - kind: h3
     text: APIをDBに繋ぎ替える
   - kind: paragraph
@@ -73,6 +107,10 @@ content_blocks:
   - kind: code
     text: |
       # main.py
+      from db import get_conn, init_db
+
+      init_db()          # 起動時にテーブルを用意しておく
+
       @app.get("/api/games")
       def list_games():
           conn = get_conn()
@@ -92,6 +130,9 @@ content_blocks:
           conn.commit()
           conn.close()
           return {"ok": True}
+  - kind: warn-box
+    title: "⚠️ commit を忘れると保存されません:"
+    text: "`INSERT` や `UPDATE` を実行しただけでは、まだ確定していません。**`conn.commit()` を呼んで初めてファイルに書き込まれます**。「エラーは出ないのにデータが入らない」という症状の原因は、ほぼこれです。SELECTには要りません（読むだけなので）。"
   - kind: kv-box
     title: "📌 ここが本章のハイライト:"
     text: この状態で**サーバを再起動してから一覧を見てください**。データが残っているはずです。前章までは消えていました。この違いが「保存する」ということです。
@@ -114,9 +155,29 @@ content_blocks:
     text: |
       # ⭕ 正しい書き方（プレースホルダを使う）
       conn.execute("SELECT * FROM players WHERE name = ?", (name,))
+  - kind: paragraph
+    text: なぜこれで防げるのか。**プレースホルダを使うと、DBは「SQLの文」と「値」を別々に受け取ります**。値の中に何が書かれていても、それはただの文字列として扱われ、命令としては解釈されません。文字列連結だと、DBには繋がった1本の文しか届かないので、区別のしようがないのです。
   - kind: warn-box
     title: "⚠️ SQLインジェクション:"
-    text: これは**実際に起き続けている代表的な攻撃**です。「自分のアプリは小さいから大丈夫」ということはありません。**ユーザーからの入力をSQLに文字列連結しない**——これだけは例外なく守ってください。
+    text: これは**実際に起き続けている代表的な攻撃**です。「自分のアプリは小さいから大丈夫」ということはありません。**ユーザーからの入力をSQLに文字列連結しない**——これだけは例外なく守ってください。f文字列（`f\"... {name} ...\"`）で組み立てるのも同じく危険です。
+  - kind: tip-box
+    title: "💡 一度実際に試してみる:"
+    text: 学習用の自分のDBで、わざと文字列連結版を書いて `' OR '1'='1` を入れてみてください。**全件返ってくるのを自分の目で見ると、二度と忘れません**。言葉で聞くだけでは身につかない部分です。必ず自分のPC上の練習用DBで行い、他人のシステムには絶対に試さないこと。
+  - kind: h3
+    text: 接続情報をコードに書かない
+  - kind: paragraph
+    text: SQLiteはファイル名だけですが、PostgreSQLなどに移るとホスト名・ユーザー名・パスワードが必要になります。**これらをコードに直接書いてはいけません**。第4章で学んだとおり、pushした瞬間に公開されます。
+  - kind: code
+    text: |
+      # .env  ← .gitignore に入れる。commitしない
+      DATABASE_URL=sqlite:///othello.db
+  - kind: code
+    text: |
+      # db.py
+      import os
+      DB_PATH = os.environ.get("DB_PATH", "othello.db")   # 環境変数から読む
+  - kind: paragraph
+    text: こうしておくと、**手元では othello.db、公開先では本番のDB**、とコードを変えずに切り替えられます。次章のデプロイでそのまま効いてきます。
   - kind: h3
     text: ORM — SQLをコードで書く
   - kind: paragraph
@@ -131,29 +192,79 @@ content_blocks:
   - kind: tip-box
     title: "💡 なぜ生SQLを先にやったか:"
     text: ORMは便利ですが、**中で何が起きているか分からないまま使うと詰まったとき何もできません**。生SQLを知っていれば「ORMがどんなSQLを出しているか」を確認して原因を追えます。順番が大事です。
+  - kind: h3
+    text: 「もし1万件あったら？」
+  - kind: paragraph
+    text: いま戦績は数十件でしょう。だから `SELECT * FROM games` で全部取ってきても一瞬です。**でも1万件になったら？** 一覧画面を開くたびに1万行を読み、JSONに変換し、ブラウザに送ることになります。
+  - kind: code
+    text: |
+      -- ❌ 全部取ってきてから、Python側で最初の20件だけ使う
+      SELECT * FROM games;
+
+      -- ⭕ 必要な分だけDBに取ってこさせる
+      SELECT * FROM games ORDER BY played_at DESC LIMIT 20;
+  - kind: kv-box
+    title: "📌 データが増えたときを想像する癖:"
+    text: いま動いているコードに対して**「もし100倍のデータがあったら、これは動くか」**と自問してみてください。この問いを習慣にできるかどうかが、動くコードを書ける人と、使われるコードを書ける人の分かれ目です。
+  - kind: h3
+    text: よくあるエラーと対処
+  - kind: table
+    headers:
+      - 症状
+      - 原因
+      - 対処
+    rows:
+      - - エラーは無いがデータが入らない
+        - commit 忘れ
+        - "`conn.commit()` を追加"
+      - - no such table
+        - テーブルが作られていない
+        - "`init_db()` を起動時に呼ぶ"
+      - - no such column
+        - 列名の食い違い
+        - CREATE TABLE の定義と見比べる
+      - - database is locked
+        - 別のプロセスが掴んでいる
+        - DBブラウザを閉じる / close 忘れを直す
+      - - unable to open database file
+        - パスが違う
+        - サーバを起動した場所からの相対パスを確認
+      - - 500 が返る
+        - サーバ内でPythonのエラー
+        - 起動したターミナルのログを読む
   - kind: assignment
     title: 戦績が消えないようにする
     goal: 前章のAPIをDBに繋ぎます。**サーバを再起動してもデータが残る**ことを確認するのが、この章のいちばんの成果です。
     steps:
       - 第6章で設計したテーブルを、実際にDBに作る
+      - db.py と main.py にファイルを分ける
       - GET /api/games を DBのSELECTに置き換える
       - POST /api/games を DBのINSERTに置き換える
       - オセロで何回か対戦し、戦績を貯める
       - "**サーバを再起動して、データが残っていることを確認する**"
+      - DBファイルを直接開いて、中のデータを目で見る
       - 余裕があれば、プレイヤー名も保存してJOINで一覧を出す
     done:
       - サーバを再起動しても戦績が消えない
       - ブラウザ → API → DB の3層を自分で図に描いて説明できる
       - なぜプレースホルダを使うのか説明できる
       - 実際にDBファイルを開いて、中のデータを確認した
-    hint: うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。
+      - db.py と main.py の役割の違いを説明できる
+    hint: うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。第7章で学んだ切り分けが、そのまま使えます。
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: "一覧APIに**並び順と件数を指定できる**ようにしてみましょう（例: `/api/games?limit=20&order=desc`）。URLの後ろに付ける値をFastAPIでどう受け取るか調べる必要があります。あわせて「limitに100000が渡されたらどうするか」も考えてみてください。**外から来る値には上限を設ける**——これも「ブラウザから来るデータは信用しない」の一例です。"
   - kind: tip-box
     title: "💡 次章への橋渡し:"
     text: これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを**誰でもアクセスできる場所に置きます**。
   - kind: checklist
     items:
       - ブラウザ → API → DB の3層を説明できる
+      - それぞれの層が何を担当するか言える
       - PythonからDBに接続してSQLを実行できる
+      - commit が必要な理由を説明できる
       - サーバを再起動してもデータが残ることを確認した
+      - db.py と main.py を分ける理由を説明できる
       - プレースホルダを使う理由を説明できる
       - SQLインジェクションがどう起きるか説明できる
+      - 接続情報をコードに直接書かない理由が分かる

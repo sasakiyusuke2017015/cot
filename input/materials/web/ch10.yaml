@@ -16,8 +16,14 @@ keywords:
     desc: JavaScriptに型を追加した言語。JSに変換されて動く
   - term: 型注釈
     desc: "変数や引数に「: number」のように型を書くこと"
+  - term: 型推論
+    desc: 書かなくてもTypeScriptが型を推測してくれる仕組み
   - term: interface
     desc: オブジェクト（データ）の形を定義する仕組み
+  - term: ユニオン型
+    desc: 「AかBのどちらか」を表す型。取りうる値を絞れる
+  - term: any
+    desc: 何でも入る型。使うと型の恩恵が消える
   - term: コンパイル
     desc: TypeScriptをJavaScriptに変換すること
   - term: 型エラー
@@ -25,11 +31,37 @@ keywords:
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
-    text: 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。
+    text: 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。**完成したオセロを型付きに書き直す**のが課題です。
   - kind: h3
     text: TypeScriptとは何か
   - kind: paragraph
     text: TypeScriptは、JavaScriptに**型**を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。
+  - kind: paragraph
+    text: 型とは「**この変数には何が入るか**」の宣言です。数値なのか、文字列なのか、あるオブジェクトなのか。それを書いておくと、違うものを入れようとした瞬間にエディタが教えてくれます。
+  - kind: h3
+    text: なぜ型が要るのか — オセロで起きたこと
+  - kind: paragraph
+    text: 抽象的な説明より、実際に起きやすいバグを見たほうが早いです。次のコードは**JavaScriptでは何のエラーも出ません**。
+  - kind: code
+    text: |
+      // 石を置く関数（片方が書いた）
+      function putStone(row, col, color) {
+        board[row][col] = color;
+      }
+
+      // 呼ぶ側（もう片方が書いた）
+      putStone(3, 4, "黒");      // ある人は日本語で
+      putStone("3", "4", "black"); // 別の人は文字列と英語で
+
+      // 数える側
+      function countBlack() {
+        // "black" で数えている → 日本語の "黒" は数えられない
+      }
+  - kind: paragraph
+    text: 2人で開発していると、**こういう食い違いが必ず起きます**。しかもJavaScriptは何も言わずに動くので、「なぜか石数が合わない」という形で、ずっと後になってから発覚します。原因を探すのに何時間もかかることがあります。
+  - kind: kv-box
+    title: "📌 型は「相方への約束」でもある:"
+    text: 型を書くということは、**「この関数はこういうものを受け取ります」と明文化する**ことです。共同開発では、相手のコードを全部読まなくても、型を見れば使い方が分かります。第4章でやった共同開発の苦労を、型が減らしてくれます。
   - kind: h3
     text: 型注釈の基本
   - kind: code
@@ -45,6 +77,26 @@ content_blocks:
 
       add(1, 2);      // OK
       add('1', '2');  // ← 実行する前にエラーで教えてくれる！
+  - kind: paragraph
+    text: "関数の `): number` の部分は**戻り値の型**です。「この関数は必ず数値を返す」と宣言しています。書いておくと、うっかり `return` を忘れた場合もエラーで気付けます。"
+  - kind: h3
+    text: 全部に型を書く必要はない
+  - kind: paragraph
+    text: 最初は「毎回書くのは面倒」と感じるはずです。実は**書かなくてよい場面が多い**——TypeScriptが自動で推測してくれるからです。これを型推論と呼びます。
+  - kind: code
+    text: |
+      let count = 0;          // number だと自動で分かる（書かなくてよい）
+      let name = '田中';      // string だと分かる
+
+      count = "あ";           // ← それでもここでエラーになる
+
+      // 一方、引数は推論できないので書く必要がある
+      function double(n: number) {
+        return n * 2;         // 戻り値は number だと推論される
+      }
+  - kind: tip-box
+    title: "💡 書くべき場所は「境界」:"
+    text: 目安は、**関数の引数と、外から入ってくるデータ**です。中の変数はほとんど推論に任せて構いません。型を書く量が減ると、TypeScriptは急に快適になります。
   - kind: h3
     text: interface — データの形を決める
   - kind: code
@@ -59,28 +111,125 @@ content_blocks:
         console.log(user.name);
         console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
       }
+  - kind: paragraph
+    text: これが特に効くのが、**第7章で作ったAPIから返ってくるデータ**です。どんな形で返ってくるかを1か所に書いておけば、以降は打ち間違いをすべてエディタが止めてくれます。
+  - kind: code
+    text: |
+      interface GameRecord {
+        id: number;
+        winner: string;
+        black_count: number;
+        white_count: number;
+        played_at: string;
+        memo?: string;          // ? は「無いかもしれない」
+      }
+
+      async function loadHistory(): Promise<GameRecord[]> {
+        const res = await fetch("/api/games");
+        return await res.json();
+      }
+
+      const games = await loadHistory();
+      games[0].black_cnt;    // ← 打ち間違いをその場で指摘してくれる
+  - kind: h3
+    text: ユニオン型 — 取りうる値を絞る
+  - kind: paragraph
+    text: 冒頭の「黒 / black / くろ」問題を根本から防ぐ書き方があります。**取りうる値そのものを型にする**のです。
+  - kind: code
+    text: |
+      type StoneColor = "black" | "white";     // このどちらか以外は許さない
+
+      function putStone(row: number, col: number, color: StoneColor) {
+        board[row][col] = color;
+      }
+
+      putStone(3, 4, "black");   // OK
+      putStone(3, 4, "黒");      // ← エラー。ここで止まる
+      putStone(3, 4, "Black");   // ← エラー。大文字違いも止まる
   - kind: kv-box
-    title: "📌 なぜ型が大事か:"
-    text: JavaScriptだけだと、間違いは**実行して初めて**分かります。TypeScriptなら**書いた瞬間にエディタが教えてくれる**。バグ探しの時間が大幅に減り、あとで学ぶReactやAPI連携でも「データの形」が明確になります。
+    title: "📌 これがTypeScriptのいちばん強い使い方:"
+    text: "`string` にしておくと、あらゆる文字列が通ってしまいます。**取りうる値が決まっているものは、その値だけを型にする**。こうすると、間違った値が入る余地そのものが消えます。手番（`\"black\" | \"white\"`）、マスの状態（`0 | 1 | 2`）など、オセロには使える場所がたくさんあります。"
+  - kind: h3
+    text: any — 使うと全部台無しになる型
+  - kind: paragraph
+    text: 型エラーに困ったとき、`any` を書くと黙ります。**が、これは型チェックを放棄する宣言です**。
+  - kind: code
+    text: |
+      let data: any = await res.json();
+      data.whatever.anything;      // 何を書いてもエラーにならない（実行時に落ちる）
+  - kind: warn-box
+    title: "⚠️ anyで黙らせるのは最後の手段:"
+    text: エラーが出ると `any` を書きたくなりますが、**それをやると型を入れた意味が消えます**。TypeScriptを入れたのに全部 any、というコードは実務でもよく見かけますが、手間だけ増えて利点がゼロの状態です。まずはエラーメッセージを読んで、正しい型を考えてください。
+  - kind: h3
+    text: 導入と実行
+  - kind: paragraph
+    text: すでにあるJSファイルを `.ts` に変えるところから始められます。段階的に移せるのがTypeScriptの良いところです。
+  - kind: code
+    text: |
+      npm install -D typescript      # 導入
+      npx tsc --init                 # 設定ファイル tsconfig.json を作る
+      npx tsc                        # .ts → .js に変換（コンパイル）
+      npx tsc --watch                # 保存のたびに自動変換
+  - kind: paragraph
+    text: 変換して出てきた `.js` をHTMLから読み込みます。**ブラウザはTypeScriptをそのままでは実行できない**ので、この変換が必ず要ります。次章で使うViteのようなツールを入れると、この手順は自動になります。
+  - kind: h3
+    text: 型エラーの読み方
+  - kind: paragraph
+    text: TypeScriptのエラー文は長く見えますが、読むところは**「何が」「どの型と」合わないか**の2点だけです。
+  - kind: code
+    text: |
+      Argument of type 'string' is not assignable to parameter of type 'number'.
+         └ 渡したもの: string        └ 求められているもの: number
+
+      Property 'mail' does not exist on type 'User'. Did you mean 'email'?
+         └ 無いもの: mail                          └ もしかして: email
+  - kind: table
+    headers:
+      - エラーの言い回し
+      - 意味
+    rows:
+      - - is not assignable to
+        - その型は入れられない
+      - - does not exist on type
+        - その名前はその型に無い（打ち間違い）
+      - - Object is possibly 'undefined'
+        - 無いかもしれないので、確認してから使う必要がある
+      - - Did you mean …?
+        - 似た名前の候補。だいたい正解
   - kind: tip-box
-    title: "💡 コツ:"
-    text: VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。TypeScriptのエラー文は最初は長く感じますが「何が」「どの型と」合わないかが必ず書いてあります。
+    title: "💡 赤い波線にマウスを乗せる:"
+    text: VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。**電球マークが出たら、クリックすると修正候補を出してくれます**。最初は候補に頼って構いません。何度も見ているうちに、読めるようになります。
   - kind: assignment
     title: オセロをTypeScriptに書き換える
     goal: 完成して動いているオセロを、TypeScriptで書き直します。**すでに動くものがある状態で型を入れる**ので、型のありがたみが分かりやすい題材です。
     steps:
       - TypeScriptを導入し、既存のJSファイルを .ts に変える
+      - まず出てくるエラーの数を見る（多くても慌てない）
       - 盤面・石の色・座標に型をつける
+      - 石の色をユニオン型にして、取りうる値を絞る
       - 関数の引数と戻り値に型注釈を書く
       - APIから受け取る戦績データの形を interface で定義する
       - エディタが出す型エラーを1つずつ解消する
+      - コンパイルして、ブラウザで今までどおり動くことを確認する
     done:
       - 型エラーが出ない状態でオセロが動く
+      - any を使っていない（使ったなら理由を説明できる）
       - "「型を入れたことで見つかったバグ・書き間違い」を1つ以上挙げられる"
       - 型があると何が楽になるか、自分の言葉で説明できる
-    hint: 石の色を string にすると "黒" でも "くろ" でも通ってしまいます。取りうる値が決まっているものは、それ専用の型を作れないか考えてみてください。
+    hint: 石の色を string にすると "黒" でも "くろ" でも通ってしまいます。取りうる値が決まっているものは、それ専用の型を作れないか考えてみてください。エラーが大量に出ても、1つ直すと連鎖して消えることが多いので、上から順に片付けていけば大丈夫です。
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: サーバ側（Python）にも型を書いてみましょう。第7章の `class Game(BaseModel)` は、実はPythonの型注釈そのものです。**フロントの interface とサーバの BaseModel が同じ形になっている**ことを確認してみてください。ここが食い違うと422エラーになります。両側の型を合わせておくのが、API開発の基本です。
+  - kind: tip-box
+    title: "💡 次章への橋渡し:"
+    text: 型でコードが安全になりました。次章のReactでは**画面の作り方そのもの**を変えます。TypeScriptとReactは実務でセットで使われることが多いので、この章をやっておくと次が理解しやすくなります。
   - kind: checklist
     items:
+      - 型が無いと何が起きるか、具体例で説明できる
       - number / string / boolean / 配列の型注釈が書ける
+      - 型推論があるので全部書かなくてよいと分かる
       - interfaceでデータの形を定義できる
+      - ユニオン型で取りうる値を絞れる
+      - any を安易に使わない理由が分かる
+      - コンパイルして .js を作れる
       - エディタの型エラーを読んで直せる

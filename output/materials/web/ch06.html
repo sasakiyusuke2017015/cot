@@ -75,6 +75,18 @@ const KEYWORDS = [
   {
     "term": "JOIN",
     "desc": "複数のテーブルを繋いで1つの結果として取り出す"
+  },
+  {
+    "term": "GROUP BY",
+    "desc": "同じ値ごとにまとめて集計する。ランキング作成に使う"
+  },
+  {
+    "term": null,
+    "desc": "「値が入っていない」を表す特別な状態"
+  },
+  {
+    "term": "SQLite",
+    "desc": "ファイル1つで動く手軽なデータベース。学習に向く"
   }
 ];
 
@@ -247,6 +259,32 @@ function Page() {
                   <h3>なぜデータベースが要るのか</h3>
                   <p>前章でPythonを覚えましたが、プログラムの中の変数は<strong>実行が終われば消えます</strong>。オセロの対戦結果を後から見返したいなら、どこかに書き残さないといけません。その置き場所がデータベース（DB）です。</p>
                   <p>「ファイルに書けばいいのでは」と思うかもしれません。実際できます。ただ、<strong>探す・並べ替える・複数人が同時に書く</strong>といったことをファイルでやると大変です。DBはそれを得意とする専用の道具です。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">やりたいこと</th><th className="tbl-th">ファイルでやると</th><th className="tbl-th">DBなら</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">直近5件だけ見たい</td><td className="tbl-td">全部読んで並べ替えて切り出す</td><td className="tbl-td">`ORDER BY ... LIMIT 5` の1行</td></tr>
+                        <tr><td className="tbl-td">黒の勝ち数を数えたい</td><td className="tbl-td">全行を読んで自分で数える</td><td className="tbl-td">`COUNT` で一発</td></tr>
+                        <tr><td className="tbl-td">2人が同時に書き込む</td><td className="tbl-td">片方の書き込みが消える事故が起きる</td><td className="tbl-td">DBが順番を管理してくれる</td></tr>
+                        <tr><td className="tbl-td">数値の列に文字が入る</td><td className="tbl-td">気付かず壊れたまま進む</td><td className="tbl-td">型が合わないと拒否してくれる</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>どのDBを使うか</h3>
+                  <p>DBにはいくつも製品があります。書き方（SQL）はほぼ共通なので、<strong>まずは一番手軽なSQLiteで始めて、必要になったら移ります</strong>。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">製品</th><th className="tbl-th">特徴</th><th className="tbl-th">このコースでは</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">SQLite</td><td className="tbl-td">ファイル1つで動く。インストール不要</td><td className="tbl-td"><strong>まずこれ</strong>。学習に最適</td></tr>
+                        <tr><td className="tbl-td">PostgreSQL</td><td className="tbl-td">本格的。実務で広く使われる</td><td className="tbl-td">余裕があれば / デプロイ時に</td></tr>
+                        <tr><td className="tbl-td">MySQL</td><td className="tbl-td">同じく定番。Webサービスで多い</td><td className="tbl-td">触れなくてよい</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 SQLiteの見方:</strong> SQLiteは `othello.db` のような<strong>ただのファイル</strong>です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。<strong>表として目で見られる状態にしておくと、SQLの結果が腹落ちします</strong>。
+                  </div>
                   <h3>テーブル = 表</h3>
                   <p>DBの中では、データを<strong>テーブル</strong>という表の形で持ちます。Excelのシートを思い浮かべてください。列（どんな項目か）と行（1件ずつのデータ）でできています。</p>
                   <div className="tbl-wrap">
@@ -261,6 +299,22 @@ function Page() {
                   </div>
                   <div className="kv-box">
                     <strong>📌 設計でいちばん大事な問い:</strong> <strong>「この表の1行は、何を表しているのか」</strong> を一言で言えるようにすること。上の表なら「1行 = 1回の対戦」です。これが曖昧なまま作ると、後で必ず破綻します。
+                  </div>
+                  <h3>設計は「作りたい画面」から逆算する</h3>
+                  <p>いきなり列を並べようとすると手が止まります。<strong>先に「どんな画面を作りたいか」を言葉にして、そこから必要な項目を引き出す</strong>と進みます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">作りたい画面</th><th className="tbl-th">そのために必要な情報</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">直近の対戦一覧</td><td className="tbl-td">勝者・石数・対戦日時</td></tr>
+                        <tr><td className="tbl-td">勝率ランキング</td><td className="tbl-td">誰が対戦したか（プレイヤー）・勝敗</td></tr>
+                        <tr><td className="tbl-td">1試合の詳細</td><td className="tbl-td">上のすべて + 手数など</td></tr>
+                        <tr><td className="tbl-td">月別の対戦数</td><td className="tbl-td">対戦日時（日付として扱える形で）</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 日時は必ず入れておく:</strong> 迷ったら<strong>「いつ」を表す列は入れておく</strong>のが鉄則です。後から「新しい順に並べたい」「今月だけ見たい」と必ず言われます。逆に、後から過去のデータに日時を足すことはできません（そのデータがいつのものか、もう分からないため）。
                   </div>
                   <h3>列には型を決める</h3>
                   <p>各列には「どんな種類のデータが入るか」（型）を決めます。数値の列に文字を入れようとするとDBが拒否してくれるので、おかしなデータが混ざるのを防げます。</p>
@@ -279,6 +333,7 @@ function Page() {
                     <li><strong>PRIMARY KEY</strong> … その行を特定する列。重複できない</li>
                     <li><strong>NOT NULL</strong> … 空を許さない</li>
                   </ul>
+                  <p>主キーには<strong>その行だけを指せる値</strong>を入れます。ふつうは連番の `id` で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。</p>
                   <h3>4つの基本操作（CRUD）</h3>
                   <div className="code-block">{`-- Create: 追加する
 INSERT INTO games (winner, black_count, white_count)
@@ -286,6 +341,7 @@ VALUES ('黒', 38, 26);
 
 -- Read: 取り出す
 SELECT * FROM games;                          -- 全部
+SELECT winner, played_at FROM games;          -- 列を選ぶ
 SELECT * FROM games WHERE winner = '黒';      -- 条件つき
 SELECT * FROM games ORDER BY played_at DESC;  -- 新しい順
 SELECT * FROM games ORDER BY played_at DESC LIMIT 5;  -- 直近5件
@@ -297,6 +353,33 @@ UPDATE games SET winner = '白' WHERE id = 1;
 DELETE FROM games WHERE id = 1;`}</div>
                   <div className="warn-box">
                     <strong>⚠️ WHERE を忘れると全部消える:</strong> `DELETE FROM games;` と書くと<strong>全行が消えます</strong>。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。
+                  </div>
+                  <h3>条件の書き方</h3>
+                  <p>WHERE には条件を組み合わせて書けます。JavaScriptの `if` に近い感覚です。</p>
+                  <div className="code-block">{`WHERE winner = '黒' AND black_count > 40      -- かつ
+WHERE winner = '黒' OR winner = '白'          -- または
+WHERE winner IN ('黒', '白')                  -- 上と同じ意味。こちらが簡潔
+WHERE black_count BETWEEN 30 AND 40           -- 範囲
+WHERE winner LIKE '黒%'                       -- 「黒」で始まる
+WHERE played_at >= '2026-08-01'               -- 日付で絞る
+WHERE memo IS NULL                            -- 値が入っていない行`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ NULL は `= NULL` では取れません:</strong> 「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、`= NULL` は真にも偽にもなりません。<strong>`IS NULL` / `IS NOT NULL` を使ってください</strong>。ここは初心者が必ず一度は引っかかる箇所です。
+                  </div>
+                  <h3>数える・集計する</h3>
+                  <p>ランキングを作るには集計が要ります。<strong>「全部取ってきてPythonで数える」より、SQLで数えたほうが圧倒的に速く、コードも短くなります</strong>。</p>
+                  <div className="code-block">{`SELECT COUNT(*) FROM games;                     -- 全対戦数
+SELECT COUNT(*) FROM games WHERE winner = '黒'; -- 黒の勝ち数
+SELECT AVG(black_count) FROM games;             -- 黒の平均石数
+SELECT MAX(black_count) FROM games;             -- 最大
+
+-- 勝者ごとに数える（GROUP BY）
+SELECT winner, COUNT(*) AS wins
+FROM games
+GROUP BY winner
+ORDER BY wins DESC;`}</div>
+                  <div className="kv-box">
+                    <strong>📌 GROUP BY は「同じ値ごとに束ねる」:</strong> 上のSQLは「winnerが同じ行をまとめて、それぞれ何行あるか数える」という意味です。結果は「黒: 12勝 / 白: 9勝 / 引き分け: 2」のような形になります。<strong>ランキング画面はほぼこれで作れます</strong>。
                   </div>
                   <h3>表を分ける — 外部キー</h3>
                   <p>「誰が対戦したか」も残したくなったとします。プレイヤー名を games テーブルに直接書くこともできますが、名前が変わったとき全行を直すことになります。そこで<strong>表を分けて、繋ぐ</strong>という考え方を使います。</p>
@@ -315,6 +398,9 @@ CREATE TABLE games (
   played_at     TIMESTAMP DEFAULT NOW()
 );`}</div>
                   <p>games には名前ではなく<strong>プレイヤーのid</strong>を持たせます。こうすると名前を変えたいとき players を1行直すだけで済みます。</p>
+                  <div className="kv-box">
+                    <strong>📌 原則は「同じ情報を2箇所に書かない」:</strong> 表を分ける理由はこれに尽きます。同じ情報が2箇所にあると、<strong>片方だけ直されて食い違う</strong>という事故が必ず起きます。「この情報の正しい置き場所はどこか」を1つに決める——これが設計の基本です。
+                  </div>
                   <h3>繋いで取り出す — JOIN</h3>
                   <p>表を分けると、取り出すときに繋ぎ直す必要があります。それが JOIN です。</p>
                   <div className="code-block">{`SELECT
@@ -327,30 +413,49 @@ FROM games g
 JOIN players b ON g.black_player = b.id
 JOIN players w ON g.white_player = w.id
 ORDER BY g.played_at DESC;`}</div>
+                  <p>`FROM games g` の `g` は<strong>別名</strong>です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。`ON` の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。</p>
                   <div className="tip-box">
                     <strong>💡 まずは分けずに作ってもいい:</strong> 最初から完璧な設計を目指すと進みません。<strong>1つのテーブルで作ってみて、不便を感じてから分ける</strong>ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。
+                  </div>
+                  <h3>よくあるエラーと対処</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">エラー</th><th className="tbl-th">意味</th><th className="tbl-th">対処</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">no such table</td><td className="tbl-td">そのテーブルが無い</td><td className="tbl-td">CREATE TABLE を実行したか / DBファイルの場所を確認</td></tr>
+                        <tr><td className="tbl-td">no such column</td><td className="tbl-td">その列が無い</td><td className="tbl-td">列名の打ち間違い / 別名の付け忘れ</td></tr>
+                        <tr><td className="tbl-td">NOT NULL constraint failed</td><td className="tbl-td">空を許さない列に空を入れた</td><td className="tbl-td">INSERT で値を渡しているか確認</td></tr>
+                        <tr><td className="tbl-td">UNIQUE constraint failed</td><td className="tbl-td">重複できない値が重複した</td><td className="tbl-td">主キーに同じidを入れていないか</td></tr>
+                        <tr><td className="tbl-td">syntax error near</td><td className="tbl-td">文法エラー</td><td className="tbl-td">カンマ・括弧・クォートの過不足。示された語の直前を見る</td></tr>
+                      </tbody>
+                    </table>
                   </div>
                   <div className="assign-box">
                     <p className="assign-title">🛠 課題: 戦績テーブルを設計する</p>
                     <p className="assign-goal">オセロの戦績を保存するテーブルを、自分たちで設計します。<strong>答えを写すのではなく、何が必要かを2人で話し合って決めること</strong>が課題の本体です。</p>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
-                      <li>SQLiteかPostgreSQLを用意する（SQLiteが手軽）</li>
+                      <li>SQLiteを用意し、中身を見られるツールも入れる</li>
                       <li>2人で「戦績として何を残したいか」を話し合って書き出す</li>
+                      <li>先に「作りたい画面」を3つ挙げ、そこから必要な項目を逆算する</li>
                       <li>その項目をもとに CREATE TABLE を書く</li>
                       <li>手で5件くらい INSERT してデータを入れる</li>
                       <li>「直近5件」「黒の勝ち数」「勝率の高い順」を SELECT で取り出す</li>
                       <li>プレイヤーを別テーブルに分け、JOINで名前つきの一覧を出す</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                    <CheckList items={["「この表の1行は何を表すか」を一言で説明できる","CRUD の4操作をすべて自分で書いて実行した","JOIN で2つの表を繋いだ結果を取り出せた","後から項目を足したくなったとき、どう直すか説明できる"]} />
-                    <p className="assign-hint">💡 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。</p>
+                    <CheckList items={["「この表の1行は何を表すか」を一言で説明できる","CRUD の4操作をすべて自分で書いて実行した","GROUP BY で勝ち数を集計できた","JOIN で2つの表を繋いだ結果を取り出せた","後から項目を足したくなったとき、どう直すか説明できる"]} />
+                    <p className="assign-hint">💡 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。最初の設計が不完全でも構いません。後で「足りない」と気付けたなら、それ自体が学びです。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>「1手ずつの棋譜を残したい」と言われたら、どんなテーブルを足しますか。<strong>1行が「1手」を表す表</strong>を考えてみてください（どの試合の、何手目に、誰が、どこに置いたか）。games との関係はどうなるでしょう。これは「1対多」という、DB設計でいちばんよく出る形の練習になります。</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 次章への橋渡し:</strong> データの置き場所ができました。ただ、ブラウザで動くオセロからは<strong>まだこのDBに触れません</strong>。次章では両者をつなぐ窓口（API）を作ります。
                   </div>
                   <h3>チェックリスト</h3>
-                  <CheckList items={["「1行が何を表すか」を意識してテーブルを設計できる","SELECT / INSERT / UPDATE / DELETE が書ける","WHERE を忘れる危険を理解している","主キーと外部キーの役割を説明できる","JOIN で複数テーブルを繋げる"]} />
+                  <CheckList items={["なぜファイルではなくDBを使うのか説明できる","「1行が何を表すか」を意識してテーブルを設計できる","列の型と NOT NULL / PRIMARY KEY の意味が分かる","SELECT / INSERT / UPDATE / DELETE が書ける","WHERE を忘れる危険を理解している","COUNT と GROUP BY で集計できる","主キーと外部キーの役割を説明できる","JOIN で複数テーブルを繋げる"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

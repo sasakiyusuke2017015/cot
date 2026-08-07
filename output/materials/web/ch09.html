@@ -65,6 +65,14 @@ const KEYWORDS = [
     "desc": "アプリを動かすサーバーを貸してくれるサービス"
   },
   {
+    "term": "localhost",
+    "desc": "自分のPCを指すアドレス。他の人からは見えない"
+  },
+  {
+    "term": "静的サイト",
+    "desc": "HTML/CSS/JSだけで動く、サーバ処理の要らないサイト"
+  },
+  {
     "term": "Vercel / Netlify",
     "desc": "GitHub連携でフロントを自動公開する定番サービス"
   },
@@ -73,8 +81,16 @@ const KEYWORDS = [
     "desc": "APIキーなど秘密の設定をコード外に置く仕組み"
   },
   {
+    "term": "ビルド",
+    "desc": "公開用にコードをまとめ直す処理"
+  },
+  {
     "term": "自動デプロイ",
     "desc": "pushのたびに最新版が自動で公開される仕組み"
+  },
+  {
+    "term": "ログ",
+    "desc": "サーバ側で何が起きたかの記録。本番の不具合はここから追う"
   }
 ];
 
@@ -242,10 +258,10 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> 自分の作ったWebアプリをインターネットに公開し、「自分でWebサービスを作った」を実感する。
+                    <strong>🎯 この章のゴール:</strong> 自分の作ったWebアプリをインターネットに公開し、<strong>公開URLを人に送って遊んでもらう</strong>ところまでを体験する。ここまでの全部の総仕上げです。
                   </div>
                   <h3>デプロイとは何か</h3>
-                  <p>デプロイとは、手元で動いているアプリを<strong>インターネット上のサーバーに配置して、誰でも使える状態にする</strong>ことです。ここまで学んだ全部の総仕上げです。</p>
+                  <p>デプロイとは、手元で動いているアプリを<strong>インターネット上のサーバーに配置して、誰でも使える状態にする</strong>ことです。</p>
                   <div className="code-block">{`コードを書く
    ↓
 GitHubへ push
@@ -253,36 +269,131 @@ GitHubへ push
 ホスティングサービスが自動でビルド・公開
    ↓
 https://あなたのアプリ.vercel.app  ← 世界中からアクセスできる`}</div>
+                  <h3>なぜ localhost では駄目なのか</h3>
+                  <p>前章までのオセロは `http://127.0.0.1:8000` で動いていました。この住所は「<strong>自分のPC</strong>」を指しています。同じURLを友達に送っても、相手のPCの中を見に行くだけで、あなたのアプリには繋がりません。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th"></th><th className="tbl-th">localhost</th><th className="tbl-th">デプロイ後</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">見られる人</td><td className="tbl-td">自分だけ</td><td className="tbl-td">世界中の誰でも</td></tr>
+                        <tr><td className="tbl-td">動いている時間</td><td className="tbl-td">自分がPCを起動している間だけ</td><td className="tbl-td">24時間ずっと</td></tr>
+                        <tr><td className="tbl-td">URL</td><td className="tbl-td">127.0.0.1:8000</td><td className="tbl-td">https://…（本物のドメイン）</td></tr>
+                        <tr><td className="tbl-td">止まるとき</td><td className="tbl-td">ターミナルを閉じたら</td><td className="tbl-td">自分で止めるまで</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 「誰かのPCで動き続けている」だけ:</strong> デプロイと聞くと特別なことに思えますが、やっていることは<strong>「自分のPCの代わりに、24時間動いているどこかのコンピュータでプログラムを動かす」</strong>だけです。ホスティングサービスは、そのコンピュータを貸してくれる会社です。仕組みが分かれば怖くありません。
+                  </div>
+                  <h3>2種類のデプロイがある</h3>
+                  <p>自分のアプリがどちらなのかで、選ぶサービスが変わります。オセロは<strong>両方</strong>を含んでいます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">種類</th><th className="tbl-th">中身</th><th className="tbl-th">必要なもの</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">静的サイト</td><td className="tbl-td">HTML / CSS / JS だけ</td><td className="tbl-td">ファイルを置く場所だけあればよい</td></tr>
+                        <tr><td className="tbl-td">サーバが要るアプリ</td><td className="tbl-td">Python が動き続ける + DB</td><td className="tbl-td">プログラムを実行し続けられる環境</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>つまりオセロの公開は<strong>2つの場所へのデプロイ</strong>になります。画面（フロント）を1か所、API + DB（バック）をもう1か所。そして両者をURLで繋ぎ直します。ここが唯一ややこしい部分です。</p>
                   <h3>今どきのデプロイはGit連携</h3>
                   <p>VercelやNetlify、Render などのホスティングサービスは、<strong>GitHubのリポジトリを連携するだけ</strong>で、pushのたびに自動で最新版を公開してくれます。第4章で身につけたGitの習慣がここで直接活きます。</p>
                   <ul>
-                    <li>フロントエンド（HTML/CSS/JS）… Vercel / Netlify などが定番</li>
+                    <li>フロントエンド（HTML/CSS/JS）… Vercel / Netlify / GitHub Pages などが定番</li>
                     <li>API + DB … Render / Railway など、DBも一緒に提供するサービスが手軽</li>
                   </ul>
-                  <div className="warn-box">
-                    <strong>⚠️ 公開前チェック:</strong> APIキーやパスワードを環境変数にしたか。誰でも触れる状態になるので、秘密情報がコードに残っていないか必ず確認します。
-                  </div>
+                  <p>基本の流れは、どのサービスでもほぼ同じです。</p>
+                  <ol>
+                    <li>サービスにGitHubアカウントでログインする</li>
+                    <li>「New Project」などから、公開したいリポジトリを選ぶ</li>
+                    <li>ビルド設定と公開するフォルダを指定する（静的サイトなら大抵そのままでよい）</li>
+                    <li>環境変数を設定する（次の節）</li>
+                    <li>Deploy を押す。数分待つとURLが発行される</li>
+                  </ol>
                   <div className="tip-box">
-                    <strong>💡 なぜデプロイが大事か:</strong> 公開URLを人に送って使ってもらえると、学習のモチベーションが一気に変わります。「動くものを世界に出した」経験が、次の学習の最大の燃料になります。
+                    <strong>💡 pushしたら自動で反映される:</strong> 一度つなげば、あとは `git push` するだけで公開版が更新されます。<strong>手作業でファイルをアップロードする必要はありません</strong>。「pushしたら数分後に本番が変わる」という感覚を、ここで一度味わっておいてください。
                   </div>
+                  <h3>環境変数 — 秘密をコードの外に置く</h3>
+                  <p>第8章で `.env` に接続情報を書きました。このファイルは `.gitignore` に入れているので、<strong>GitHubには上がっていません</strong>。ということは、公開先のサーバにも届いていません。</p>
+                  <p>そこで、<strong>ホスティングサービスの管理画面から環境変数を設定します</strong>。多くのサービスに「Environment Variables」という項目があります。</p>
+                  <div className="code-block">{`手元（.env ファイル）        公開先（サービスの管理画面）
+  DB_PATH=othello.db    →    DB_PATH=/data/othello.db
+  API_URL=127.0.0.1:8000 →   API_URL=https://xxx.onrender.com
+
+コードは同じまま。値だけが場所によって変わる`}</div>
+                  <div className="kv-box">
+                    <strong>📌 これが第8章で環境変数にした理由:</strong> もし接続情報をコードに直接書いていたら、公開のたびにコードを書き換えることになります。<strong>「環境ごとに変わるものは、コードの外に出す」</strong>——この原則が、ここで具体的な形で効いてきます。
+                  </div>
+                  <h3>公開前チェック</h3>
+                  <div className="warn-box">
+                    <strong>⚠️ 公開は取り消せないと思うこと:</strong> 一度インターネットに出したものは、消しても誰かの手元に残っている可能性があります。<strong>特にリポジトリを公開（public）にする場合は、履歴のすべてが見られます</strong>。第4章で学んだとおり、過去のcommitに秘密情報が残っていれば、それも見えます。押す前に必ず確認してください。
+                  </div>
+                  <h3>公開前に確認すること</h3>
+                  <CheckList items={["APIキー・パスワードがコードに書かれていない",".env が .gitignore に入っていて、commitされていない","過去のcommit履歴にも秘密情報が残っていない","CORSの許可を「なんでも許可」のままにしていない","個人情報・実在の住所や電話番号を含むテストデータが入っていない","DELETE系のAPIに、誰でも叩ける状態で危険なものが無い","リポジトリを public にしてよいか2人で確認した"]} />
+                  <h3>「手元では動くのに本番で動かない」</h3>
+                  <p>デプロイして最初にほぼ必ず起きます。<strong>バグではなく、環境の違いです</strong>。原因はだいたいこの5つに絞られます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">症状</th><th className="tbl-th">原因</th><th className="tbl-th">対処</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">画面は出るがデータが来ない</td><td className="tbl-td">APIのURLが127.0.0.1のまま</td><td className="tbl-td">公開したAPIのURLに書き換える</td></tr>
+                        <tr><td className="tbl-td">CORSエラー</td><td className="tbl-td">許可するオリジンが手元のまま</td><td className="tbl-td">公開したフロントのURLを許可に追加</td></tr>
+                        <tr><td className="tbl-td">起動に失敗する</td><td className="tbl-td">ライブラリが入っていない</td><td className="tbl-td">requirements.txt を用意したか確認</td></tr>
+                        <tr><td className="tbl-td">500 が返る</td><td className="tbl-td">環境変数が未設定</td><td className="tbl-td">管理画面で設定して再デプロイ</td></tr>
+                        <tr><td className="tbl-td">しばらくするとデータが消える</td><td className="tbl-td">保存先が一時的な場所</td><td className="tbl-td">永続化されるDBを使う（下記）</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="warn-box">
+                    <strong>⚠️ SQLiteファイルが消えることがある:</strong> サービスによっては、<strong>再起動のたびにファイルが初期状態に戻ります</strong>（アプリを動かす場所と、データを残す場所が別になっているため）。手元では消えないのに本番だけ消える、という現象の正体はこれです。対処は、そのサービスが提供する永続ディスクを使うか、<strong>PostgreSQLなどの独立したDBサービスに移す</strong>ことです。第6章で「SQLは製品が変わってもほぼ同じ」と書いたのは、ここで効いてきます。
+                  </div>
+                  <h3>ログを読む</h3>
+                  <p>本番では `print` の出力が画面に見えません。代わりに、<strong>サービスの管理画面に「Logs」という項目</strong>があります。第7章でターミナルのエラーを読んだのと同じことを、ここで行います。</p>
+                  <ol>
+                    <li>管理画面の Logs（またはDeploy Logs）を開く</li>
+                    <li>デプロイ時のエラーか、実行時のエラーかを見分ける</li>
+                    <li>Pythonのエラーが出ていれば、手元と同じように読む</li>
+                    <li>直したら push する。自動で再デプロイされる</li>
+                  </ol>
+                  <div className="tip-box">
+                    <strong>💡 切り分けは今までと同じ:</strong> 本番だからといって特別なことはありません。<strong>Networkタブでリクエストを見て、ログでサーバ側を見る</strong>。第7章で身につけた切り分けが、そのまま通用します。「本番だから分からない」と思った瞬間に手が止まるので、いつもの手順に落として考えてください。
+                  </div>
+                  <h3>公開したら、人に使ってもらう</h3>
+                  <p>URLができたら、<strong>必ず誰かに送って使ってもらってください</strong>。ここまでが課題です。家族でも友人でも構いません。</p>
+                  <p>自分以外の人が触ると、想定していなかったことが必ず起きます。「スマホだと盤面がはみ出る」「連打すると変になる」「何をすればいいか分からない」——これらは<strong>自分では絶対に見つけられない種類の問題</strong>です。実際に使われて初めて分かることがある、というのを体験してください。</p>
                   <div className="assign-box">
                     <p className="assign-title">🛠 課題: オセロを世界に公開する</p>
                     <p className="assign-goal">2人で作ったオセロを、誰でも遊べる場所に置きます。<strong>公開URLを人に送って遊んでもらう</strong>ところまでが課題です。ここまでの全部の集大成になります。</p>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
+                      <li>公開前チェックを2人で一緒に行う</li>
                       <li>フロントエンド（オセロの画面）をVercelかNetlifyにデプロイする</li>
                       <li>API + DB を Render か Railway にデプロイする</li>
+                      <li>環境変数をサービスの管理画面に設定する</li>
                       <li>フロント側のAPI接続先を、ローカルのURLから公開URLに書き換える</li>
                       <li>CORSの許可設定を、公開したフロントのURLに変更する</li>
                       <li>公開URLで実際に対戦し、戦績が保存されることを確認する</li>
+                      <li>一度 push して、自動で反映されることを確認する</li>
                       <li>家族や友人にURLを送って遊んでもらう</li>
+                      <li>もらった感想をIssueに登録する</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                    <CheckList items={["公開URLにアクセスして対戦できる","対戦結果が保存され、再訪しても残っている","自分以外の誰かに遊んでもらった","APIキーやパスワードがコードに残っていないか確認した"]} />
-                    <p className="assign-hint">💡 フロントとAPIは別々のサービスにデプロイすることになります。「フロントは動くがAPIに繋がらない」ときは、接続先URLとCORS設定の2つを疑ってください。第7章で学んだ切り分けがそのまま使えます。</p>
+                    <CheckList items={["公開URLにアクセスして対戦できる","対戦結果が保存され、再訪しても残っている","スマホからも開いて動作を確認した","自分以外の誰かに遊んでもらった","APIキーやパスワードがコードに残っていないか確認した","本番のログを開いて、中身を読んだことがある"]} />
+                    <p className="assign-hint">💡 フロントとAPIは別々のサービスにデプロイすることになります。「フロントは動くがAPIに繋がらない」ときは、接続先URLとCORS設定の2つを疑ってください。第7章で学んだ切り分けがそのまま使えます。一度にすべてを繋ごうとせず、まずフロントだけ公開して表示を確認する、と段階を分けると原因が絞れます。</p>
                   </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>独自ドメイン（`othello-tanaka.com` のような自分専用のURL）を取って割り当ててみましょう。年間千円台から取得できます。あわせて、<strong>pushしたら自動でテストを走らせてから公開する</strong>仕組み（GitHub Actions など）も調べてみてください。「壊れたコードが本番に出ない」ようにする、実務では当たり前の仕組みです。</p>
+                  </div>
+                  <h3>ここまで来たら</h3>
+                  <p>必修範囲はここで終わりです。振り返ると、<strong>HTMLでページを書き、CSSで整え、JavaScriptで動かし、Gitで2人で共同開発し、Pythonでサーバを書き、SQLでデータを設計し、APIで繋ぎ、DBに保存し、世界に公開した</strong>——Webアプリを一通り自分の手で作ったことになります。</p>
+                  <div className="kv-box">
+                    <strong>📌 覚えたのは文法ではない:</strong> この過程で本当に身についたのは、タグやコマンドではなく、<strong>エラーを読む・原因を仮説立てる・調べる・直す</strong>というサイクルです。これは言語やフレームワークが変わっても使えます。次に何を学ぶときも、同じやり方で進められます。
+                  </div>
+                  <p>この先は発展範囲です。第10章で<strong>TypeScript</strong>、第11章で<strong>React</strong>を扱います。どちらも「動いているオセロを作り直す」課題なので、<strong>すでに動くものがある状態で新しい道具の効果を確かめられます</strong>。順番はどちらからでも構いません。</p>
                   <h3>チェックリスト</h3>
-                  <CheckList items={["デプロイの意味を説明できる","push → 自動公開の流れを体験した","公開URLを人に共有して使ってもらった"]} />
+                  <CheckList items={["デプロイの意味を説明できる","localhost と公開URLの違いを説明できる","静的サイトとサーバが要るアプリの違いが分かる","push → 自動公開の流れを体験した","環境変数をサービス側に設定できる","公開前に秘密情報のチェックができる","本番のログを見て原因を追える","公開URLを人に共有して使ってもらった"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

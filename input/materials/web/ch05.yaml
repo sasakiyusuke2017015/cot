@@ -22,6 +22,12 @@ keywords:
     desc: プロジェクトごとにライブラリを分ける仕組み（venv）
   - term: pip
     desc: ライブラリを入れるコマンド。JSのnpmにあたる
+  - term: f文字列
+    desc: 文字列の中に値を埋め込む書き方。JSのテンプレートリテラルにあたる
+  - term: None
+    desc: 「値が無い」を表す。JSの null にあたる
+  - term: import
+    desc: 他のファイルやライブラリの機能を持ち込む書き方
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
@@ -35,6 +41,23 @@ content_blocks:
   - kind: kv-box
     title: "📌 ここが最初の大きな壁:"
     text: ブラウザの中（フロントエンド）とサーバ（バックエンド）は**別の場所で動く別のプログラム**です。この2つがどう繋がるかが分かると、Webアプリの全体像が見えます。焦らず進めてください。
+  - kind: h3
+    text: 準備 — Pythonを入れて動かす
+  - kind: paragraph
+    text: 公式サイト（`python.org`）からインストーラを落として実行します。**Windowsでは1点だけ必ず守ってください**。
+  - kind: warn-box
+    title: "⚠️ Add python.exe to PATH にチェックを入れる:"
+    text: インストーラの最初の画面の下に、小さくこのチェックボックスがあります。**ここを入れ忘れると、ターミナルで `python` と打っても「見つかりません」になります**。入れ忘れた場合はインストーラをもう一度実行して、Modify から直せます。初心者が最初に詰まる定番の箇所です。
+  - kind: code
+    text: |
+      python --version        # 3.12.x のように出れば成功
+      python hello.py         # ファイルを実行する
+      python                  # 対話モード（1行ずつ試せる。exit() で抜ける）
+  - kind: paragraph
+    text: 動いたら、`hello.py` というファイルを作って1行だけ書いて実行してみてください。**JavaScriptと違って、ブラウザを介さずターミナルで直接動く**——これが「サーバ側の言語」の感触です。
+  - kind: code
+    text: |
+      print("こんにちは")
   - kind: h3
     text: JavaScriptと比べてみる
   - kind: paragraph
@@ -77,6 +100,52 @@ content_blocks:
       def greet(who):
           return "こんにちは、" + who
   - kind: h3
+    text: 対応表で覚える
+  - kind: paragraph
+    text: いちいち文法書を読むより、**JSで知っていることの対応を押さえる**ほうが早く書けるようになります。
+  - kind: table
+    headers:
+      - やりたいこと
+      - JavaScript
+      - Python
+    rows:
+      - - 画面に出す
+        - "`console.log(x)`"
+        - "`print(x)`"
+      - - 変数
+        - "`const` / `let`"
+        - 宣言不要。`x = 1` だけ
+      - - 真偽値
+        - "`true` / `false`"
+        - "`True` / `False`（大文字始まり）"
+      - - 値が無い
+        - "`null` / `undefined`"
+        - "`None`"
+      - - かつ / または / 否定
+        - "`&&` / `||` / `!`"
+        - "`and` / `or` / `not`"
+      - - 等しい
+        - "`===`"
+        - "`==`（Pythonは1種類だけ）"
+      - - 配列
+        - "`[1, 2, 3]`"
+        - リスト。書き方は同じ
+      - - 個数
+        - "`arr.length`"
+        - "`len(arr)`"
+      - - 末尾に追加
+        - "`arr.push(x)`"
+        - "`arr.append(x)`"
+      - - 文字列に値を埋める
+        - "`` `${name}さん` ``"
+        - "`f\"{name}さん\"`"
+      - - コメント
+        - "`// コメント`"
+        - "`# コメント`"
+  - kind: tip-box
+    title: "💡 Trueが大文字なのは地味に効く:"
+    text: JSの癖で `true` と書くと `NameError` になります。同じく `&&` を書くと構文エラーです。**最初の1週間は必ずやります**。エラーが出たらこの表に戻ってきてください。恥ずかしいことではありません。
+  - kind: h3
     text: 決定的な違い — インデントがブロックを決める
   - kind: paragraph
     text: JavaScriptは波括弧 `{ }` で処理のまとまりを表しますが、**Pythonは行頭の空白（インデント）でそれを表します**。波括弧もセミコロンもありません。
@@ -91,6 +160,36 @@ content_blocks:
   - kind: warn-box
     title: "⚠️ 最初はここで必ず詰まる:"
     text: インデントがずれると `IndentationError` というエラーになります。**エラーが出たらまず行頭の空白を疑ってください**。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。
+  - kind: tip-box
+    title: "💡 VS Code の設定を1つだけ:"
+    text: "画面右下に「スペース: 4」と出ているか確認してください。「タブのサイズ」表示になっていたらクリックして「スペースによるインデント」に変えます。**タブとスペースが混ざったファイルは、見た目が同じでもPythonがエラーを出します**。原因が目に見えないので、最初に設定しておくのが安全です。"
+  - kind: h3
+    text: 繰り返しの書き方
+  - kind: paragraph
+    text: オセロの盤面は8×8のマスなので、繰り返しを多用します。JSの `for (let i = 0; i < 8; i++)` にあたるのが `range()` です。
+  - kind: code
+    text: |
+      for i in range(8):        # 0, 1, 2, ... 7（8は含まない）
+          print(i)
+
+      for i in range(1, 9):     # 1 から 8 まで
+          print(i)
+
+      # 中身を直接まわす（JSの for...of）
+      for f in ["りんご", "みかん"]:
+          print(f)
+
+      # 番号と中身の両方が欲しいとき
+      for i, f in enumerate(["りんご", "みかん"]):
+          print(i, f)           # 0 りんご / 1 みかん
+
+      # 条件が続く間くり返す
+      count = 0
+      while count < 3:
+          count = count + 1
+  - kind: kv-box
+    title: "📌 range(8) が 0〜7 なのはJSと同じ考え方:"
+    text: "第3章で「0から数える」を学びました。Pythonも同じです。**`range(8)` は「8個ぶん、0から数える」** という意味なので、8は含まれません。8×8の盤面を全部まわすなら `for row in range(8): for col in range(8):` の二重ループになります。"
   - kind: h3
     text: リストと辞書
   - kind: paragraph
@@ -101,6 +200,8 @@ content_blocks:
       scores = [10, 25, 8]
       scores.append(30)        # 追加（JSのpush）
       print(len(scores))       # 個数（JSのlength）
+      print(scores[0])         # 10（0から数える）
+      print(scores[-1])        # 30（末尾。Python独自で便利）
 
       # 辞書（JSのオブジェクト）
       player = {"name": "田中", "wins": 3}
@@ -115,6 +216,59 @@ content_blocks:
       for r in records:
           print(r["winner"], r["black"], "-", r["white"])
   - kind: h3
+    text: 2次元リスト — オセロの盤面
+  - kind: paragraph
+    text: 第3章でJavaScriptの2次元配列を扱いました。Pythonでもまったく同じ考え方で書けます。**`board[行][列]`** です。
+  - kind: code
+    text: |
+      # 8×8を空（0）で初期化する
+      board = [[0] * 8 for _ in range(8)]
+
+      # 中央4マスに初期配置（1=黒, 2=白）
+      board[3][3] = 2
+      board[3][4] = 1
+      board[4][3] = 1
+      board[4][4] = 2
+
+      # 盤面を文字で表示する
+      MARK = {0: ".", 1: "●", 2: "○"}
+      for row in board:
+          print(" ".join(MARK[cell] for cell in row))
+  - kind: warn-box
+    title: "⚠️ 盤面の作り方でよくある罠:"
+    text: |
+      `board = [[0] * 8] * 8` と書きたくなりますが、**これは動きません**。
+      同じ行が8個並んでいるだけなので、1マス変えると8行すべてが変わります。
+
+      正しくは `[[0] * 8 for _ in range(8)]` のように、行を8回作ります。
+      これはPython特有の落とし穴で、多くの人が一度は踏みます。
+  - kind: h3
+    text: 関数と import
+  - kind: code
+    text: |
+      def count_stones(board, color):
+          """盤面の中の指定色の石を数える"""
+          total = 0
+          for row in board:
+              for cell in row:
+                  if cell == color:
+                      total = total + 1
+          return total
+
+      # 引数に既定値をつけられる
+      def greet(name, greeting="こんにちは"):
+          return f"{greeting}、{name}さん"
+
+      print(greet("田中"))                  # こんにちは、田中さん
+      print(greet("田中", "おはよう"))       # おはよう、田中さん
+  - kind: paragraph
+    text: 他のファイルやライブラリの機能を使うときは `import` します。次章以降で毎回書くことになります。
+  - kind: code
+    text: |
+      import sqlite3                  # 標準で入っているDB用の機能（第8章）
+      from fastapi import FastAPI     # ライブラリから一部だけ持ち込む（第7章）
+      from othello import count_stones  # 自分で書いた othello.py から持ち込む
+  - kind: h3
     text: 環境を用意する
   - kind: paragraph
     text: Pythonをインストールしたら、プロジェクトごとに**仮想環境**を作ります。これは「このプロジェクト専用のライブラリ置き場」で、別のプロジェクトと混ざらないようにする仕組みです。
@@ -128,29 +282,74 @@ content_blocks:
 
       pip install fastapi          # ライブラリを入れる（次章で使う）
       pip list                     # 入っているものを確認
+      pip freeze > requirements.txt  # 何を入れたかを記録（デプロイで使う）
   - kind: tip-box
     title: "💡 コツ:"
     text: 仮想環境を有効にすると、プロンプトの先頭に `(venv)` と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。**venvフォルダは .gitignore に入れて、commitしないこと。**
+  - kind: h3
+    text: よく出るエラーと読み方
+  - kind: paragraph
+    text: Pythonのエラーは**下から読む**のがコツです。一番下の行に「何が起きたか」、その上に「どのファイルの何行目か」が出ます。
+  - kind: table
+    headers:
+      - エラー
+      - 意味
+      - よくある原因
+    rows:
+      - - IndentationError
+        - インデントがおかしい
+        - 行頭の空白がずれている / タブとスペースの混在
+      - - NameError
+        - その名前が見つからない
+        - 打ち間違い / JSの癖で `true` と書いた
+      - - TypeError
+        - 型が合わない
+        - 数値と文字列を足そうとした
+      - - KeyError
+        - 辞書にそのキーが無い
+        - キー名の打ち間違い
+      - - IndexError
+        - リストの範囲外
+        - "`board[8]` のように0から数え忘れた"
+      - - ModuleNotFoundError
+        - ライブラリが見つからない
+        - "`pip install` 忘れ / 仮想環境が無効"
+      - - SyntaxError
+        - 文法が壊れている
+        - コロン忘れ / 括弧の閉じ忘れ
+  - kind: tip-box
+    title: "💡 第3章の30分ルールはここでも同じ:"
+    text: エラー文をそのまま検索するのが最短です。**Pythonのエラー文はJavaScriptより親切**で、どの行で何が起きたかがはっきり出ます。30分調べて「分かったこと・試したこと・仮説」を持って聞く——このやり方をそのまま続けてください。
   - kind: assignment
     title: オセロのロジックをPythonで書き直す
     goal: すでにJavaScriptで動いているオセロの判定ロジックを、Pythonで書き直します。動くものを別の言語に移すことで、「言語の違い」と「考え方の共通部分」がはっきり分かります。
     steps:
-      - 仮想環境を作り、有効化する
+      - Pythonを入れ、仮想環境を作って有効化する
       - "`othello.py` を作り、8×8の盤面をリストで表現する"
-      - 石を置いたとき裏返せるかを判定する関数を書く（JSから移植）
       - 盤面をコンソールに文字で表示する関数を書く
+      - 石を置いたとき裏返せるかを判定する関数を書く（JSから移植）
+      - 石の数を数えて勝敗を返す関数を書く
       - 実際に何手か打たせて、正しく裏返るか確認する
     done:
       - Pythonだけでオセロの盤面が動く（画面は文字表示でよい）
       - JS版とPython版で、同じ手を打つと同じ結果になる
       - "「JSとPythonで書き方が違った点」を3つ挙げられる"
-    hint: 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。
+      - エラーが出たとき、メッセージを読んで自力で直せた
+    hint: 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。JS版のコードを横に開いて、1関数ずつ移していくと進めやすくなります。
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: 移植したPython版で、**コンピュータに一手打たせて**みましょう。「置ける場所を全部探して、その中からランダムに1つ選ぶ」だけで、とりあえず対戦相手になります。さらに「裏返せる石が一番多い場所を選ぶ」に変えると、少し強くなります。ここまで来るとアルゴリズムの入口です。
   - kind: tip-box
     title: "💡 次章への橋渡し:"
     text: Pythonが書けるようになりました。ただ、いまのままではデータは実行中しか残りません。次章では**データを保存する場所（データベース）**と、それを操作するSQLを学びます。
   - kind: checklist
     items:
+      - Pythonをインストールしてファイルを実行できる
       - インデントでブロックを表すことを理解した
+      - JSとPythonの書き方の対応が頭に入っている
       - リストと辞書を使い分けられる
+      - 2次元リストで8×8の盤面を作れる
+      - 関数を定義して呼び出せる
       - 仮想環境を作って有効化できる
+      - エラー文を読んで原因を特定できる
       - JSで書いた処理をPythonで書き直せた

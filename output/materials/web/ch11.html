@@ -75,6 +75,22 @@ const KEYWORDS = [
   {
     "term": "useState",
     "desc": "stateを作るReactの関数（フック）"
+  },
+  {
+    "term": "useEffect",
+    "desc": "表示のタイミングで処理を走らせるフック。API取得に使う"
+  },
+  {
+    "term": "再描画",
+    "desc": "stateが変わったとき、Reactが画面を作り直すこと"
+  },
+  {
+    "term": "key",
+    "desc": "リストを描くとき各要素に付ける目印"
+  },
+  {
+    "term": "状態の持ち上げ",
+    "desc": "共有したい状態を、共通の親に置くこと"
   }
 ];
 
@@ -242,10 +258,54 @@ function Page() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <div className="prose">
                   <div className="kv-box">
-                    <strong>🎯 この章のゴール:</strong> コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。
+                    <strong>🎯 この章のゴール:</strong> コンポーネント・props・state の3つを理解し、部品を組み合わせて画面を作れるようになる。<strong>すでに完成しているオセロをReactで作り直す</strong>のが課題です。
                   </div>
-                  <h3>Reactとは何か</h3>
-                  <p>Reactは、画面を<strong>コンポーネント（部品）</strong>として分割して組み立てるライブラリです。「ボタン」「カード」「一覧」を部品として作り、組み合わせて画面にします。部品は再利用できるので、大きなアプリでも整理された状態を保てます。</p>
+                  <h3>素のJavaScriptで何が大変だったか</h3>
+                  <p>第3章で、JavaScriptからDOMを操作しました。オセロを作ったとき、こういうコードを書いたはずです。</p>
+                  <div className="code-block">{`// 石を置いたあと、画面を更新する
+function updateView() {
+  // 64マス全部を見て、盤面の状態と合っているか確認して書き換える
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const cell = document.querySelector(\`[data-row="\${row}"][data-col="\${col}"]\`);
+      cell.className = "";
+      if (board[row][col] === 1) cell.classList.add("black");
+      if (board[row][col] === 2) cell.classList.add("white");
+    }
+  }
+  // 石数の表示も忘れずに更新
+  document.querySelector("#black-count").textContent = countStones(1);
+  document.querySelector("#white-count").textContent = countStones(2);
+  // 手番の表示も更新
+  document.querySelector("#turn").textContent = turn === 1 ? "黒番" : "白番";
+}`}</div>
+                  <p>この方式の問題は、<strong>「データを変えたら、画面を変える処理も自分で書かないといけない」</strong>ことです。石数の更新を書き忘れれば、盤面だけ変わって数字が古いまま残ります。機能が増えるほど、この「更新し忘れ」が増えていきます。</p>
+                  <div className="kv-box">
+                    <strong>📌 Reactが解決するのはここ:</strong> Reactでは、<strong>データ（state）を変えるだけで画面が自動で作り直されます</strong>。「画面を更新する処理」を人間が書く必要がなくなる——これがReactを使う最大の理由です。上のような `updateView()` は、Reactでは1行も書きません。
+                  </div>
+                  <h3>「どう変えるか」から「どう見えるか」へ</h3>
+                  <p>考え方が根本的に変わります。素のJSは「<strong>この操作が来たら、画面のここをこう書き換える</strong>」という手順の記述でした。Reactは「<strong>この状態のとき、画面はこう見える</strong>」という結果の記述です。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th"></th><th className="tbl-th">素のJavaScript</th><th className="tbl-th">React</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">書くもの</td><td className="tbl-td">画面をどう書き換えるかの手順</td><td className="tbl-td">状態と、その見た目</td></tr>
+                        <tr><td className="tbl-td">石を置いたら</td><td className="tbl-td">盤面・石数・手番を自分で更新</td><td className="tbl-td">stateを変えるだけ</td></tr>
+                        <tr><td className="tbl-td">更新し忘れ</td><td className="tbl-td">起きる</td><td className="tbl-td">起きない（全部stateから作られる）</td></tr>
+                        <tr><td className="tbl-td">コードの置き場所</td><td className="tbl-td">HTML・CSS・JSに分かれる</td><td className="tbl-td">部品ごとにまとまる</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>準備 — Viteでプロジェクトを作る</h3>
+                  <div className="code-block">{`npm create vite@latest othello-react
+# → Framework は React、Variant は TypeScript を選ぶ
+
+cd othello-react
+npm install
+npm run dev        # → http://localhost:5173 が開く`}</div>
+                  <div className="tip-box">
+                    <strong>💡 保存すると即座に画面が変わる:</strong> `npm run dev` を動かしたままコードを保存すると、<strong>ブラウザが自動で更新されます</strong>。第1章のLive Serverと同じ体験ですが、こちらは画面の状態を保ったまま更新されるので、さらに快適です。開発中はこれを起動しっぱなしにします。
+                  </div>
                   <h3>コンポーネントとJSX</h3>
                   <div className="code-block">{`function Hello(props) {
   return <h1>こんにちは、{props.name}さん</h1>;
@@ -259,9 +319,21 @@ function App() {
     </div>
   );
 }`}</div>
-                  <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。</p>
+                  <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。関数名は<strong>必ず大文字で始めます</strong>（小文字だと通常のHTMLタグとして扱われます）。</p>
+                  <div className="warn-box">
+                    <strong>⚠️ JSXはHTMLではありません:</strong> 見た目は似ていますが、いくつか違いがあります。最初に必ず引っかかる箇所です。
+
+class → className     （classはJSの予約語のため）
+for   → htmlFor
+style="color: red"  →  style=&#123;&#123; color: 'red' &#125;&#125;
+returnするタグは必ず1つ（複数並べるなら &lt;&gt; &lt;/&gt; で包む）
+閉じタグの無いタグも &lt;br /&gt; のように閉じる
+
+                  </div>
                   <h3>state — 画面が変わる仕組み</h3>
-                  <div className="code-block">{`function Counter() {
+                  <div className="code-block">{`import { useState } from 'react';
+
+function Counter() {
   const [count, setCount] = useState(0);
   return (
     <button onClick={() => setCount(count + 1)}>
@@ -269,29 +341,136 @@ function App() {
     </button>
   );
 }`}</div>
+                  <p>`useState(0)` は「初期値0の状態を作る」という意味で、<strong>現在の値</strong>と<strong>それを変える関数</strong>の2つを返します。`setCount` を呼ぶと、Reactがこの部品を作り直し、新しい `count` で画面を描き直します。</p>
                   <div className="kv-box">
-                    <strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。
+                    <strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。`document.querySelector` を書きたくなったら、それはたいてい設計を見直す合図です。
                   </div>
-                  <div className="tip-box">
-                    <strong>💡 コツ:</strong> 迷ったら「この画面はどんな部品に分けられるか？」から考えます。ヘッダー・一覧・一覧の1行・ボタン…と分解してから作り始めると設計が楽になります。
+                  <h3>全員がここで詰まる — stateは直接書き換えない</h3>
+                  <p>オセロの盤面をstateにすると、必ずこれを踏みます。<strong>「値を変えたのに画面が変わらない」</strong>という現象です。</p>
+                  <div className="code-block">{`const [board, setBoard] = useState(initialBoard);
+
+// ❌ 直接書き換えても画面は変わらない
+board[3][4] = 1;
+setBoard(board);       // 中身は変わったが「同じ配列」なのでReactが気付かない
+
+// ⭕ 新しい配列を作って渡す
+const next = board.map(row => [...row]);   // 中身ごとコピー
+next[3][4] = 1;
+setBoard(next);`}</div>
+                  <p>なぜかというと、Reactは「<strong>前の値と違うか</strong>」を見て再描画を判断するからです。同じ配列の中身だけ変えても、Reactから見れば「同じもの」なので何も起きません。<strong>新しい配列・新しいオブジェクトを作って渡す</strong>——これがReactの鉄則です。</p>
+                  <div className="warn-box">
+                    <strong>⚠️ 2次元配列のコピーは1段では足りない:</strong> `[...board]` だと外側だけの浅いコピーになり、中の各行は元と同じものを指したままです。8×8の盤面では `board.map(row =&gt; [...row])` のように、<strong>行ごとにコピー</strong>してください。ここは第5章のPythonで踏んだ `[[0] * 8] * 8` の罠と、実は同じ話です。
+                  </div>
+                  <h3>リストを描く</h3>
+                  <p>盤面の64マスや戦績一覧は、配列から作ります。`map` で並べるのがReactの定型です。</p>
+                  <div className="code-block">{`function Board({ board, onCellClick }) {
+  return (
+    <div className="board">
+      {board.map((row, r) =>
+        row.map((cell, c) => (
+          <div
+            key={\`\${r}-\${c}\`}
+            className={\`cell stone-\${cell}\`}
+            onClick={() => onCellClick(r, c)}
+          />
+        ))
+      )}
+    </div>
+  );
+}`}</div>
+                  <p>`key` は、Reactが「どの要素がどれか」を見分けるための目印です。<strong>付け忘れると警告が出て、並び替えたときに表示がおかしくなります</strong>。配列の添字ではなく、その要素固有の値（戦績なら `id`）を使うのが望ましい書き方です。</p>
+                  <h3>状態をどこに持つか</h3>
+                  <p>Reactでいちばん設計が要るのがここです。<strong>盤面のstateは、マスの部品ではなく親（盤面全体）が持ちます</strong>。</p>
+                  <div className="code-block">{`function Game() {
+  const [board, setBoard] = useState(initialBoard);
+  const [turn, setTurn] = useState("black");
+
+  function handleClick(r, c) {
+    const next = board.map(row => [...row]);
+    // …裏返し処理…
+    setBoard(next);
+    setTurn(turn === "black" ? "white" : "black");
+  }
+
+  return (
+    <div>
+      <Board board={board} onCellClick={handleClick} />
+      <Score board={board} />
+      <Turn turn={turn} />
+    </div>
+  );
+}`}</div>
+                  <div className="kv-box">
+                    <strong>📌 これが「状態の持ち上げ」:</strong> 石数（Score）も手番（Turn）も、盤面と同じデータを見ています。<strong>複数の部品が同じ情報を必要とするなら、共通の親が持って、propsで配る</strong>。これがReactの基本的な設計です。「石数表示の更新を忘れる」ことが起きなくなるのは、石数を別で持たず<strong>盤面から毎回計算している</strong>からです。
+                  </div>
+                  <h3>APIからデータを取る — useEffect</h3>
+                  <p>第7章で作った戦績一覧を表示します。「画面が表示されたときに1回だけ取ってくる」という処理には `useEffect` を使います。</p>
+                  <div className="code-block">{`import { useState, useEffect } from 'react';
+
+function History() {
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/games")
+      .then(res => res.json())
+      .then(data => { setGames(data); setLoading(false); });
+  }, []);        // ← 空の配列 = 最初の1回だけ実行
+
+  if (loading) return <p>読み込み中…</p>;
+  return (
+    <ul>
+      {games.map(g => (
+        <li key={g.id}>{g.winner}の勝ち（{g.black_count} - {g.white_count}）</li>
+      ))}
+    </ul>
+  );
+}`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 末尾の `[]` を忘れると無限ループします:</strong> 第2引数の配列は「<strong>いつ実行するか</strong>」の指定です。`[]` なら最初の1回だけ。<strong>書き忘れると毎回の再描画で実行され、その中でstateを変えるのでまた再描画され…</strong>と無限に繰り返します。ブラウザが固まり、サーバに大量のリクエストが飛びます。Networkタブが同じリクエストで埋まっていたら、これを疑ってください。
+                  </div>
+                  <h3>よくあるエラーと対処</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">症状・エラー</th><th className="tbl-th">原因</th><th className="tbl-th">対処</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">stateを変えたのに画面が変わらない</td><td className="tbl-td">配列・オブジェクトを直接書き換えた</td><td className="tbl-td">新しいものを作って set する</td></tr>
+                        <tr><td className="tbl-td">Each child should have a unique key</td><td className="tbl-td">keyの付け忘れ</td><td className="tbl-td">map の中の要素に key を付ける</td></tr>
+                        <tr><td className="tbl-td">Objects are not valid as a React child</td><td className="tbl-td">オブジェクトをそのまま表示しようとした</td><td className="tbl-td">`&#123;obj.name&#125;` のように中の値を指定する</td></tr>
+                        <tr><td className="tbl-td">リクエストが無限に飛ぶ</td><td className="tbl-td">useEffect の第2引数忘れ</td><td className="tbl-td">`, [])` を付ける</td></tr>
+                        <tr><td className="tbl-td">Too many re-renders</td><td className="tbl-td">描画中に set を呼んでいる</td><td className="tbl-td">`onClick=&#123;fn()&#125;` ではなく `onClick=&#123;() =&gt; fn()&#125;`</td></tr>
+                        <tr><td className="tbl-td">class が効かない</td><td className="tbl-td">class と書いている</td><td className="tbl-td">className に直す</td></tr>
+                        <tr><td className="tbl-td">Cannot read properties of undefined</td><td className="tbl-td">データ取得前に中身を触っている</td><td className="tbl-td">読み込み中の表示を先に返す</td></tr>
+                      </tbody>
+                    </table>
                   </div>
                   <div className="assign-box">
                     <p className="assign-title">🛠 課題: オセロをReactで作り直す</p>
                     <p className="assign-goal">素のJavaScriptで作ったオセロを、Reactのコンポーネントで組み直します。<strong>同じものを2通りの方法で作る</strong>ことで、Reactが何を楽にしてくれるのかがはっきり分かります。</p>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
-                      <li>Reactのプロジェクトを作る（Vite が手軽）</li>
-                      <li>画面を部品に分解する（盤面・マス・石数表示・戦績一覧など）</li>
+                      <li>Viteでプロジェクトを作る</li>
+                      <li>画面を部品に分解する（盤面・マス・石数表示・手番表示・戦績一覧など）</li>
+                      <li>まず盤面だけを表示する（クリックはまだ無くてよい）</li>
                       <li>盤面の状態を state で持つ</li>
                       <li>マスをクリックしたら state を更新し、画面が自動で変わることを確認する</li>
+                      <li>裏返し判定など、既存のロジックをそのまま移植する</li>
+                      <li>石数と手番を、盤面のstateから計算して表示する</li>
                       <li>戦績一覧をAPIから取得して表示する</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                    <CheckList items={["React版のオセロが動く","「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる","画面を部品に分けた理由を説明できる"]} />
-                    <p className="assign-hint">💡 最初に盤面を1つのstateとして持つか、マスごとに持つかで悩むはずです。「画面 = stateの反映結果」という原則に立ち返って考えてみてください。</p>
+                    <CheckList items={["React版のオセロが動く","`document.querySelector` を1度も使っていない","「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる","画面を部品に分けた理由を説明できる","stateを直接書き換えると何が起きるか説明できる"]} />
+                    <p className="assign-hint">💡 最初に盤面を1つのstateとして持つか、マスごとに持つかで悩むはずです。「画面 = stateの反映結果」という原則に立ち返って考えてみてください。判定ロジック（裏返し・置ける場所）は素のJSから<strong>そのまま持ってこられます</strong>。Reactが変えるのは画面の作り方だけで、ロジックは変わりません。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>「待った（1手戻す）」機能を付けてみましょう。<strong>盤面の履歴を配列で持つ</strong>——つまり「これまでの全盤面のリスト」をstateにして、表示するのはその末尾、戻るときは1つ手前を見る、という設計です。素のJavaScriptでこれを作るのがどれだけ大変か想像すると、Reactの考え方の利点がはっきり分かります。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 ここまで来たら:</strong> 第10章のTypeScriptと組み合わせると、propsにも型が付きます。<strong>「この部品には何を渡せばいいか」がエディタに出る</strong>ようになり、共同開発が一段と楽になります。実務でReactとTypeScriptがセットで使われるのはこのためです。
                   </div>
                   <h3>チェックリスト</h3>
-                  <CheckList items={["コンポーネント・props・stateの役割を説明できる","useStateで画面が変わるアプリを作れる","画面を部品に分解してから作り始められる"]} />
+                  <CheckList items={["素のJSでの画面更新が何が大変だったか説明できる","コンポーネント・props・stateの役割を説明できる","JSXとHTMLの違い（className等）が分かる","useStateで画面が変わるアプリを作れる","stateを直接書き換えてはいけない理由が分かる","map と key でリストを描ける","共有する状態を親に持たせる設計ができる","useEffectでAPIからデータを取得できる","画面を部品に分解してから作り始められる"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>

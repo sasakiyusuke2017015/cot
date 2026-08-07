@@ -22,6 +22,12 @@ keywords:
     desc: Create / Read / Update / Delete の4操作
   - term: JOIN
     desc: 複数のテーブルを繋いで1つの結果として取り出す
+  - term: GROUP BY
+    desc: 同じ値ごとにまとめて集計する。ランキング作成に使う
+  - term: NULL
+    desc: 「値が入っていない」を表す特別な状態
+  - term: SQLite
+    desc: ファイル1つで動く手軽なデータベース。学習に向く
 content_blocks:
   - kind: kv-box
     title: "🎯 この章のゴール:"
@@ -32,6 +38,46 @@ content_blocks:
     text: 前章でPythonを覚えましたが、プログラムの中の変数は**実行が終われば消えます**。オセロの対戦結果を後から見返したいなら、どこかに書き残さないといけません。その置き場所がデータベース（DB）です。
   - kind: paragraph
     text: 「ファイルに書けばいいのでは」と思うかもしれません。実際できます。ただ、**探す・並べ替える・複数人が同時に書く**といったことをファイルでやると大変です。DBはそれを得意とする専用の道具です。
+  - kind: table
+    headers:
+      - やりたいこと
+      - ファイルでやると
+      - DBなら
+    rows:
+      - - 直近5件だけ見たい
+        - 全部読んで並べ替えて切り出す
+        - "`ORDER BY ... LIMIT 5` の1行"
+      - - 黒の勝ち数を数えたい
+        - 全行を読んで自分で数える
+        - "`COUNT` で一発"
+      - - 2人が同時に書き込む
+        - 片方の書き込みが消える事故が起きる
+        - DBが順番を管理してくれる
+      - - 数値の列に文字が入る
+        - 気付かず壊れたまま進む
+        - 型が合わないと拒否してくれる
+  - kind: h3
+    text: どのDBを使うか
+  - kind: paragraph
+    text: DBにはいくつも製品があります。書き方（SQL）はほぼ共通なので、**まずは一番手軽なSQLiteで始めて、必要になったら移ります**。
+  - kind: table
+    headers:
+      - 製品
+      - 特徴
+      - このコースでは
+    rows:
+      - - SQLite
+        - ファイル1つで動く。インストール不要
+        - "**まずこれ**。学習に最適"
+      - - PostgreSQL
+        - 本格的。実務で広く使われる
+        - 余裕があれば / デプロイ時に
+      - - MySQL
+        - 同じく定番。Webサービスで多い
+        - 触れなくてよい
+  - kind: tip-box
+    title: "💡 SQLiteの見方:"
+    text: SQLiteは `othello.db` のような**ただのファイル**です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。**表として目で見られる状態にしておくと、SQLの結果が腹落ちします**。
   - kind: h3
     text: テーブル = 表
   - kind: paragraph
@@ -63,6 +109,26 @@ content_blocks:
     title: "📌 設計でいちばん大事な問い:"
     text: "**「この表の1行は、何を表しているのか」** を一言で言えるようにすること。上の表なら「1行 = 1回の対戦」です。これが曖昧なまま作ると、後で必ず破綻します。"
   - kind: h3
+    text: 設計は「作りたい画面」から逆算する
+  - kind: paragraph
+    text: いきなり列を並べようとすると手が止まります。**先に「どんな画面を作りたいか」を言葉にして、そこから必要な項目を引き出す**と進みます。
+  - kind: table
+    headers:
+      - 作りたい画面
+      - そのために必要な情報
+    rows:
+      - - 直近の対戦一覧
+        - 勝者・石数・対戦日時
+      - - 勝率ランキング
+        - 誰が対戦したか（プレイヤー）・勝敗
+      - - 1試合の詳細
+        - 上のすべて + 手数など
+      - - 月別の対戦数
+        - 対戦日時（日付として扱える形で）
+  - kind: tip-box
+    title: "💡 日時は必ず入れておく:"
+    text: 迷ったら**「いつ」を表す列は入れておく**のが鉄則です。後から「新しい順に並べたい」「今月だけ見たい」と必ず言われます。逆に、後から過去のデータに日時を足すことはできません（そのデータがいつのものか、もう分からないため）。
+  - kind: h3
     text: 列には型を決める
   - kind: paragraph
     text: 各列には「どんな種類のデータが入るか」（型）を決めます。数値の列に文字を入れようとするとDBが拒否してくれるので、おかしなデータが混ざるのを防げます。
@@ -83,6 +149,8 @@ content_blocks:
       - "**TIMESTAMP** … 日時"
       - "**PRIMARY KEY** … その行を特定する列。重複できない"
       - "**NOT NULL** … 空を許さない"
+  - kind: paragraph
+    text: 主キーには**その行だけを指せる値**を入れます。ふつうは連番の `id` で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。
   - kind: h3
     text: 4つの基本操作（CRUD）
   - kind: code
@@ -93,6 +161,7 @@ content_blocks:
 
       -- Read: 取り出す
       SELECT * FROM games;                          -- 全部
+      SELECT winner, played_at FROM games;          -- 列を選ぶ
       SELECT * FROM games WHERE winner = '黒';      -- 条件つき
       SELECT * FROM games ORDER BY played_at DESC;  -- 新しい順
       SELECT * FROM games ORDER BY played_at DESC LIMIT 5;  -- 直近5件
@@ -105,6 +174,41 @@ content_blocks:
   - kind: warn-box
     title: "⚠️ WHERE を忘れると全部消える:"
     text: "`DELETE FROM games;` と書くと**全行が消えます**。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、**先に同じ条件で SELECT して対象を確認する**癖をつけてください。"
+  - kind: h3
+    text: 条件の書き方
+  - kind: paragraph
+    text: WHERE には条件を組み合わせて書けます。JavaScriptの `if` に近い感覚です。
+  - kind: code
+    text: |
+      WHERE winner = '黒' AND black_count > 40      -- かつ
+      WHERE winner = '黒' OR winner = '白'          -- または
+      WHERE winner IN ('黒', '白')                  -- 上と同じ意味。こちらが簡潔
+      WHERE black_count BETWEEN 30 AND 40           -- 範囲
+      WHERE winner LIKE '黒%'                       -- 「黒」で始まる
+      WHERE played_at >= '2026-08-01'               -- 日付で絞る
+      WHERE memo IS NULL                            -- 値が入っていない行
+  - kind: warn-box
+    title: "⚠️ NULL は `= NULL` では取れません:"
+    text: "「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、`= NULL` は真にも偽にもなりません。**`IS NULL` / `IS NOT NULL` を使ってください**。ここは初心者が必ず一度は引っかかる箇所です。"
+  - kind: h3
+    text: 数える・集計する
+  - kind: paragraph
+    text: ランキングを作るには集計が要ります。**「全部取ってきてPythonで数える」より、SQLで数えたほうが圧倒的に速く、コードも短くなります**。
+  - kind: code
+    text: |
+      SELECT COUNT(*) FROM games;                     -- 全対戦数
+      SELECT COUNT(*) FROM games WHERE winner = '黒'; -- 黒の勝ち数
+      SELECT AVG(black_count) FROM games;             -- 黒の平均石数
+      SELECT MAX(black_count) FROM games;             -- 最大
+
+      -- 勝者ごとに数える（GROUP BY）
+      SELECT winner, COUNT(*) AS wins
+      FROM games
+      GROUP BY winner
+      ORDER BY wins DESC;
+  - kind: kv-box
+    title: "📌 GROUP BY は「同じ値ごとに束ねる」:"
+    text: "上のSQLは「winnerが同じ行をまとめて、それぞれ何行あるか数える」という意味です。結果は「黒: 12勝 / 白: 9勝 / 引き分け: 2」のような形になります。**ランキング画面はほぼこれで作れます**。"
   - kind: h3
     text: 表を分ける — 外部キー
   - kind: paragraph
@@ -127,6 +231,9 @@ content_blocks:
       );
   - kind: paragraph
     text: games には名前ではなく**プレイヤーのid**を持たせます。こうすると名前を変えたいとき players を1行直すだけで済みます。
+  - kind: kv-box
+    title: "📌 原則は「同じ情報を2箇所に書かない」:"
+    text: 表を分ける理由はこれに尽きます。同じ情報が2箇所にあると、**片方だけ直されて食い違う**という事故が必ず起きます。「この情報の正しい置き場所はどこか」を1つに決める——これが設計の基本です。
   - kind: h3
     text: 繋いで取り出す — JOIN
   - kind: paragraph
@@ -143,15 +250,41 @@ content_blocks:
       JOIN players b ON g.black_player = b.id
       JOIN players w ON g.white_player = w.id
       ORDER BY g.played_at DESC;
+  - kind: paragraph
+    text: "`FROM games g` の `g` は**別名**です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。`ON` の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。"
   - kind: tip-box
     title: "💡 まずは分けずに作ってもいい:"
     text: 最初から完璧な設計を目指すと進みません。**1つのテーブルで作ってみて、不便を感じてから分ける**ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。
+  - kind: h3
+    text: よくあるエラーと対処
+  - kind: table
+    headers:
+      - エラー
+      - 意味
+      - 対処
+    rows:
+      - - no such table
+        - そのテーブルが無い
+        - CREATE TABLE を実行したか / DBファイルの場所を確認
+      - - no such column
+        - その列が無い
+        - 列名の打ち間違い / 別名の付け忘れ
+      - - NOT NULL constraint failed
+        - 空を許さない列に空を入れた
+        - INSERT で値を渡しているか確認
+      - - UNIQUE constraint failed
+        - 重複できない値が重複した
+        - 主キーに同じidを入れていないか
+      - - syntax error near
+        - 文法エラー
+        - カンマ・括弧・クォートの過不足。示された語の直前を見る
   - kind: assignment
     title: 戦績テーブルを設計する
     goal: オセロの戦績を保存するテーブルを、自分たちで設計します。**答えを写すのではなく、何が必要かを2人で話し合って決めること**が課題の本体です。
     steps:
-      - SQLiteかPostgreSQLを用意する（SQLiteが手軽）
+      - SQLiteを用意し、中身を見られるツールも入れる
       - "2人で「戦績として何を残したいか」を話し合って書き出す"
+      - "先に「作りたい画面」を3つ挙げ、そこから必要な項目を逆算する"
       - その項目をもとに CREATE TABLE を書く
       - 手で5件くらい INSERT してデータを入れる
       - "「直近5件」「黒の勝ち数」「勝率の高い順」を SELECT で取り出す"
@@ -159,16 +292,23 @@ content_blocks:
     done:
       - "「この表の1行は何を表すか」を一言で説明できる"
       - CRUD の4操作をすべて自分で書いて実行した
+      - GROUP BY で勝ち数を集計できた
       - JOIN で2つの表を繋いだ結果を取り出せた
       - 後から項目を足したくなったとき、どう直すか説明できる
-    hint: 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。
+    hint: 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。最初の設計が不完全でも構いません。後で「足りない」と気付けたなら、それ自体が学びです。
+  - kind: ex-box
+    title: 発展課題（余裕があれば）
+    text: 「1手ずつの棋譜を残したい」と言われたら、どんなテーブルを足しますか。**1行が「1手」を表す表**を考えてみてください（どの試合の、何手目に、誰が、どこに置いたか）。games との関係はどうなるでしょう。これは「1対多」という、DB設計でいちばんよく出る形の練習になります。
   - kind: tip-box
     title: "💡 次章への橋渡し:"
     text: データの置き場所ができました。ただ、ブラウザで動くオセロからは**まだこのDBに触れません**。次章では両者をつなぐ窓口（API）を作ります。
   - kind: checklist
     items:
+      - なぜファイルではなくDBを使うのか説明できる
       - "「1行が何を表すか」を意識してテーブルを設計できる"
+      - 列の型と NOT NULL / PRIMARY KEY の意味が分かる
       - SELECT / INSERT / UPDATE / DELETE が書ける
       - WHERE を忘れる危険を理解している
+      - COUNT と GROUP BY で集計できる
       - 主キーと外部キーの役割を説明できる
       - JOIN で複数テーブルを繋げる
