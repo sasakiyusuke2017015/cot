@@ -55,8 +55,9 @@ function num(n) {
 /**
  * 章カード一覧。chNN.yaml から自動集約する。
  * teacher=true のときだけ コマ数 / ねらい（teaching:）を出す。
+ * link=false のときはカードをリンクにしない（単体配布版。他ファイルを参照しない）。
  */
-function renderRoadmap(chapters, { teacher }) {
+function renderRoadmap(chapters, { teacher, link = true }) {
   const totalSessions = chapters.reduce((s, c) => s + (c.teaching?.sessions ?? 0), 0)
 
   const card = (c) => {
@@ -68,7 +69,11 @@ function renderRoadmap(chapters, { teacher }) {
       teacher && t.goal
         ? `<p class="text-xs text-slate-600 bg-slate-50 rounded p-2 leading-relaxed"><strong class="text-slate-700">ねらい:</strong> ${inline(t.goal)}</p>`
         : ''
-    return `          <a href="materials/web/ch${pad2(c.id)}.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">
+    const open = link
+      ? `<a href="materials/web/ch${pad2(c.id)}.html" class="block bg-white rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition p-4">`
+      : `<div class="bg-white rounded-xl border border-slate-200 p-4">`
+    const close = link ? '</a>' : '</div>'
+    return `          ${open}
             <div class="flex items-center gap-2 mb-2">
               <span class="w-7 h-7 shrink-0 rounded-full ${tag.dot} text-white text-sm font-bold flex items-center justify-center">${c.id}</span>
               <span class="text-lg">${c.icon ?? ''}</span>
@@ -77,7 +82,7 @@ function renderRoadmap(chapters, { teacher }) {
             </div>
             <p class="text-sm text-slate-500${goal ? ' mb-2' : ''}">${inline(c.subtitle)}</p>
             ${goal}
-          </a>`
+          ${close}`
   }
 
   // 学習の「壁」ごとにグループ化して並べる
@@ -103,13 +108,15 @@ ${members.map(card).join('\n')}
   }).filter(Boolean)
 
   const heading = teacher ? `学習ロードマップ（全${chapters.length}章）` : `学習ロードマップ`
-  const note = teacher
-    ? 'カードをクリックすると受講者向けの教材ページが開きます。ブロックの切れ目が学習の「壁」です。'
-    : 'この順に進めます。ブロックごとに、越える壁が変わります。'
+  const note = !link
+    ? 'この順に進めます。ブロックの切れ目が学習の「壁」です。'
+    : teacher
+      ? 'カードをクリックすると受講者向けの教材ページが開きます。ブロックの切れ目が学習の「壁」です。'
+      : 'この順に進めます。ブロックごとに、越える壁が変わります。'
 
   return `    <section>
       <div class="flex items-baseline justify-between mb-4">
-        <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">${teacher ? '1. ' : ''}${heading}</h2>
+        <h2 class="text-2xl font-bold border-l-4 border-amber-500 pl-3">${teacher && link ? '1. ' : ''}${heading}</h2>
         ${teacher && totalSessions ? `<span class="text-sm text-slate-500">想定 計${totalSessions}コマ（1コマ=1時間）</span>` : ''}
       </div>
       <p class="text-sm text-slate-600 mb-5">${note}</p>
@@ -345,6 +352,75 @@ function renderTeachingCycle(tc, n) {
 }
 
 /**
+ * ページの外枠（head / ヘッダ / main / footer）。
+ * ハブページと単体配布のロードマップページで共有する。
+ */
+function pageShell({ course, teacher, sections, switchLink = '', titleSuffix, label, grad, lead, footerText }) {
+  const badges = (course.conditions ?? [])
+    .map((c) => `<span class="bg-white/20 rounded-full px-3 py-1">${inline(c)}</span>`)
+    .join('\n        ')
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${inline(course.title)}${titleSuffix}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+@media print { .no-print { display:none; } a { text-decoration:none; color:inherit; } }
+</style>
+</head>
+<body class="${teacher ? 'bg-amber-50' : 'bg-slate-50'} text-slate-800">
+
+<header class="bg-gradient-to-r ${grad} text-white">
+  <div class="max-w-5xl mx-auto px-6 py-10">
+    <p class="text-white/80 text-sm tracking-widest mb-2">${label}</p>
+    <h1 class="text-3xl md:text-4xl font-bold mb-3">${inline(course.title)}</h1>
+    <p class="text-white/90 leading-relaxed">${lead}</p>
+    <div class="flex flex-wrap gap-2 mt-4 text-sm">
+        ${badges}
+    </div>
+  </div>
+</header>
+${switchLink}
+
+<main class="max-w-5xl mx-auto px-6 py-10 space-y-12">
+
+${sections}
+
+</main>
+
+<footer class="text-center text-xs text-slate-400 pb-8">
+  ${footerText}
+</footer>
+
+</body>
+</html>
+`
+}
+
+/**
+ * 学習ロードマップだけの単体ページ。
+ * 他ファイルへのリンクを持たないので、この 1 枚だけ配っても成立する。
+ */
+export function renderWebRoadmapPage(course, chapters, { audience = 'learner' } = {}) {
+  const teacher = audience === 'teacher'
+  const suffix = teacher ? ' — 学習ロードマップ（講師用）' : ' — 学習ロードマップ'
+  return pageShell({
+    course,
+    teacher,
+    sections: renderRoadmap(chapters, { teacher, link: false }),
+    titleSuffix: suffix,
+    label: teacher ? '🐯 WEB DEVELOPMENT PLAYBOOK — 講師用' : '🐯 WEB DEVELOPMENT PLAYBOOK',
+    grad: teacher ? 'from-amber-500 to-orange-600' : 'from-blue-600 to-indigo-700',
+    lead: inline(course.lead),
+    footerText: `${inline(course.title)}${suffix}`,
+  })
+}
+
+/**
  * ハブページを組み立てる。
  * @param {object} course   course.yaml
  * @param {object[]} chapters chNN.yaml の配列
@@ -354,10 +430,6 @@ function renderTeachingCycle(tc, n) {
  */
 export function renderWebIndex(course, chapters, { audience = 'teacher' } = {}) {
   const teacher = audience === 'teacher'
-  const badges = (course.conditions ?? [])
-    .map((c) => `<span class="bg-white/20 rounded-full px-3 py-1">${inline(c)}</span>`)
-    .join('\n        ')
-
   const sections = [renderRoadmap(chapters, { teacher })]
 
   if (teacher) {
@@ -401,43 +473,15 @@ export function renderWebIndex(course, chapters, { audience = 'teacher' } = {}) 
   </div>`
     : ''
 
-  return `<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${inline(course.title)}${teacher ? ' — 講師用ガイド' : ''}</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
-@media print { .no-print { display:none; } a { text-decoration:none; color:inherit; } }
-</style>
-</head>
-<body class="${teacher ? 'bg-amber-50' : 'bg-slate-50'} text-slate-800">
-
-<header class="bg-gradient-to-r ${head.grad} text-white">
-  <div class="max-w-5xl mx-auto px-6 py-10">
-    <p class="text-white/80 text-sm tracking-widest mb-2">${head.label}</p>
-    <h1 class="text-3xl md:text-4xl font-bold mb-3">${inline(course.title)}</h1>
-    <p class="text-white/90 leading-relaxed">${lead}</p>
-    <div class="flex flex-wrap gap-2 mt-4 text-sm">
-        ${badges}
-    </div>
-  </div>
-</header>
-${switchLink}
-
-<main class="max-w-5xl mx-auto px-6 py-10 space-y-12">
-
-${sections.filter(Boolean).join('\n\n')}
-
-</main>
-
-<footer class="text-center text-xs text-slate-400 pb-8">
-  ${inline(course.title)}${teacher ? ' — 講師用ガイド' : ''}
-</footer>
-
-</body>
-</html>
-`
+  return pageShell({
+    course,
+    teacher,
+    sections: sections.filter(Boolean).join('\n\n'),
+    switchLink,
+    titleSuffix: teacher ? ' — 講師用ガイド' : '',
+    label: head.label,
+    grad: head.grad,
+    lead,
+    footerText: `${inline(course.title)}${teacher ? ' — 講師用ガイド' : ''}`,
+  })
 }

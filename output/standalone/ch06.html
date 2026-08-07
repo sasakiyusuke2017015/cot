@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第6章 - SQL</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "テーブル",
+    "desc": "行と列でデータを持つ表。Excelのシートに近い"
+  },
+  {
+    "term": "主キー",
+    "desc": "行を1つに特定するための列。重複しない値を入れる"
+  },
+  {
+    "term": "外部キー",
+    "desc": "別のテーブルの行を指す列。表と表を繋ぐ"
+  },
+  {
+    "term": "CRUD",
+    "desc": "Create / Read / Update / Delete の4操作"
+  },
+  {
+    "term": "JOIN",
+    "desc": "複数のテーブルを繋いで1つの結果として取り出す"
+  },
+  {
+    "term": "GROUP BY",
+    "desc": "同じ値ごとにまとめて集計する。ランキング作成に使う"
+  },
+  {
+    "term": null,
+    "desc": "「値が入っていない」を表す特別な状態"
+  },
+  {
+    "term": "SQLite",
+    "desc": "ファイル1つで動く手軽なデータベース。学習に向く"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "テーブルを設計するとき、最初に決めるべき最も大事なことはどれか。",
+    "options": [
+      "テーブル名を英語にするか日本語にするか",
+      "その表の1行が何を表しているか",
+      "列の並び順をどうするか",
+      "何件のデータが入る予定か"
+    ],
+    "answer": 1,
+    "explain": "「その表の1行が何を表しているか」が曖昧なまま作ると後で必ず破綻する。戦績テーブルなら「1行=1回の対戦」のように一言で言えるようにする。"
+  },
+  {
+    "q": "DELETE 文を書くときに特に注意すべきことはどれか。",
+    "options": [
+      "削除したデータは自動でバックアップされる",
+      "実行に時間がかかるので夜間に実行する",
+      "WHERE を忘れると全行が消えてしまう",
+      "1度に1行しか削除できない"
+    ],
+    "answer": 2,
+    "explain": "WHERE無しのDELETEやUPDATEは全行が対象になる。実行前に同じ条件でSELECTして対象を確認する癖をつけるとよい。"
+  },
+  {
+    "q": "主キー（PRIMARY KEY）の説明として正しいものはどれか。",
+    "options": [
+      "その行を一意に特定するための列。重複した値は入れられない",
+      "検索を高速にするためだけの設定",
+      "必ず名前を「key」にする決まりの列",
+      "最初に作らなければならない列のこと"
+    ],
+    "answer": 0,
+    "explain": "主キーは行を特定するための列で、重複や空を許さない。他のテーブルからこの値を参照して表同士を繋ぐ（外部キー）。"
+  },
+  {
+    "q": "プレイヤー名を games テーブルに直接書かず、players テーブルに分ける利点はどれか。",
+    "options": [
+      "データベースの容量が必ず小さくなる",
+      "SQLの実行速度が必ず速くなる",
+      "JOINを書かずに済むようになる",
+      "名前を変更したいとき1行直すだけで済む"
+    ],
+    "answer": 3,
+    "explain": "同じ情報を複数箇所に持つと変更時に全部直す必要がある。表を分けてidで参照すれば、元の1行を直すだけで反映される。"
+  },
+  {
+    "q": "分けた2つのテーブルを繋いで1つの結果として取り出すSQLの機能はどれか。",
+    "options": [
+      "MERGE",
+      "JOIN",
+      "CONNECT",
+      "LINK"
+    ],
+    "answer": 1,
+    "explain": "JOINで複数のテーブルを繋ぐ。games と players を繋げば、プレイヤー名つきの対戦一覧を取り出せる。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch06';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第6章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
+            <span className="tag bg-white/20 text-white">第6章 · バックエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🗃️ SQL</h1>
+            <p className="text-emerald-100 mt-1">データの置き場所を設計する</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> <strong>オセロの戦績を保存するテーブルを自分で設計できる</strong>ようになる。あわせてSQLの基本操作を覚え、データの出し入れができるようにする。
+                  </div>
+                  <h3>なぜデータベースが要るのか</h3>
+                  <p>前章でPythonを覚えましたが、プログラムの中の変数は<strong>実行が終われば消えます</strong>。オセロの対戦結果を後から見返したいなら、どこかに書き残さないといけません。その置き場所がデータベース（DB）です。</p>
+                  <p>「ファイルに書けばいいのでは」と思うかもしれません。実際できます。ただ、<strong>探す・並べ替える・複数人が同時に書く</strong>といったことをファイルでやると大変です。DBはそれを得意とする専用の道具です。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">やりたいこと</th><th className="tbl-th">ファイルでやると</th><th className="tbl-th">DBなら</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">直近5件だけ見たい</td><td className="tbl-td">全部読んで並べ替えて切り出す</td><td className="tbl-td">`ORDER BY ... LIMIT 5` の1行</td></tr>
+                        <tr><td className="tbl-td">黒の勝ち数を数えたい</td><td className="tbl-td">全行を読んで自分で数える</td><td className="tbl-td">`COUNT` で一発</td></tr>
+                        <tr><td className="tbl-td">2人が同時に書き込む</td><td className="tbl-td">片方の書き込みが消える事故が起きる</td><td className="tbl-td">DBが順番を管理してくれる</td></tr>
+                        <tr><td className="tbl-td">数値の列に文字が入る</td><td className="tbl-td">気付かず壊れたまま進む</td><td className="tbl-td">型が合わないと拒否してくれる</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>どのDBを使うか</h3>
+                  <p>DBにはいくつも製品があります。書き方（SQL）はほぼ共通なので、<strong>まずは一番手軽なSQLiteで始めて、必要になったら移ります</strong>。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">製品</th><th className="tbl-th">特徴</th><th className="tbl-th">このコースでは</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">SQLite</td><td className="tbl-td">ファイル1つで動く。インストール不要</td><td className="tbl-td"><strong>まずこれ</strong>。学習に最適</td></tr>
+                        <tr><td className="tbl-td">PostgreSQL</td><td className="tbl-td">本格的。実務で広く使われる</td><td className="tbl-td">余裕があれば / デプロイ時に</td></tr>
+                        <tr><td className="tbl-td">MySQL</td><td className="tbl-td">同じく定番。Webサービスで多い</td><td className="tbl-td">触れなくてよい</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 SQLiteの見方:</strong> SQLiteは `othello.db` のような<strong>ただのファイル</strong>です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。<strong>表として目で見られる状態にしておくと、SQLの結果が腹落ちします</strong>。
+                  </div>
+                  <h3>テーブル = 表</h3>
+                  <p>DBの中では、データを<strong>テーブル</strong>という表の形で持ちます。Excelのシートを思い浮かべてください。列（どんな項目か）と行（1件ずつのデータ）でできています。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">id</th><th className="tbl-th">winner</th><th className="tbl-th">black_count</th><th className="tbl-th">white_count</th><th className="tbl-th">played_at</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">1</td><td className="tbl-td">黒</td><td className="tbl-td">38</td><td className="tbl-td">26</td><td className="tbl-td">2026-08-01 14:30</td></tr>
+                        <tr><td className="tbl-td">2</td><td className="tbl-td">白</td><td className="tbl-td">20</td><td className="tbl-td">44</td><td className="tbl-td">2026-08-01 15:10</td></tr>
+                        <tr><td className="tbl-td">3</td><td className="tbl-td">引き分け</td><td className="tbl-td">32</td><td className="tbl-td">32</td><td className="tbl-td">2026-08-02 09:05</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 設計でいちばん大事な問い:</strong> <strong>「この表の1行は、何を表しているのか」</strong> を一言で言えるようにすること。上の表なら「1行 = 1回の対戦」です。これが曖昧なまま作ると、後で必ず破綻します。
+                  </div>
+                  <h3>設計は「作りたい画面」から逆算する</h3>
+                  <p>いきなり列を並べようとすると手が止まります。<strong>先に「どんな画面を作りたいか」を言葉にして、そこから必要な項目を引き出す</strong>と進みます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">作りたい画面</th><th className="tbl-th">そのために必要な情報</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">直近の対戦一覧</td><td className="tbl-td">勝者・石数・対戦日時</td></tr>
+                        <tr><td className="tbl-td">勝率ランキング</td><td className="tbl-td">誰が対戦したか（プレイヤー）・勝敗</td></tr>
+                        <tr><td className="tbl-td">1試合の詳細</td><td className="tbl-td">上のすべて + 手数など</td></tr>
+                        <tr><td className="tbl-td">月別の対戦数</td><td className="tbl-td">対戦日時（日付として扱える形で）</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 日時は必ず入れておく:</strong> 迷ったら<strong>「いつ」を表す列は入れておく</strong>のが鉄則です。後から「新しい順に並べたい」「今月だけ見たい」と必ず言われます。逆に、後から過去のデータに日時を足すことはできません（そのデータがいつのものか、もう分からないため）。
+                  </div>
+                  <h3>列には型を決める</h3>
+                  <p>各列には「どんな種類のデータが入るか」（型）を決めます。数値の列に文字を入れようとするとDBが拒否してくれるので、おかしなデータが混ざるのを防げます。</p>
+                  <div className="code-block">{`CREATE TABLE games (
+  id           INTEGER PRIMARY KEY,   -- 主キー。行を特定する
+  winner       TEXT NOT NULL,         -- 文字。空は許さない
+  black_count  INTEGER NOT NULL,      -- 整数
+  white_count  INTEGER NOT NULL,
+  played_at    TIMESTAMP DEFAULT NOW() -- 日時。既定は今
+);`}</div>
+                  <ul>
+                    <li><strong>INTEGER</strong> … 整数</li>
+                    <li><strong>TEXT</strong> … 文字列</li>
+                    <li><strong>BOOLEAN</strong> … true / false</li>
+                    <li><strong>TIMESTAMP</strong> … 日時</li>
+                    <li><strong>PRIMARY KEY</strong> … その行を特定する列。重複できない</li>
+                    <li><strong>NOT NULL</strong> … 空を許さない</li>
+                  </ul>
+                  <p>主キーには<strong>その行だけを指せる値</strong>を入れます。ふつうは連番の `id` で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。</p>
+                  <h3>4つの基本操作（CRUD）</h3>
+                  <div className="code-block">{`-- Create: 追加する
+INSERT INTO games (winner, black_count, white_count)
+VALUES ('黒', 38, 26);
+
+-- Read: 取り出す
+SELECT * FROM games;                          -- 全部
+SELECT winner, played_at FROM games;          -- 列を選ぶ
+SELECT * FROM games WHERE winner = '黒';      -- 条件つき
+SELECT * FROM games ORDER BY played_at DESC;  -- 新しい順
+SELECT * FROM games ORDER BY played_at DESC LIMIT 5;  -- 直近5件
+
+-- Update: 書き換える
+UPDATE games SET winner = '白' WHERE id = 1;
+
+-- Delete: 消す
+DELETE FROM games WHERE id = 1;`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ WHERE を忘れると全部消える:</strong> `DELETE FROM games;` と書くと<strong>全行が消えます</strong>。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。
+                  </div>
+                  <h3>条件の書き方</h3>
+                  <p>WHERE には条件を組み合わせて書けます。JavaScriptの `if` に近い感覚です。</p>
+                  <div className="code-block">{`WHERE winner = '黒' AND black_count > 40      -- かつ
+WHERE winner = '黒' OR winner = '白'          -- または
+WHERE winner IN ('黒', '白')                  -- 上と同じ意味。こちらが簡潔
+WHERE black_count BETWEEN 30 AND 40           -- 範囲
+WHERE winner LIKE '黒%'                       -- 「黒」で始まる
+WHERE played_at >= '2026-08-01'               -- 日付で絞る
+WHERE memo IS NULL                            -- 値が入っていない行`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ NULL は `= NULL` では取れません:</strong> 「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、`= NULL` は真にも偽にもなりません。<strong>`IS NULL` / `IS NOT NULL` を使ってください</strong>。ここは初心者が必ず一度は引っかかる箇所です。
+                  </div>
+                  <h3>数える・集計する</h3>
+                  <p>ランキングを作るには集計が要ります。<strong>「全部取ってきてPythonで数える」より、SQLで数えたほうが圧倒的に速く、コードも短くなります</strong>。</p>
+                  <div className="code-block">{`SELECT COUNT(*) FROM games;                     -- 全対戦数
+SELECT COUNT(*) FROM games WHERE winner = '黒'; -- 黒の勝ち数
+SELECT AVG(black_count) FROM games;             -- 黒の平均石数
+SELECT MAX(black_count) FROM games;             -- 最大
+
+-- 勝者ごとに数える（GROUP BY）
+SELECT winner, COUNT(*) AS wins
+FROM games
+GROUP BY winner
+ORDER BY wins DESC;`}</div>
+                  <div className="kv-box">
+                    <strong>📌 GROUP BY は「同じ値ごとに束ねる」:</strong> 上のSQLは「winnerが同じ行をまとめて、それぞれ何行あるか数える」という意味です。結果は「黒: 12勝 / 白: 9勝 / 引き分け: 2」のような形になります。<strong>ランキング画面はほぼこれで作れます</strong>。
+                  </div>
+                  <h3>表を分ける — 外部キー</h3>
+                  <p>「誰が対戦したか」も残したくなったとします。プレイヤー名を games テーブルに直接書くこともできますが、名前が変わったとき全行を直すことになります。そこで<strong>表を分けて、繋ぐ</strong>という考え方を使います。</p>
+                  <div className="code-block">{`CREATE TABLE players (
+  id    INTEGER PRIMARY KEY,
+  name  TEXT NOT NULL
+);
+
+CREATE TABLE games (
+  id            INTEGER PRIMARY KEY,
+  black_player  INTEGER REFERENCES players(id),  -- 外部キー
+  white_player  INTEGER REFERENCES players(id),
+  winner        TEXT NOT NULL,
+  black_count   INTEGER NOT NULL,
+  white_count   INTEGER NOT NULL,
+  played_at     TIMESTAMP DEFAULT NOW()
+);`}</div>
+                  <p>games には名前ではなく<strong>プレイヤーのid</strong>を持たせます。こうすると名前を変えたいとき players を1行直すだけで済みます。</p>
+                  <div className="kv-box">
+                    <strong>📌 原則は「同じ情報を2箇所に書かない」:</strong> 表を分ける理由はこれに尽きます。同じ情報が2箇所にあると、<strong>片方だけ直されて食い違う</strong>という事故が必ず起きます。「この情報の正しい置き場所はどこか」を1つに決める——これが設計の基本です。
+                  </div>
+                  <h3>繋いで取り出す — JOIN</h3>
+                  <p>表を分けると、取り出すときに繋ぎ直す必要があります。それが JOIN です。</p>
+                  <div className="code-block">{`SELECT
+  g.id,
+  b.name AS black_name,
+  w.name AS white_name,
+  g.winner,
+  g.played_at
+FROM games g
+JOIN players b ON g.black_player = b.id
+JOIN players w ON g.white_player = w.id
+ORDER BY g.played_at DESC;`}</div>
+                  <p>`FROM games g` の `g` は<strong>別名</strong>です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。`ON` の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。</p>
+                  <div className="tip-box">
+                    <strong>💡 まずは分けずに作ってもいい:</strong> 最初から完璧な設計を目指すと進みません。<strong>1つのテーブルで作ってみて、不便を感じてから分ける</strong>ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。
+                  </div>
+                  <h3>よくあるエラーと対処</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">エラー</th><th className="tbl-th">意味</th><th className="tbl-th">対処</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">no such table</td><td className="tbl-td">そのテーブルが無い</td><td className="tbl-td">CREATE TABLE を実行したか / DBファイルの場所を確認</td></tr>
+                        <tr><td className="tbl-td">no such column</td><td className="tbl-td">その列が無い</td><td className="tbl-td">列名の打ち間違い / 別名の付け忘れ</td></tr>
+                        <tr><td className="tbl-td">NOT NULL constraint failed</td><td className="tbl-td">空を許さない列に空を入れた</td><td className="tbl-td">INSERT で値を渡しているか確認</td></tr>
+                        <tr><td className="tbl-td">UNIQUE constraint failed</td><td className="tbl-td">重複できない値が重複した</td><td className="tbl-td">主キーに同じidを入れていないか</td></tr>
+                        <tr><td className="tbl-td">syntax error near</td><td className="tbl-td">文法エラー</td><td className="tbl-td">カンマ・括弧・クォートの過不足。示された語の直前を見る</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: 戦績テーブルを設計する</p>
+                    <p className="assign-goal">オセロの戦績を保存するテーブルを、自分たちで設計します。<strong>答えを写すのではなく、何が必要かを2人で話し合って決めること</strong>が課題の本体です。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>SQLiteを用意し、中身を見られるツールも入れる</li>
+                      <li>2人で「戦績として何を残したいか」を話し合って書き出す</li>
+                      <li>先に「作りたい画面」を3つ挙げ、そこから必要な項目を逆算する</li>
+                      <li>その項目をもとに CREATE TABLE を書く</li>
+                      <li>手で5件くらい INSERT してデータを入れる</li>
+                      <li>「直近5件」「黒の勝ち数」「勝率の高い順」を SELECT で取り出す</li>
+                      <li>プレイヤーを別テーブルに分け、JOINで名前つきの一覧を出す</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["「この表の1行は何を表すか」を一言で説明できる","CRUD の4操作をすべて自分で書いて実行した","GROUP BY で勝ち数を集計できた","JOIN で2つの表を繋いだ結果を取り出せた","後から項目を足したくなったとき、どう直すか説明できる"]} />
+                    <p className="assign-hint">💡 迷ったら「後からどんな画面を作りたいか」から考えます。「勝率ランキングを出したい」なら、勝敗が数えられる形になっているか確認する、という具合です。最初の設計が不完全でも構いません。後で「足りない」と気付けたなら、それ自体が学びです。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>「1手ずつの棋譜を残したい」と言われたら、どんなテーブルを足しますか。<strong>1行が「1手」を表す表</strong>を考えてみてください（どの試合の、何手目に、誰が、どこに置いたか）。games との関係はどうなるでしょう。これは「1対多」という、DB設計でいちばんよく出る形の練習になります。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> データの置き場所ができました。ただ、ブラウザで動くオセロからは<strong>まだこのDBに触れません</strong>。次章では両者をつなぐ窓口（API）を作ります。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["なぜファイルではなくDBを使うのか説明できる","「1行が何を表すか」を意識してテーブルを設計できる","列の型と NOT NULL / PRIMARY KEY の意味が分かる","SELECT / INSERT / UPDATE / DELETE が書ける","WHERE を忘れる危険を理解している","COUNT と GROUP BY で集計できる","主キーと外部キーの役割を説明できる","JOIN で複数テーブルを繋げる"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第7章「API」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

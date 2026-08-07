@@ -61,6 +61,11 @@ ai_edu/                                ← 出力先（DBパイプラインを�
   - `output/toranomaki.html` … **講師用ハブ**（章一覧・章別カンペ・進め方。ここが入口）
   - `output/materials/web/chNN.html` … 生徒向けの章ページ
   - `output/questions/web/chNN-check.csv` … 問題CSV
+- 単体配布用: `npm run build:web:standalone` → `output/standalone/`
+  - `roadmap.html` … 学習ロードマップだけ（章一覧・壁のブロック）
+  - `chNN.html` … 各章（本文 + クイズ + キーワード）
+  - **他ファイルへのリンクを一切持たない**。1ファイルだけ渡しても成立する
+  - `npm run web` で build:web → build:web:single → build:web:standalone → validate:web を一括実行
 - 検証: `npm run validate:web`（HTML/CSV の構造 + ハブのリンク整合）
 - 章構成（全 9 章・ロードマップ順）: HTML → CSS → JavaScript → Git → TypeScript → React → API → DB → デプロイ
 - **問題 YAML が唯一の元データ**。CSV と HTML 内の確認クイズの両方をそこから生成する（二重管理しない）
@@ -88,6 +93,8 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 | `output/teacher.html` | 講師 | 上記 + 章別カンペ表 + 教え方（コマ配分・メンターの役割・育成3ステップ等） |
 | `output/all-learner.html` | 受講者 | 全章1ファイル版（配布用）。講師メモなし |
 | `output/all-teacher.html` | 講師 | 全章1ファイル版。講師メモ入り |
+| `output/standalone/roadmap.html` | 受講者 | ロードマップ単体。リンク無しで配れる |
+| `output/standalone/chNN.html` | 受講者 | 章単体。リンク無しで1章だけ配れる |
 
 - 章ページ（`chNN.html`）は**受講者向け**。`teaching:` は出力されず、`← 目次` は `index.html` へ戻る
 - 講師用ページからのみ受講者用へのリンクを置く（逆向きは置かない）
@@ -162,6 +169,9 @@ npm run preview           # 生成 HTML をブラウザで確認（ローカル�
 - `input/questions/web/chNN.yaml` — 問題データ（web 種別・CSV と HTML クイズの共通ソース）
 - `scripts/build-materials.mjs`・`build-questions.mjs` — lvN 種別のビルダー
 - `scripts/build-web.mjs` — web 種別のビルダー（HTML + CSV を一括生成）
+- `scripts/build-web-standalone.mjs` — 単体配布版のビルダー（`output/standalone/`）
+- `scripts/lib/load-web-input.mjs` — web 用の入力読み込み（問題番号の通し連番もここ）
+- `scripts/lib/render-web-chapter.mjs` — 章ページの組み立て（サイト版・単体版で共用）
 - `scripts/lib/render-blocks.mjs` — lvN 用 content_blocks → JSX
 - `scripts/lib/render-blocks-web.mjs` — web 用 content_blocks → JSX（`code` ブロック対応）
 - `scripts/lib/render-web-index.mjs` — 講師用ハブ（toranomaki.html）の組み立て

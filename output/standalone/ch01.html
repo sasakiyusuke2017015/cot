@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第1章 - HTML</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "HTML",
+    "desc": "Webページの構造（骨組み）を記述する言語"
+  },
+  {
+    "term": "タグ",
+    "desc": "要素の始まりと終わりを示す目印。<p>〜</p> のように書く"
+  },
+  {
+    "term": "要素",
+    "desc": "タグで挟まれたページの構成単位。見出し・段落など"
+  },
+  {
+    "term": "属性",
+    "desc": "要素に追加する情報。href や src、id、class など"
+  },
+  {
+    "term": "入れ子（ネスト）",
+    "desc": "要素の中に要素を入れること。順番通りに閉じる必要がある"
+  },
+  {
+    "term": "セマンティック",
+    "desc": "見た目でなく意味でタグを選ぶ考え方"
+  },
+  {
+    "term": "開発者ツール",
+    "desc": "ブラウザ内蔵の解析ツール。右クリック→検証で開く"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "HTMLの役割として最も適切なものはどれか。",
+    "options": [
+      "ページの見た目を装飾する",
+      "データベースを操作する",
+      "ページの構造（骨組み）を記述する",
+      "ページに動きをつける"
+    ],
+    "answer": 2,
+    "explain": "正しくは「ページの構造（骨組み）を記述する」。構造はHTML・見た目はCSS・動きはJavaScriptと役割が分かれている。"
+  },
+  {
+    "q": "ページ内で最上位の見出しを表すHTMLタグはどれか。",
+    "options": [
+      "span",
+      "h1",
+      "div",
+      "p"
+    ],
+    "answer": 1,
+    "explain": "見出しはh1〜h6で表しh1が最上位。1ページにh1は1つが基本である。pは段落・div/spanは意味を持たないグループ化の入れ物。"
+  },
+  {
+    "q": "次のうち、入れ子の閉じ方が正しいものはどれか。",
+    "options": [
+      "<strong><p>これは大事</strong></p>",
+      "<p>これは<strong>大事です</p>",
+      "<p>これは<strong>大事</p></strong>",
+      "<p>これは<strong>大事</strong>です</p>"
+    ],
+    "answer": 3,
+    "explain": "入れ子は「後に開けたものを先に閉じる」のが原則。順番が入れ替わると表示が崩れる原因になる。"
+  },
+  {
+    "q": "div と span の違いとして正しいものはどれか。",
+    "options": [
+      "divは前後で改行されるが、spanは文章の流れの中に収まる",
+      "divは見出し用、spanは段落用である",
+      "divは文字を大きく、spanは小さく表示する",
+      "divはCSSが使えるが、spanは使えない"
+    ],
+    "answer": 0,
+    "explain": "divはブロック要素で縦に積まれ、spanはインライン要素で改行されない。どちらも意味を持たない入れ物という点は同じ。"
+  },
+  {
+    "q": "「文字を大きくしたいので h1 を使う」という選び方が推奨されない理由はどれか。",
+    "options": [
+      "h1は表示速度が遅くなるため",
+      "タグは見た目ではなく意味で選ぶべきで、文字サイズはCSSで指定するため",
+      "h1は古い書き方で廃止予定であるため",
+      "h1はページの先頭でしか使えない決まりがあるため"
+    ],
+    "answer": 1,
+    "explain": "意味に合ったタグを選ぶことをセマンティックなHTMLと呼ぶ。検索エンジンや読み上げソフト、後からコードを読む人が構造を理解できるようになる。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch01';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第1章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
+            <span className="tag bg-white/20 text-white">第1章 · フロントエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🏗️ HTML</h1>
+            <p className="text-blue-100 mt-1">ページの骨組みを作る</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、意味に合ったタグを選んでページの骨組みを作れるようになる。最終的にオセロの盤面もHTMLで組みます。
+                  </div>
+                  <h3>はじめに — 道具をそろえる</h3>
+                  <p>本題に入る前に、開発に使う道具を用意します。<strong>ここは一度やれば以降ずっと使うもの</strong>なので、面倒でも最初にきちんと整えてください。必要なのは「エディタ」と「ブラウザ」の2つだけです。</p>
+                  <h3>① VS Code を入れる</h3>
+                  <p>コードを書くための専用エディタです。メモ帳でも書けますが、色分け・入力補完・エラー表示があるかどうかで学習効率がまるで変わります。<strong>現場で最も使われているエディタ</strong>でもあります。</p>
+                  <ol>
+                    <li>`Visual Studio Code` で検索し、公式サイトからダウンロードする（無料）</li>
+                    <li>インストーラを実行する。選択肢はすべて既定のままでよい</li>
+                    <li>起動して、真っ黒な画面が出れば成功</li>
+                  </ol>
+                  <p>起動したら、<strong>拡張機能</strong>を入れます。左側の四角が4つ並んだアイコン（Extensions）をクリックし、名前で検索してインストールしてください。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">拡張機能</th><th className="tbl-th">何ができるか</th><th className="tbl-th">必須度</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">Japanese Language Pack</td><td className="tbl-td">VS Code のメニューが日本語になる</td><td className="tbl-td">好みで</td></tr>
+                        <tr><td className="tbl-td">Live Server</td><td className="tbl-td"><strong>保存すると自動でブラウザが更新される</strong></td><td className="tbl-td">ほぼ必須</td></tr>
+                        <tr><td className="tbl-td">HTML CSS Support</td><td className="tbl-td">HTMLの中でCSSクラス名を補完してくれる</td><td className="tbl-td">あると楽</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 Live Server がいちばん効く:</strong> これを入れると、HTMLファイルを右クリック →「Open with Live Server」で開けます。<strong>以降はファイルを保存するだけでブラウザが自動更新される</strong>ので、「保存 → ブラウザに切り替え → 再読み込み」の繰り返しが不要になります。地味ですが学習速度がかなり変わります。
+                  </div>
+                  <h3>② 作業フォルダを作る</h3>
+                  <p>作ったファイルが散らからないよう、専用のフォルダを決めます。<strong>日本語やスペースを含まない場所</strong>にするのが無難です（後々ツールが誤動作する原因になります）。</p>
+                  <div className="code-block">{`C:\\dev\\web-study\\          ← ここを作業フォルダにする
+  ├─ profile.html          ← 第1章で作る
+  ├─ style.css             ← 第2章で追加
+  └─ script.js             ← 第3章で追加`}</div>
+                  <p>フォルダを作ったら、VS Code の「ファイル → フォルダーを開く」でそのフォルダを開いてください。左側にファイル一覧が出れば準備完了です。</p>
+                  <div className="warn-box">
+                    <strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると
+<strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。
+
+エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。
+
+                  </div>
+                  <h3>③ ブラウザと開発者ツール</h3>
+                  <p>ブラウザは <strong>Chrome か Edge</strong> を使ってください。どちらも同じ仕組みで動いており、開発者向けの機能が充実しています。</p>
+                  <p>準備できたら、いま見ているこのページで <strong>F12キー</strong> を押してみてください。画面が分割されて、コードのようなものが出れば成功です。これが<strong>開発者ツール</strong>で、この先ずっと使います（詳しい使い方はこの章の後半で説明します）。</p>
+                  <div className="tip-box">
+                    <strong>💡 これで準備完了:</strong> 道具はこれだけです。<strong>Web開発は最初の一歩の敷居が低い</strong>のが良いところで、エディタとブラウザさえあれば始められます。Gitやサーバは必要になったときに入れます（第4章・第5章）。
+                  </div>
+                  <h3>そもそもWebページとは何でできているか</h3>
+                  <p>普段見ているWebページは、実は<strong>ただのテキストファイル</strong>です。ブラウザがそのテキストを読んで、解釈して、画面に描いています。魔法は何もありません。</p>
+                  <p>そのテキストは3種類の役割に分かれています。この分担がWeb開発の土台なので、最初に頭に入れてください。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">言語</th><th className="tbl-th">役割</th><th className="tbl-th">例えるなら</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">HTML</td><td className="tbl-td">構造（何がどこにあるか）</td><td className="tbl-td">家の骨組み・間取り</td></tr>
+                        <tr><td className="tbl-td">CSS</td><td className="tbl-td">見た目（どう見えるか）</td><td className="tbl-td">内装・壁紙・家具の配置</td></tr>
+                        <tr><td className="tbl-td">JavaScript</td><td className="tbl-td">動き（何が起きるか）</td><td className="tbl-td">電気・水道などの設備</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>この章で扱うのはHTMLだけです。<strong>見た目が地味でも気にしないでください</strong>。骨組みが正しくできていれば、あとから内装はいくらでも変えられます。</p>
+                  <h3>最小のHTMLファイル</h3>
+                  <p>まずは動くものを見ます。テキストエディタで次を書いて `index.html` という名前で保存し、ダブルクリックしてブラウザで開いてください。</p>
+                  <div className="code-block">{`<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>はじめてのページ</title>
+  </head>
+  <body>
+    <h1>こんにちは</h1>
+    <p>これが最初のWebページです。</p>
+  </body>
+</html>`}</div>
+                  <p>表示されましたか。これで<strong>もうWebページを作ったことになります</strong>。順に何を書いたか見ていきます。</p>
+                  <ul>
+                    <li><strong>`&lt;!DOCTYPE html&gt;`</strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li>
+                    <li><strong>`&lt;html lang="ja"&gt;`</strong> … 全体を包む要素。lang="ja" は日本語のページだという情報</li>
+                    <li><strong>`&lt;head&gt;`</strong> … ページの設定を書く場所。<strong>画面には表示されない</strong></li>
+                    <li><strong>`&lt;meta charset="UTF-8"&gt;`</strong> … 文字コードの指定。これが無いと日本語が文字化けする</li>
+                    <li><strong>`&lt;title&gt;`</strong> … ブラウザのタブに出る名前</li>
+                    <li><strong>`&lt;body&gt;`</strong> … 実際に画面に表示される中身。ここが本体</li>
+                  </ul>
+                  <div className="warn-box">
+                    <strong>⚠️ 文字化けしたら:</strong> 日本語が「譁�蟄怜喧縺�」のように壊れて見えたら、ほぼ `&lt;meta charset="UTF-8"&gt;` の書き忘れです。ファイル自体の保存形式がUTF-8になっているかも確認してください（VS Codeなら右下に表示されます）。
+                  </div>
+                  <h3>要素とタグ — HTMLの基本単位</h3>
+                  <p>HTMLは<strong>要素</strong>の積み重ねでできています。要素は「開始タグ」「中身」「終了タグ」の3つで1組です。</p>
+                  <div className="code-block">{`<p>これが段落です。</p>
+↑            ↑        ↑
+開始タグ     中身     終了タグ（/ が付く）`}</div>
+                  <p>終了タグを忘れると、そこから後ろが全部おかしくなります。慣れるまでは<strong>開始タグを書いたらすぐ終了タグも書いて、後から中身を埋める</strong>やり方が安全です。</p>
+                  <h3>入れ子（ネスト）— 箱の中に箱を入れる</h3>
+                  <p>要素の中に別の要素を入れられます。これを入れ子と呼びます。HTMLの構造はすべてこの入れ子でできています。</p>
+                  <div className="code-block">{`<ul>
+  <li>じゃがいも</li>
+  <li>にんじん</li>
+  <li>玉ねぎ</li>
+</ul>`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 閉じる順番は「後に開けたものを先に閉じる」:</strong> 箱を入れ子にするのと同じで、順番を守らないと壊れます。
+
+⭕ 正しい: &lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;
+❌ 誤り:   &lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;
+
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 インデントを付ける:</strong> 入れ子になったら、中の要素は半角スペース2つ分ずらして書きます。<strong>ブラウザの動作には影響しませんが、人間が読むときに構造が一目で分かります</strong>。これは実務でも必ず守られている習慣です。
+                  </div>
+                  <h3>属性 — 要素に情報を足す</h3>
+                  <p>タグには<strong>属性</strong>という追加情報を書けます。「開始タグの中に、名前=\"値\" の形で書く」と覚えてください。</p>
+                  <div className="code-block">{`<a href="https://example.com">リンクの文字</a>
+   ↑    ↑
+   属性名 値（ダブルクォートで囲む）
+
+<img src="cat.jpg" alt="猫の写真">
+<div id="board" class="game-area">…</div>`}</div>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">属性</th><th className="tbl-th">使うタグ</th><th className="tbl-th">意味</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">href</td><td className="tbl-td">a</td><td className="tbl-td">リンク先のURL</td></tr>
+                        <tr><td className="tbl-td">src</td><td className="tbl-td">img</td><td className="tbl-td">画像ファイルの場所</td></tr>
+                        <tr><td className="tbl-td">alt</td><td className="tbl-td">img</td><td className="tbl-td">画像が表示できないときの代替文。読み上げにも使われる</td></tr>
+                        <tr><td className="tbl-td">id</td><td className="tbl-td">どの要素にも</td><td className="tbl-td">その要素だけの名前。<strong>ページ内で重複させない</strong></td></tr>
+                        <tr><td className="tbl-td">class</td><td className="tbl-td">どの要素にも</td><td className="tbl-td">グループ名。同じclassを複数の要素に付けてよい</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 id と class は後で効いてくる:</strong> いまは「名前を付けるもの」という理解で十分です。ただし<strong>次章のCSSと第3章のJavaScriptで多用します</strong>。CSSは「この名前の要素をこう見せる」、JavaScriptは「この名前の要素を操作する」ために使います。ここで名前を付ける習慣をつけておくと後が楽です。
+                  </div>
+                  <h3>まず覚えるタグ</h3>
+                  <p>HTMLのタグは100種類以上ありますが、実際によく使うのは20個程度です。まずは次のものから覚えてください。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">タグ</th><th className="tbl-th">意味</th><th className="tbl-th">補足</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">h1〜h6</td><td className="tbl-td">見出し</td><td className="tbl-td">h1が最上位。<strong>1ページにh1は1つが基本</strong></td></tr>
+                        <tr><td className="tbl-td">p</td><td className="tbl-td">段落</td><td className="tbl-td">文章のかたまり</td></tr>
+                        <tr><td className="tbl-td">ul / li</td><td className="tbl-td">順序なしリスト</td><td className="tbl-td">黒丸のリスト。liはulの中にだけ書く</td></tr>
+                        <tr><td className="tbl-td">ol / li</td><td className="tbl-td">順序つきリスト</td><td className="tbl-td">番号が振られる</td></tr>
+                        <tr><td className="tbl-td">a</td><td className="tbl-td">リンク</td><td className="tbl-td">href属性で行き先を指定</td></tr>
+                        <tr><td className="tbl-td">img</td><td className="tbl-td">画像</td><td className="tbl-td">終了タグが無い（中身を持たないため）</td></tr>
+                        <tr><td className="tbl-td">table</td><td className="tbl-td">表</td><td className="tbl-td">オセロの盤面にも使える</td></tr>
+                        <tr><td className="tbl-td">button</td><td className="tbl-td">ボタン</td><td className="tbl-td">押せる要素。JSと組み合わせる</td></tr>
+                        <tr><td className="tbl-td">input</td><td className="tbl-td">入力欄</td><td className="tbl-td">終了タグが無い</td></tr>
+                        <tr><td className="tbl-td">div</td><td className="tbl-td">意味を持たない箱</td><td className="tbl-td">グループ化のための入れ物</td></tr>
+                        <tr><td className="tbl-td">span</td><td className="tbl-td">意味を持たない箱（文中用）</td><td className="tbl-td">文章の一部を囲むとき</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>div と span の違い</h3>
+                  <p>初心者がよく混乱する2つです。役割は同じ「意味を持たない箱」ですが、<strong>表示のされ方</strong>が違います。</p>
+                  <ul>
+                    <li><strong>div</strong> … 前後で改行される（縦に積まれる）。<strong>ブロック要素</strong>と呼ぶ</li>
+                    <li><strong>span</strong> … 改行されず、文章の中に収まる。<strong>インライン要素</strong>と呼ぶ</li>
+                  </ul>
+                  <div className="code-block">{`<div>これは箱1</div>
+<div>これは箱2</div>
+<!-- → 縦に2段で表示される -->
+
+<p>この文の<span>ここだけ</span>を囲む</p>
+<!-- → 1行のまま。spanは流れを乱さない -->`}</div>
+                  <h3>「見た目」でタグを選んではいけない</h3>
+                  <p>ここがこの章でいちばん大事な話です。<strong>「文字を大きくしたいからh1を使う」という選び方をしないでください</strong>。h1は「このページの主題」を表すタグであって、文字を大きくするタグではありません。</p>
+                  <div className="code-block">{`❌ 悪い例（見た目で選んでいる）
+<h1>会社概要</h1>
+<h1>お問い合わせ</h1>     ← 大きくしたいから h1 にした
+
+⭕ 良い例（意味で選んでいる）
+<h1>株式会社サンプル</h1>  ← ページの主題は1つ
+<h2>会社概要</h2>
+<h2>お問い合わせ</h2>`}</div>
+                  <p>意味に合ったタグを選ぶことを<strong>セマンティック</strong>なHTMLと言います。なぜ大事かというと、HTMLを読むのは人間の目だけではないからです。</p>
+                  <ul>
+                    <li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する。検索結果での見え方が変わる</li>
+                    <li><strong>スクリーンリーダー</strong> … 目の不自由な人が使う読み上げソフト。「見出しだけ拾って移動」ができるのは h1〜h6 が正しく付いているページだけ</li>
+                    <li><strong>あとで直す人</strong> … 下の例を見てください</li>
+                  </ul>
+                  <p>3つ目が分かりにくいので、具体例を出します。次の2つは<strong>画面上はまったく同じに見えます</strong>。半年後にこのコードを開いて、どこを直せばいいか分かるのはどちらでしょうか。</p>
+                  <div className="code-block">{`❌ 全部 div で書いた場合
+<div class="t1">料金プラン</div>
+<div class="b1">
+  <div class="t2">無料プラン</div>
+  <div class="x">月0円</div>
+</div>
+
+⭕ 意味のあるタグで書いた場合
+<h2>料金プラン</h2>
+<section>
+  <h3>無料プラン</h3>
+  <p>月0円</p>
+</section>`}</div>
+                  <p>上は `t1` `b1` `x` が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
+                  <div className="tip-box">
+                    <strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。
+                  </div>
+                  <h3>なぜ「構造」と「見た目」を分けるのか</h3>
+                  <p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（`&lt;font&gt;` など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
+                  <p>例えば100ページのサイトで「見出しの色を変えたい」となったとき——構造と見た目が分かれていればCSSの1行を直すだけで全ページに反映されます。混ざっていると、100ページ分の全見出しを手作業で直すことになります。この差は決定的です。</p>
+                  <h3>開発者ツールを開いてみる</h3>
+                  <p>ブラウザには、表示中のページのHTMLを見る機能が標準で付いています。<strong>世の中の全Webページが教材になる</strong>ので、必ず使えるようになってください。</p>
+                  <ol>
+                    <li>好きなWebページを開く</li>
+                    <li>気になる部分を右クリック →「検証」（または F12）</li>
+                    <li>画面が分割され、そのページのHTMLが表示される</li>
+                    <li>HTMLの行にマウスを乗せると、画面上の対応する場所が光る</li>
+                  </ol>
+                  <div className="tip-box">
+                    <strong>💡 使い方のコツ:</strong> 「このボタン、どう作られているんだろう」と思ったら右クリック→検証。<strong>プロが書いたHTMLをいくらでも読めます</strong>。最初は複雑で面食らいますが、知っているタグを探すだけでも勉強になります。
+                  </div>
+                  <h3>よくあるエラーと直し方</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">症状</th><th className="tbl-th">原因</th><th className="tbl-th">直し方</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">日本語が文字化けする</td><td className="tbl-td">charset の指定漏れ</td><td className="tbl-td">`&lt;meta charset="UTF-8"&gt;` を head に入れる</td></tr>
+                        <tr><td className="tbl-td">途中から表示が崩れる</td><td className="tbl-td">終了タグの書き忘れ</td><td className="tbl-td">開発者ツールで入れ子を確認する</td></tr>
+                        <tr><td className="tbl-td">リンクが飛ばない</td><td className="tbl-td">href のスペルミス・クォート忘れ</td><td className="tbl-td">`href="..."` の形になっているか</td></tr>
+                        <tr><td className="tbl-td">画像が出ない</td><td className="tbl-td">ファイルの場所が違う</td><td className="tbl-td">HTMLファイルから見た相対パスを確認</td></tr>
+                        <tr><td className="tbl-td">変更が反映されない</td><td className="tbl-td">保存していない / キャッシュ</td><td className="tbl-td">保存して Ctrl+Shift+R で再読み込み</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="warn-box">
+                    <strong>⚠️ HTMLはエラーで止まらない:</strong> プログラミング言語と違い、HTMLは間違っていても<strong>エラーを出さずに勝手に解釈して表示します</strong>。「なんか崩れてる」だけで原因を教えてくれません。だからこそ開発者ツールで構造を確認する習慣が重要になります。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: プロフィールカード（第1段階）</p>
+                    <p className="assign-goal">自分のプロフィールカードをHTMLだけで作ります。この課題は第2章・第3章で育てていくので、消さずに取っておいてください。見た目は次章で整えるので、<strong>いまは構造だけに集中</strong>します。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>`profile.html` を作り、DOCTYPE から body までの骨組みを書く</li>
+                      <li>タブに表示される title を自分の名前にする</li>
+                      <li>名前を h1、肩書き（学習中のことなど）を p で書く</li>
+                      <li>「できること」を ul のリストで3つ以上書く</li>
+                      <li>好きなサイトへのリンクを a で貼る（新しいタブで開く方法も調べてみる）</li>
+                      <li>自己紹介文を p で2〜3段落書く</li>
+                      <li>各パーツを div で囲み、id か class で名前を付けておく（次章で使う）</li>
+                      <li>ブラウザで開いて表示を確認し、開発者ツールで構造を見る</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["ブラウザで開くと内容が表示される","開発者ツールで見たとき、意図した入れ子になっている","なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）","文字化けしていない","h1 が1つだけになっている"]} />
+                    <p className="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、`a` タグの属性を調べてみてください。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>第4章で作るオセロの<strong>盤面だけ</strong>をHTMLで書いてみましょう。8×8のマス目です。table タグを使う方法と、div を並べる方法の2通りが考えられます。どちらが良さそうか考えながら書いてみてください（正解はありません。第2章で見た目を付けるときに違いが分かります）。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> 骨組みができました。ただ、いまは真っ白で味気ないはずです。次章のCSSで<strong>同じHTMLのまま見た目だけを変えられる</strong>ことを体験します。HTMLを書き直す必要はありません——それが構造と見た目を分ける利点です。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["HTMLの役割は「構造」だと説明できる","開始タグ・終了タグ・属性の書き方が分かる","入れ子を正しい順番で閉じられる","div と span の違いを説明できる","見た目ではなく意味でタグを選べる","開発者ツールで他のページの構造を見たことがある","profile.html を作ってブラウザで表示できた"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第2章「CSS」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

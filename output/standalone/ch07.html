@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第7章 - API</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "API",
+    "desc": "プログラム同士がデータをやり取りする窓口"
+  },
+  {
+    "term": "HTTP",
+    "desc": "ブラウザとサーバがやり取りするときの約束事"
+  },
+  {
+    "term": "HTTPメソッド",
+    "desc": "GET=取得 / POST=追加 / PUT=更新 / DELETE=削除"
+  },
+  {
+    "term": "ステータスコード",
+    "desc": "結果を表す3桁の番号。200=成功 / 404=無い / 500=サーバ側エラー"
+  },
+  {
+    "term": "JSON",
+    "desc": "データ交換の標準的なテキスト形式"
+  },
+  {
+    "term": "エンドポイント",
+    "desc": "「このURLにこの方法で」という、APIの1つ1つの窓口"
+  },
+  {
+    "term": "非同期 / await",
+    "desc": "返事を待つ間ほかを止めない仕組み。通信で必ず使う"
+  },
+  {
+    "term": "FastAPI",
+    "desc": "PythonでAPIを作るライブラリ。自動でドキュメントも作る"
+  },
+  {
+    "term": "CORS",
+    "desc": "別のオリジンからの通信を許可する仕組み。最初に必ず詰まる"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "APIの役割として最も適切なものはどれか。",
+    "options": [
+      "画像を圧縮する機能",
+      "パソコンの電源を管理する仕組み",
+      "ブラウザとサーバがデータをやり取りする窓口",
+      "CSSを自動生成する機能"
+    ],
+    "answer": 2,
+    "explain": "ブラウザのJavaScriptからサーバのPython関数を直接呼ぶことはできない。間にHTTPとJSONを挟んでやり取りする窓口がAPIである。"
+  },
+  {
+    "q": "ブラウザから別のサーバへ通信したとき「CORS policy」というエラーが出た。この原因として正しいものはどれか。",
+    "options": [
+      "ブラウザが安全のため別オリジンへの通信を既定で止めている",
+      "JSONの書き方が間違っている",
+      "インターネット回線が切断されている",
+      "サーバのプログラムに文法エラーがある"
+    ],
+    "answer": 0,
+    "explain": "CORSエラーはバグではなくブラウザの正しい動作である。サーバ側で許可するオリジンを設定して解決する。"
+  },
+  {
+    "q": "一覧を取得するときに使うHTTPメソッドはどれか。",
+    "options": [
+      "PUT",
+      "DELETE",
+      "POST",
+      "GET"
+    ],
+    "answer": 3,
+    "explain": "GET=取得、POST=追加、PUT=更新、DELETE=削除。SQLのSELECT/INSERT/UPDATE/DELETEときれいに対応する。"
+  },
+  {
+    "q": "FastAPIでサーバを起動したあと、ブラウザ側を書く前に動作確認できる場所はどこか。",
+    "options": [
+      "サーバのログファイル",
+      "データベースの管理画面",
+      "自動生成される /docs のページ",
+      "GitHubのリポジトリページ"
+    ],
+    "answer": 2,
+    "explain": "FastAPIは自動でAPIの操作画面を作る。ここでサーバ単体を試せるため、詰まったときブラウザ側とサーバ側を切り分けられる。"
+  },
+  {
+    "q": "APIを呼んだら404が返ってきた。最も可能性が高い原因はどれか。",
+    "options": [
+      "ブラウザのキャッシュが残っている",
+      "呼び出しているURLが間違っている",
+      "送ったJSONの形式が違う",
+      "サーバ側のコードでエラーが起きている"
+    ],
+    "answer": 1,
+    "explain": "404はURLが見つからない意味。422は送ったデータの形が違う、500はサーバ側でエラーが起きている。ステータスコードで原因の見当がつく。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch07';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第7章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
+            <span className="tag bg-white/20 text-white">第7章 · バックエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🔌 API</h1>
+            <p className="text-emerald-100 mt-1">ブラウザとサーバをつなぐ</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> FastAPIでサーバを立て、<strong>オセロの画面から戦績を送って一覧を取得できる</strong>ようにする。ブラウザとサーバが別プログラムとして動いていることを、目で見て確認する。
+                  </div>
+                  <h3>いま2つのプログラムがある</h3>
+                  <p>ここまでで、ブラウザで動くオセロ（HTML/CSS/JS）と、Pythonで書いたコード、そしてデータベースができました。これらは<strong>それぞれ別の場所で動く、別のプログラム</strong>です。</p>
+                  <div className="code-block">{`[ブラウザ]              [サーバ]
+HTML/CSS/JS      ？      Python + DB
+オセロの画面     ←→      戦績の保存先
+
+この「？」の部分をつなぐのが API`}</div>
+                  <p>ブラウザのJavaScriptから、サーバのPythonの関数を直接呼ぶことはできません。<strong>間にHTTPという約束事を挟んで、JSONという形式でデータをやり取りします</strong>。その窓口がAPIです。</p>
+                  <h3>なぜブラウザから直接DBに繋がないのか</h3>
+                  <p>素朴な疑問として「JavaScriptから直接データベースを触れば早いのでは」と思うはずです。<strong>技術的にできなくはないが、絶対にやってはいけない</strong>——理由は3つあります。</p>
+                  <ul>
+                    <li><strong>接続情報が丸見えになる</strong> … ブラウザに送ったコードは誰でも読めます。DBのパスワードを書けば、全世界に公開したのと同じです</li>
+                    <li><strong>何でもできてしまう</strong> … DBに直接繋げるなら、`DELETE FROM games` を打たれても止められません</li>
+                    <li><strong>ルールを置く場所が無くなる</strong> … 「石数は0〜64の範囲」のような検証を、信用できない場所（ブラウザ）でしか行えなくなります</li>
+                  </ul>
+                  <div className="kv-box">
+                    <strong>📌 APIは「受付」である:</strong> APIは、DBの前に立つ受付だと考えてください。<strong>ブラウザからのお願いを受け取り、内容を検査し、問題なければDBに取り次ぐ</strong>。この関所があるから、ブラウザ側が何をしようとサーバのルールを守らせられます。<strong>「ブラウザから来るデータは信用しない」</strong>——これはWeb開発の大原則です。
+                  </div>
+                  <h3>HTTP — やり取りの約束事</h3>
+                  <p>ブラウザとサーバの会話は、必ず「<strong>リクエスト</strong>を送って、<strong>レスポンス</strong>が返る」の1往復です。1回のやり取りで完結し、サーバは前回のことを覚えていません。</p>
+                  <div className="code-block">{`[リクエスト] ブラウザ → サーバ
+  メソッド:  POST                      ← 何をしたいか
+  URL:      /api/games                ← どこに対して
+  ヘッダ:    Content-Type: application/json   ← 補足情報
+  ボディ:    {"winner": "黒", ...}     ← 送るデータ
+
+[レスポンス] サーバ → ブラウザ
+  ステータス: 200 OK                   ← 結果
+  ボディ:    {"ok": true}              ← 返すデータ`}</div>
+                  <h3>窓口の作り方 — URLとメソッド</h3>
+                  <p>APIは「どのURLに」「どの方法で」アクセスするかで機能が決まります。この組み合わせ1つ1つを<strong>エンドポイント</strong>と呼びます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">メソッド</th><th className="tbl-th">URL</th><th className="tbl-th">やること</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">GET</td><td className="tbl-td">/api/games</td><td className="tbl-td">戦績の一覧を取得する</td></tr>
+                        <tr><td className="tbl-td">POST</td><td className="tbl-td">/api/games</td><td className="tbl-td">対戦結果を1件追加する</td></tr>
+                        <tr><td className="tbl-td">GET</td><td className="tbl-td">/api/games/3</td><td className="tbl-td">3番の対戦の詳細を取得する</td></tr>
+                        <tr><td className="tbl-td">DELETE</td><td className="tbl-td">/api/games/3</td><td className="tbl-td">3番の対戦を削除する</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 前章とのつながり:</strong> この4つは、SQLで学んだ <strong>CRUD</strong>（INSERT / SELECT / UPDATE / DELETE）ときれいに対応します。APIは「外から使えるようにしたCRUD」だと考えると分かりやすくなります。
+                  </div>
+                  <p>URLに<strong>同じ `/api/games` が2回出てくる</strong>ことに注目してください。URLは「何を扱うか（戦績というデータ）」を表し、メソッドが「それをどうするか」を表します。この分け方が身につくと、API設計で迷わなくなります。</p>
+                  <h3>ステータスコード — 結果は番号で返る</h3>
+                  <p>レスポンスには必ず3桁の番号が付きます。<strong>最初の1桁を見れば、誰のせいかが分かります</strong>。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">番号</th><th className="tbl-th">意味</th><th className="tbl-th">誰の問題か</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">200 OK</td><td className="tbl-td">成功</td><td className="tbl-td">—</td></tr>
+                        <tr><td className="tbl-td">201 Created</td><td className="tbl-td">作成に成功</td><td className="tbl-td">—</td></tr>
+                        <tr><td className="tbl-td">400 Bad Request</td><td className="tbl-td">送ったリクエストがおかしい</td><td className="tbl-td">ブラウザ側</td></tr>
+                        <tr><td className="tbl-td">404 Not Found</td><td className="tbl-td">そのURLは無い</td><td className="tbl-td">ブラウザ側（URLの打ち間違い）</td></tr>
+                        <tr><td className="tbl-td">422 Unprocessable</td><td className="tbl-td">データの形が期待と違う</td><td className="tbl-td">ブラウザ側（送る中身）</td></tr>
+                        <tr><td className="tbl-td">500 Internal Server Error</td><td className="tbl-td">サーバの中でエラーが起きた</td><td className="tbl-td">サーバ側</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 4xx と 5xx の切り分けが最重要:</strong> <strong>400番台は「送った側が悪い」、500番台は「受けた側が悪い」</strong>。これだけ覚えておけば、詰まったときにどちらのコードを見るべきかが即座に決まります。想像で直し始める前に、まず番号を見てください。
+                  </div>
+                  <h3>JSON — 共通のデータ形式</h3>
+                  <p>PythonとJavaScriptは別の言語なので、そのままではデータを渡せません。そこで<strong>両方が読み書きできるテキスト形式</strong>に変換します。それがJSONです。</p>
+                  <div className="code-block">{`// JSONの実体はただの文字列
+{"winner": "黒", "black_count": 38, "white_count": 26}
+
+// JavaScript側
+JSON.stringify(obj)   // オブジェクト → JSON文字列（送るとき）
+JSON.parse(text)      // JSON文字列 → オブジェクト（受けるとき）
+
+# Python側は FastAPI が自動で変換してくれる
+# 辞書を return するだけでJSONになる`}</div>
+                  <p>形はJavaScriptのオブジェクト、Pythonの辞書とほぼ同じです。<strong>キーは必ずダブルクォートで囲む</strong>、末尾にカンマを付けられない、といった細かい制約があります。</p>
+                  <h3>FastAPIでサーバを書く</h3>
+                  <p>PythonでAPIを作るライブラリはいくつかありますが、ここでは <strong>FastAPI</strong> を使います。書く量が少なく、<strong>自動でAPIの説明ページを作ってくれる</strong>のが大きな利点です。</p>
+                  <div className="code-block">{`pip install fastapi uvicorn`}</div>
+                  <div className="code-block">{`# main.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# 受け取るデータの形を決めておく
+class Game(BaseModel):
+    winner: str
+    black_count: int
+    white_count: int
+
+games = []   # ひとまずメモリに置く（次章でDBに移す）
+
+@app.get("/api/games")
+def list_games():
+    return games
+
+@app.post("/api/games")
+def add_game(game: Game):
+    games.append(game)
+    return {"ok": True, "count": len(games)}`}</div>
+                  <p>`@app.get("/api/games")` の部分が「このURLにGETが来たら、下の関数を動かす」という指定です。関数が返した辞書やリストは、<strong>FastAPIが自動でJSONに変換して</strong>返してくれます。</p>
+                  <div className="kv-box">
+                    <strong>📌 class Game が検査をしている:</strong> `BaseModel` を継承したクラスは、<strong>受け取るデータの形の宣言</strong>です。`black_count: int` と書いておけば、文字列が送られてきた時点でFastAPIが自動で弾き、<strong>422</strong>を返します。さきほどの「ブラウザから来るデータは信用しない」を、書くだけで実現してくれる仕組みです。
+                  </div>
+                  <div className="code-block">{`uvicorn main:app --reload      # サーバを起動する
+# → http://127.0.0.1:8000 で動く
+# 止めるときは Ctrl + C`}</div>
+                  <p>`127.0.0.1` は「自分のPC」を指す特別なアドレスで、`localhost` と書いても同じです。`:8000` は<strong>ポート番号</strong>——1台のPCの中で複数のサーバを区別するための番号です。すでに使われていると `Address already in use` と出るので、その場合は別の番号にします。</p>
+                  <div className="kv-box">
+                    <strong>📌 まずは /docs を開くこと:</strong> サーバを起動したら `http://127.0.0.1:8000/docs` を開いてください。<strong>FastAPIが自動で作ったAPIの操作画面</strong>が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に<strong>サーバだけで動作確認できます</strong>。切り分けができるので、詰まったときの強い味方になります。
+                  </div>
+                  <h3>ブラウザ側から呼ぶ</h3>
+                  <p>サーバが動いたら、オセロの画面から呼びます。JavaScriptの `fetch` を使います。</p>
+                  <div className="code-block">{`// 対戦が終わったら結果を送る
+async function saveResult(winner, black, white) {
+  const res = await fetch("http://127.0.0.1:8000/api/games", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      winner: winner,
+      black_count: black,
+      white_count: white,
+    }),
+  });
+  const data = await res.json();
+  console.log("保存しました", data);
+}
+
+// 戦績一覧を取ってくる
+async function loadHistory() {
+  const res = await fetch("http://127.0.0.1:8000/api/games");
+  const games = await res.json();
+  return games;
+}`}</div>
+                  <h3>async と await — 返事を待つということ</h3>
+                  <p>見慣れない `async` と `await` が出てきました。<strong>通信は時間がかかる</strong>——ここまでの処理と決定的に違う点です。</p>
+                  <p>サーバへのリクエストは、返事が来るまで数十ミリ秒〜数秒かかります。その間ブラウザが固まっては困るので、JavaScriptは「<strong>返事は後で来るので、先に進んでおく</strong>」という動き方をします。`await` は「ここは返事を待ってから次に進む」という指示です。</p>
+                  <div className="code-block">{`// ❌ awaitを付け忘れると
+const res = fetch(url);
+console.log(res);        // → Promise { <pending> } と出る（まだ返事が来ていない）
+
+// ⭕ await を付ける
+const res = await fetch(url);
+const data = await res.json();   // json() も時間がかかるので await が要る
+console.log(data);       // → 中身が出る`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ await は async の中でしか書けません:</strong> `await` を使う関数には必ず `async` を付けます。忘れると `await is only valid in async functions` というエラーになります。<strong>「Promise &#123; pending &#125; と表示された」ときは、ほぼ await の付け忘れ</strong>です。この2つはセットだと覚えてください。
+                  </div>
+                  <h3>失敗したときの処理も書く</h3>
+                  <p>通信は失敗します。サーバが落ちている、URLが違う、ネットワークが切れている——どれも普通に起きます。<strong>`fetch` は404や500でもエラーにならない</strong>ので、自分で確認する必要があります。</p>
+                  <div className="code-block">{`async function loadHistory() {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/games");
+    if (!res.ok) {                       // 404や500はここで捕まえる
+      console.error("失敗:", res.status);
+      return [];
+    }
+    return await res.json();
+  } catch (e) {
+    // サーバが起動していない・ネットが切れている等はこちら
+    console.error("通信できませんでした", e);
+    return [];
+  }
+}`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ ここで必ず CORS エラーが出ます:</strong> ブラウザは安全のため、<strong>別の場所にあるサーバへの通信を既定で止めます</strong>。コンソールに「CORS policy」というエラーが出たら、これです。バグではなくブラウザの正しい動作なので、サーバ側で「このオリジンからは許可する」と設定します。
+                  </div>
+                  <div className="code-block">{`# main.py に追記
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # 学習用。本番では実際のURLを指定する
+    allow_methods=["*"],
+    allow_headers=["*"],
+)`}</div>
+                  <p>なぜこんな制限があるのか。もし無ければ、<strong>悪意あるサイトを開いただけで、そのJavaScriptがあなたのログイン中の銀行サイトへ勝手にリクエストを送れてしまう</strong>からです。CORSは「このサイトからのアクセスは許可する」とサーバ側が明示する仕組みで、あなたを守っている側の機能です。</p>
+                  <h3>Networkタブを読む</h3>
+                  <p>通信の問題は、<strong>開発者ツールのNetworkタブを開けば事実が見えます</strong>。想像で直そうとせず、必ずここを見てください。第1章で開いた開発者ツール（F12）の中にあります。</p>
+                  <ol>
+                    <li>F12 で開発者ツールを開き、<strong>Network</strong> タブを選ぶ</li>
+                    <li>画面を操作してリクエストを発生させる（一覧ボタンを押す等）</li>
+                    <li>一覧に行が出るか確認する。<strong>出ないならリクエスト自体が飛んでいない</strong>（JSのエラーを疑う）</li>
+                    <li>行をクリックし、<strong>Headers</strong> で送ったURL・メソッド、<strong>Payload</strong> で送った中身を見る</li>
+                    <li><strong>Response</strong> タブで、サーバが返した中身を見る</li>
+                    <li>ステータス列の番号を見て、4xx か 5xx かを判断する</li>
+                  </ol>
+                  <h3>詰まったときの切り分け</h3>
+                  <p>うまく動かないとき、<strong>ブラウザ側とサーバ側のどちらで失敗しているか</strong>を先に切り分けます。想像で直そうとすると必ず遠回りになります。</p>
+                  <ol>
+                    <li>`/docs` でサーバ単体を試す → ここで失敗するならサーバ側の問題</li>
+                    <li>ブラウザの Network タブを開く → リクエストが飛んでいるか確認する</li>
+                    <li>飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）</li>
+                    <li>サーバを起動したターミナルを見る → Pythonのエラーが出ていないか</li>
+                  </ol>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">症状</th><th className="tbl-th">疑うところ</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">Networkに何も出ない</td><td className="tbl-td">JSがそこまで到達していない。Consoleタブのエラーを見る</td></tr>
+                        <tr><td className="tbl-td">CORS policy と出る</td><td className="tbl-td">サーバ側にCORS設定を追加する</td></tr>
+                        <tr><td className="tbl-td">Failed to fetch</td><td className="tbl-td">サーバが起動していない / URLやポート番号の間違い</td></tr>
+                        <tr><td className="tbl-td">404</td><td className="tbl-td">URLの綴り。`/api/games` の前後のスラッシュも確認</td></tr>
+                        <tr><td className="tbl-td">422</td><td className="tbl-td">送ったJSONの形。`/docs` の例と見比べる</td></tr>
+                        <tr><td className="tbl-td">500</td><td className="tbl-td">サーバのターミナルにPythonのエラーが出ている</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロの戦績をサーバに送る</p>
+                    <p className="assign-goal">FastAPIでAPIを作り、オセロの画面から実際に呼びます。ブラウザとサーバという<strong>2つのプログラムが通信している</strong>ことを、自分の目で確認するのが狙いです。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>FastAPIを入れ、main.py を作ってサーバを起動する</li>
+                      <li>`/docs` を開き、画面から戦績を1件登録してみる</li>
+                      <li>GET /api/games と POST /api/games を作る</li>
+                      <li>オセロ側で、対戦が終わったら結果を自動でPOSTする</li>
+                      <li>「戦績一覧」ボタンを作り、GETした結果を画面に表示する</li>
+                      <li>CORSエラーを解決する</li>
+                      <li>通信が失敗したときの処理（res.ok の確認）も書く</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["オセロで対戦を終えると、サーバにデータが届く","一覧ボタンで過去の戦績が表示される","Networkタブでリクエストとレスポンスの中身を説明できる","サーバを止めると画面側でどうなるか確認した","404 と 500 を意図的に起こして、違いを見た"]} />
+                    <p className="assign-hint">💡 いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>`DELETE /api/games/&#123;id&#125;` を作って、一覧から1件消せるようにしてみましょう。URLの一部（`&#123;id&#125;`）を受け取る書き方を調べる必要があります。あわせて「存在しないidを指定されたら404を返す」処理も入れてみてください。<strong>正常系だけでなく異常系も設計する</strong>という、実務で最も差が出る部分の練習になります。</p>
+                  </div>
+                  <div className="warn-box">
+                    <strong>⚠️ まだデータは消えます:</strong> いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。<strong>サーバを再起動すると全部消えます</strong>。次章でDBに繋いで、本当に保存されるようにします。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["ブラウザから直接DBに繋がない理由を説明できる","リクエストとレスポンスの構造が分かる","GET / POST / PUT / DELETE の使い分けが分かる","4xx と 5xx の違いを説明できる","JSONが何のためにあるか説明できる","FastAPIでエンドポイントを作れる","/docs でサーバ単体の動作確認ができる","fetchでAPIを呼んで結果を画面に出せる","async / await が必要な理由を説明できる","CORSエラーの原因を説明できる","Networkタブでリクエストの中身を確認できる","ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第8章「DB連携」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

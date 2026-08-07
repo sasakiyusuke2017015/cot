@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第2章 - CSS</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "CSS",
+    "desc": "HTMLに見た目（色・大きさ・配置）を与える言語"
+  },
+  {
+    "term": "セレクタ",
+    "desc": "スタイルを当てる対象を選ぶ書き方。.card や h1 など"
+  },
+  {
+    "term": "プロパティ",
+    "desc": "何を変えるか。color、font-size など"
+  },
+  {
+    "term": "ボックスモデル",
+    "desc": "content→padding→border→margin の4層構造"
+  },
+  {
+    "term": "Flexbox",
+    "desc": "要素を1方向に並べるレイアウト機能。display:flex"
+  },
+  {
+    "term": "Grid",
+    "desc": "格子状に並べるレイアウト機能。オセロの盤面に最適"
+  },
+  {
+    "term": "詳細度",
+    "desc": "複数の指定が競合したときどれが勝つかの優先順位"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "class属性が「card」の要素を選ぶCSSセレクタはどれか。",
+    "options": [
+      "#card",
+      "card()",
+      "@card",
+      ".card"
+    ],
+    "answer": 3,
+    "explain": "classはドット（.card）で選ぶ。#はid用のセレクタであり関数形や@形式のセレクタは存在しない。"
+  },
+  {
+    "q": "子要素を横一列に並べたいとき親要素に指定するCSSはどれか。",
+    "options": [
+      "color: red;",
+      "display: flex;",
+      "font-size: 2rem;",
+      "content: row;"
+    ],
+    "answer": 1,
+    "explain": "「display: flex;」を親要素に指定すると子要素が横に並びgapやjustify-contentで整えられる。"
+  },
+  {
+    "q": "ボックスモデルにおいて、内側から外側への正しい順序はどれか。",
+    "options": [
+      "border → padding → content → margin",
+      "content → margin → border → padding",
+      "content → padding → border → margin",
+      "padding → content → margin → border"
+    ],
+    "answer": 2,
+    "explain": "要素は箱として描画され内側からこの4層になる。レイアウト崩れの原因の多くはpaddingとmarginの取り違えである。"
+  },
+  {
+    "q": "CSSをHTMLに直接書かず、別ファイルに分ける主な利点はどれか。",
+    "options": [
+      "1つのCSSファイルを複数ページで使い回せ、見た目を1か所で変えられる",
+      "JavaScriptが不要になる",
+      "CSSの書き方が簡単になる",
+      "ファイルサイズが必ず小さくなる"
+    ],
+    "answer": 0,
+    "explain": "構造と見た目を分けることで、サイト全体の見た目を1か所の修正で変更できる。HTMLに直接書くとページ数だけ同じ指定をコピーすることになる。"
+  },
+  {
+    "q": "HTMLからCSSファイルを読み込む正しい書き方はどれか。",
+    "options": [
+      "<style src=\"style.css\"></style>",
+      "<css href=\"style.css\">",
+      "<script src=\"style.css\"></script>",
+      "<link rel=\"stylesheet\" href=\"style.css\">"
+    ],
+    "answer": 3,
+    "explain": "外部CSSはlinkタグでhead内に書く。scriptタグはJavaScriptの読み込みに使うものである。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch02';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第2章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
+            <span className="tag bg-white/20 text-white">第2章 · フロントエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🎨 CSS</h1>
+            <p className="text-blue-100 mt-1">見た目とレイアウトを整える</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> セレクタでHTML要素を選んでスタイルを当てる仕組みを理解し、FlexboxとGridでレイアウトを組めるようになる。<strong>HTMLを一切変えずに見た目だけを変えられる</strong>ことを体験します。
+                  </div>
+                  <h3>CSSとは何か</h3>
+                  <p>CSS（Cascading Style Sheets）は、HTMLで作った骨組みに<strong>見た目（色・大きさ・配置）</strong>を与える言語です。前章で作ったページは真っ白で味気なかったはずですが、HTMLは一行も変えずに見違えるようにできます。</p>
+                  <p>書き方はいたって単純で、「<strong>どの要素に</strong>」「<strong>何を</strong>」「<strong>どうする</strong>」の3つを並べるだけです。</p>
+                  <div className="code-block">{`セレクタ {
+  プロパティ: 値;
+}
+
+/* 実例 */
+h1 {
+  color: #1e3a8a;      /* 文字色を紺色に */
+  font-size: 2rem;     /* 文字の大きさを2倍に */
+}`}</div>
+                  <ul>
+                    <li><strong>セレクタ</strong> … どの要素に当てるか（h1、.card など）</li>
+                    <li><strong>プロパティ</strong> … 何を変えるか（color、font-size など）</li>
+                    <li><strong>値</strong> … どうするか（#1e3a8a、2rem など）</li>
+                    <li>行の終わりには必ず<strong>セミコロン `;`</strong> を付ける</li>
+                    <li>`/* */` で囲むとコメント（メモ書き）になる</li>
+                  </ul>
+                  <h3>CSSファイルを分けて読み込む</h3>
+                  <p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにするのが基本</strong>です。まず `style.css` を作り、HTMLの `&lt;head&gt;` の中で読み込みます。</p>
+                  <div className="code-block">{`<!-- profile.html の <head> の中に書く -->
+<link rel="stylesheet" href="style.css">`}</div>
+                  <div className="kv-box">
+                    <strong>📌 なぜ分けるのか:</strong> 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると恩恵がはっきりします。<strong>1つのCSSファイルを複数ページで使い回せる</strong>ので、サイト全体の見た目を1か所で変えられます。HTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。
+                  </div>
+                  <h3>セレクタ — どれを選ぶか</h3>
+                  <p>セレクタには種類があります。まずは次の3つを覚えてください。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">書き方</th><th className="tbl-th">何を選ぶか</th><th className="tbl-th">使いどころ</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">h1</td><td className="tbl-td">そのタグ全部</td><td className="tbl-td">「見出しは全部この色」など全体の方針</td></tr>
+                        <tr><td className="tbl-td">.card</td><td className="tbl-td">class="card" の要素</td><td className="tbl-td"><strong>最もよく使う</strong>。同じ見た目を複数に当てる</td></tr>
+                        <tr><td className="tbl-td">#board</td><td className="tbl-td">id="board" の要素</td><td className="tbl-td">ページに1つしかないものを狙う</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="code-block">{`/* タグで選ぶ */
+p { line-height: 1.8; }
+
+/* class で選ぶ（先頭にドット） */
+.card { background: white; }
+
+/* id で選ぶ（先頭にシャープ） */
+#board { width: 400px; }`}</div>
+                  <div className="tip-box">
+                    <strong>💡 迷ったら class を使う:</strong> idは1ページに1つしか使えず、あとで「他にも同じ見た目にしたい」となったとき困ります。<strong>基本はclass、本当に唯一のものだけid</strong>と考えておけば失敗しません。
+                  </div>
+                  <h3>組み合わせて絞り込む</h3>
+                  <p>セレクタは組み合わせられます。これを知っていると「同じclass名でも場所によって見た目を変える」ことができます。</p>
+                  <div className="code-block">{`/* .card の中にある h2 だけ */
+.card h2 { color: navy; }
+
+/* card と large の両方を持つ要素 */
+.card.large { font-size: 1.5rem; }
+
+/* 複数まとめて同じ指定 */
+h1, h2, h3 { font-family: sans-serif; }`}</div>
+                  <h3>詳細度 — 指定がぶつかったらどうなるか</h3>
+                  <p>同じ要素に複数の指定が当たると、<strong>より具体的なほうが勝ちます</strong>。これを詳細度と言います。CSSが効かないときの原因の多くがこれです。</p>
+                  <div className="code-block">{`p { color: black; }        /* 弱い */
+.intro { color: blue; }    /* こちらが勝つ */
+#main { color: red; }      /* さらに強い */
+
+<p class="intro" id="main">この文字は赤になる</p>`}</div>
+                  <ul>
+                    <li><strong>id</strong>（#）… いちばん強い</li>
+                    <li><strong>class</strong>（.）… 中くらい</li>
+                    <li><strong>タグ名</strong>（p, h1）… いちばん弱い</li>
+                    <li>同じ強さなら<strong>後に書いたほうが勝つ</strong></li>
+                  </ul>
+                  <div className="warn-box">
+                    <strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）
+② 詳細度で別の指定に負けている
+③ そもそもCSSファイルが読み込まれていない
+
+<strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。
+
+                  </div>
+                  <h3>ボックスモデル — すべての要素は箱</h3>
+                  <p>レイアウトを理解する上で最重要の概念です。<strong>すべての要素は4層構造の箱</strong>として描画されます。</p>
+                  <div className="code-block">{`┌─────────────────────────┐
+│  margin（外側の余白）      │
+│ ┌─────────────────────┐ │
+│ │ border（枠線）         │ │
+│ │ ┌─────────────────┐ │ │
+│ │ │ padding（内側の余白）│ │ │
+│ │ │ ┌─────────────┐ │ │ │
+│ │ │ │  content     │ │ │ │
+│ │ │ │  （中身）     │ │ │ │
+│ │ │ └─────────────┘ │ │ │
+│ │ └─────────────────┘ │ │
+│ └─────────────────────┘ │
+└─────────────────────────┘`}</div>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">層</th><th className="tbl-th">意味</th><th className="tbl-th">使い分け</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">content</td><td className="tbl-td">文字や画像そのもの</td><td className="tbl-td">width / height で大きさを指定</td></tr>
+                        <tr><td className="tbl-td">padding</td><td className="tbl-td">枠線の<strong>内側</strong>の余白</td><td className="tbl-td">「箱の中で中身を窮屈にしたくない」とき</td></tr>
+                        <tr><td className="tbl-td">border</td><td className="tbl-td">枠線</td><td className="tbl-td">見た目の区切り</td></tr>
+                        <tr><td className="tbl-td">margin</td><td className="tbl-td">枠線の<strong>外側</strong>の余白</td><td className="tbl-td">「隣の要素と離したい」とき</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 padding と margin の使い分け:</strong> 迷ったらこう考えてください。<strong>背景色を付けたときに色が付く範囲を広げたいなら padding、要素同士の距離を空けたいなら margin</strong> です。paddingは箱の内側なので背景色が付き、marginは外側なので付きません。
+                  </div>
+                  <div className="code-block">{`.card {
+  padding: 16px;              /* 上下左右すべて */
+  padding: 16px 24px;         /* 上下 / 左右 */
+  padding: 8px 16px 24px 32px; /* 上 右 下 左（時計回り） */
+
+  margin: 0 auto;             /* 上下0、左右autoで中央寄せ */
+}`}</div>
+                  <div className="tip-box">
+                    <strong>💡 box-sizing は最初に書く:</strong> 既定では width に padding と border が<strong>含まれません</strong>。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。
+
+`* &#123; box-sizing: border-box; &#125;`
+
+                  </div>
+                  <h3>Flexbox — 一列に並べる</h3>
+                  <p>要素を横や縦に並べたいときはFlexboxを使います。<strong>並べたい要素の「親」に指定する</strong>のがポイントです。</p>
+                  <div className="code-block">{`<!-- HTML -->
+<div class="row">
+  <div>A</div>
+  <div>B</div>
+  <div>C</div>
+</div>`}</div>
+                  <div className="code-block">{`/* CSS：親に指定する */
+.row {
+  display: flex;              /* 子要素を横に並べる */
+  gap: 12px;                  /* 要素の間隔 */
+  justify-content: center;    /* 横方向の揃え */
+  align-items: center;        /* 縦方向の揃え */
+}`}</div>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">プロパティ</th><th className="tbl-th">よく使う値</th><th className="tbl-th">効果</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">flex-direction</td><td className="tbl-td">row / column</td><td className="tbl-td">横並び / 縦並び</td></tr>
+                        <tr><td className="tbl-td">gap</td><td className="tbl-td">8px など</td><td className="tbl-td">要素同士の間隔</td></tr>
+                        <tr><td className="tbl-td">justify-content</td><td className="tbl-td">center / space-between</td><td className="tbl-td">並び方向の揃え</td></tr>
+                        <tr><td className="tbl-td">align-items</td><td className="tbl-td">center / stretch</td><td className="tbl-td">交差方向の揃え</td></tr>
+                        <tr><td className="tbl-td">flex-wrap</td><td className="tbl-td">wrap</td><td className="tbl-td">入りきらないとき折り返す</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>Grid — 格子状に並べる</h3>
+                  <p>Flexboxは一列に並べるのが得意ですが、<strong>縦横の格子</strong>を作るならGridが適しています。オセロの盤面（8×8）にはこちらが最適です。</p>
+                  <div className="code-block">{`.board {
+  display: grid;
+  grid-template-columns: repeat(8, 50px);  /* 50px幅の列を8つ */
+  gap: 2px;
+  background: #333;        /* 隙間が線に見える */
+}
+.cell {
+  background: #2d7a4f;     /* マスの緑 */
+  aspect-ratio: 1;         /* 正方形にする */
+}`}</div>
+                  <p>これだけで8×8の盤面ができます。`repeat(8, 50px)` は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
+                  <h3>色の指定方法</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">書き方</th><th className="tbl-th">例</th><th className="tbl-th">補足</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">色名</td><td className="tbl-td">red, white</td><td className="tbl-td">手軽だが種類が限られる</td></tr>
+                        <tr><td className="tbl-td">16進数</td><td className="tbl-td">#1e3a8a</td><td className="tbl-td"><strong>最もよく使う</strong>。RGB各2桁</td></tr>
+                        <tr><td className="tbl-td">rgb</td><td className="tbl-td">rgb(30, 58, 138)</td><td className="tbl-td">数値で分かりやすい</td></tr>
+                        <tr><td className="tbl-td">rgba</td><td className="tbl-td">rgba(0, 0, 0, 0.5)</td><td className="tbl-td">最後の値は透明度</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 色は自分で考えなくていい:</strong> 配色は専門的な技術です。<strong>既存の配色パレットから選ぶ</strong>のが早くて確実です。「color palette」で検索すれば、組み合わせが決まった色見本がいくらでも見つかります。開発者ツールで好きなサイトの色を調べるのも有効です。
+                  </div>
+                  <h3>よく使うプロパティ</h3>
+                  <div className="code-block">{`.card {
+  /* 文字 */
+  color: #374151;              /* 文字色 */
+  font-size: 1rem;             /* 大きさ */
+  font-weight: bold;           /* 太さ */
+  line-height: 1.8;            /* 行間（読みやすさに直結） */
+  text-align: center;          /* 揃え */
+
+  /* 背景と枠 */
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;          /* 角を丸く */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);  /* 影 */
+
+  /* 大きさ */
+  width: 300px;
+  max-width: 100%;             /* 画面が狭いときはみ出さない */
+}`}</div>
+                  <h3>スマホでも崩れないようにする</h3>
+                  <p>画面幅に応じてスタイルを変えられます。これを<strong>レスポンシブ対応</strong>と言います。</p>
+                  <div className="code-block">{`/* 通常（PC向け） */
+.row { display: flex; }
+
+/* 画面幅が600px以下のとき */
+@media (max-width: 600px) {
+  .row { flex-direction: column; }  /* 縦積みに変える */
+}`}</div>
+                  <div className="tip-box">
+                    <strong>💡 確認方法:</strong> 開発者ツールを開き、左上のスマホアイコン（Toggle device toolbar）を押すと、スマホ表示を再現できます。実機がなくても確認できます。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: プロフィールカード（第2段階 — 見た目を整える）</p>
+                    <p className="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。<strong>HTMLファイルは1文字も変えずに</strong>、見た目だけを変えるのが狙いです（class名の追加は可）。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>`style.css` を作り、profile.html から link で読み込む</li>
+                      <li>`* &#123; box-sizing: border-box; &#125;` を最初に書いておく</li>
+                      <li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li>
+                      <li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li>
+                      <li>Flexbox を使って「できること」のリストを横並びのタグ風にする</li>
+                      <li>画面幅600px以下では縦並びになるようにする</li>
+                      <li><strong>HTMLファイルには style 属性を1つも書かない</strong></li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["style.css を削除すると、見た目だけが消えて内容は残る","HTMLに style=\"...\" が1つも書かれていない","開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる","スマホ表示にしても崩れない","padding と margin を使い分けた理由を説明できる"]} />
+                    <p className="assign-hint">💡 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>Gridを使ってオセロの盤面（8×8）を作ってみましょう。マスの色、石を置いたときの丸（border-radiusで円になります）、置ける場所を示すハイライトまでCSSで表現できます。第4章でオセロを作るとき、この見た目がそのまま使えます。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> 構造と見た目がそろいました。ただし<strong>まだ何も動きません</strong>。ボタンを押しても何も起きず、石も置けません。次章のJavaScriptで、ようやく「動くもの」になります。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["セレクタとプロパティの書き方が分かる","class と id の使い分けができる","詳細度で指定が上書きされる仕組みを理解した","ボックスモデルの4層を言える","padding と margin を使い分けられる","display:flex で要素を横に並べられる","display:grid で格子状に並べられる","CSSを別ファイルに分ける理由を説明できる"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第3章「JavaScript」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

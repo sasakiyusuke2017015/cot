@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第4章 - Git</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "リポジトリ",
+    "desc": "コードと履歴をまとめて管理する保管庫"
+  },
+  {
+    "term": "commit",
+    "desc": "変更を履歴として記録する操作"
+  },
+  {
+    "term": "ステージ",
+    "desc": "commit する変更を一時的に載せておく場所"
+  },
+  {
+    "term": "push / pull",
+    "desc": "手元の履歴をGitHubへ送る / 最新を取り込む"
+  },
+  {
+    "term": "GitHub",
+    "desc": "リポジトリをネット上に置いて共有するサービス"
+  },
+  {
+    "term": ".gitignore",
+    "desc": "履歴に含めないファイルを指定する設定"
+  },
+  {
+    "term": "コンフリクト",
+    "desc": "2人が同じ箇所を変更したとき起きる衝突。手で解決する"
+  },
+  {
+    "term": "Issue",
+    "desc": "GitHubの課題管理。やることを1件ずつ登録して進捗を共有する"
+  },
+  {
+    "term": "機能分解",
+    "desc": "大きな課題を、1日で終わる大きさの機能に割ること"
+  },
+  {
+    "term": "git status",
+    "desc": "いま何が変更されているかを確認するコマンド"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "git commitが行うことはどれか。",
+    "options": [
+      "ファイルを削除する",
+      "変更を履歴として記録する",
+      "サーバーにアプリを公開する",
+      "コードを自動で修正する"
+    ],
+    "answer": 1,
+    "explain": "commitは「この時点の変更」を履歴として記録する操作でありpushでその履歴をGitHubに送る。"
+  },
+  {
+    "q": "学習の最初の段階で覚えるべきGitコマンドの組み合わせはどれか。",
+    "options": [
+      "clone・add・commit・push・pull",
+      "merge・tag・bisect",
+      "reset・revert・reflog",
+      "rebase・cherry-pick・stash"
+    ],
+    "answer": 0,
+    "explain": "最初は基本5コマンド（clone・add・commit・push・pull）で十分でありbranchやrebaseはチーム開発に入る段階で学べばよい。"
+  },
+  {
+    "q": "2人が同じ箇所を変更してpushしたときに起きるコンフリクトについて、正しい説明はどれか。",
+    "options": [
+      "リポジトリが壊れるので作り直す必要がある",
+      "どちらかのコードが自動的に消えてしまう不具合である",
+      "片方がpushをやめれば絶対に起きない",
+      "Gitがどちらを採用すべきか判断できないため止まる。正常な動作である"
+    ],
+    "answer": 3,
+    "explain": "コンフリクトは事故ではなくGitの正しい動作。2人で確認しながらどちらを残すか決めれば解決できる。担当ファイルを分けておくと発生を減らせる。"
+  },
+  {
+    "q": "大きな課題に取りかかるとき、最初にやるべきこととして最も適切なものはどれか。",
+    "options": [
+      "必要な機能を洗い出し、1日程度で終わる大きさに分解する",
+      "全体が完成するまで動作確認をしない",
+      "いちばん難しい機能から着手する",
+      "設計せずにまず全部書いてみる"
+    ],
+    "answer": 0,
+    "explain": "機能分解が実務の第一歩。難所から始めると何も動かない期間が長くなり心が折れる。まず動く最小限を作ってから積み上げる。"
+  },
+  {
+    "q": "リポジトリにcommitしてはいけないものはどれか。",
+    "options": [
+      "HTMLやCSSのファイル",
+      "過去に書いた古いコード",
+      "パスワードやAPIキーなどの秘密情報",
+      "READMEなどの説明文書"
+    ],
+    "answer": 2,
+    "explain": "一度pushした履歴は簡単には消せない。秘密情報は .gitignore で除外する。公開リポジトリなら全世界から見えてしまう。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch04';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第4章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-orange-600 to-amber-500">
+            <span className="tag bg-white/20 text-white">第4章 · バージョン管理</span>
+            <h1 className="text-2xl font-bold mt-2">🌿 Git</h1>
+            <p className="text-orange-100 mt-1">履歴を残し、2人でオセロを作る</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> 5つの基本コマンドでコードをGitHubに置けるようになり、<strong>2人で1つのリポジトリを共有してオセロを完成させる</strong>。技術より「進め方」を身につけるのが本当の目的。
+                  </div>
+                  <h3>なぜ今Gitを学ぶのか</h3>
+                  <p>Gitはコードの<strong>変更履歴を記録する</strong>道具です。TypeScriptやReactより先に学ぶのは、実際の開発では<strong>早い段階からGitを使う習慣</strong>をつけたほうが自然だからです。ここから先の演習はすべてGitで履歴を残しながら進めます。</p>
+                  <p>そしてもうひとつ。ここから<strong>2人での共同作業</strong>が始まります。2人が同じファイルを別々に編集して、それを1つにまとめる——これはGitなしにはほぼ不可能です。</p>
+                  <h3>Gitが無い世界を想像してみる</h3>
+                  <p>Gitを使わずにファイルを管理すると、こうなります。見覚えがあるかもしれません。</p>
+                  <div className="code-block">{`othello.html
+othello_修正.html
+othello_修正2.html
+othello_最終.html
+othello_最終_ほんとの最終.html
+othello_最終_田中さん修正版.html      ← どれが最新？`}</div>
+                  <p>この方式には致命的な問題が3つあります。<strong>どれが最新か分からない</strong>、<strong>何をどう変えたか分からない</strong>、<strong>2人分の変更を1つにまとめられない</strong>。Gitはこの3つをすべて解決します。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">知りたいこと</th><th className="tbl-th">Gitがあると</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">いまの最新はどれか</td><td className="tbl-td">常に1つのファイルだけ。最新はいつもそれ</td></tr>
+                        <tr><td className="tbl-td">昨日から何が変わったか</td><td className="tbl-td">変更点だけを色付きで表示できる</td></tr>
+                        <tr><td className="tbl-td">なぜこう直したか</td><td className="tbl-td">commitメッセージに理由が残っている</td></tr>
+                        <tr><td className="tbl-td">壊す前に戻したい</td><td className="tbl-td">過去のどの時点にも戻せる</td></tr>
+                        <tr><td className="tbl-td">2人の変更をまとめたい</td><td className="tbl-td">自動で合成してくれる。無理な箇所だけ人間が判断する</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>準備 — Gitを入れて名前を設定する</h3>
+                  <p>第1章と同じく、ここも一度やれば以降ずっと使う設定です。まず `Git for Windows`（Macなら公式サイトの案内）で検索してインストールしてください。選択肢はすべて既定のままで構いません。</p>
+                  <p>入ったら、VS Codeのターミナル（表示 → ターミナル）で次を実行します。<strong>これは履歴に残る「誰がやったか」の名前</strong>なので、最初に必ず設定します。</p>
+                  <div className="code-block">{`git --version                                  # 入ったか確認
+git config --global user.name "Tanaka Taro"    # 履歴に残る名前
+git config --global user.email "you@example.com"  # GitHubと同じアドレス
+git config --global init.defaultBranch main    # 既定のブランチ名を main に`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ メールアドレスはGitHubと揃える:</strong> ここで設定したアドレスがGitHubのアカウントと違うと、<strong>GitHub上で「誰のcommitか」が紐付きません</strong>。見た目の問題だけですが、2人分の作業量を確認するときに困るので最初に揃えておいてください。
+                  </div>
+                  <p>次にGitHubのアカウントを作ります。無料です。作ったら、右上のアイコンから「Your repositories」→「New」で空のリポジトリを1つ作ってみてください。</p>
+                  <div className="tip-box">
+                    <strong>💡 初回のpushで認証を求められる:</strong> 最初にpushするとき、ユーザー名とパスワードを聞かれます。ここで<strong>GitHubのログインパスワードは使えません</strong>（数年前に廃止されました）。GitHubの Settings → Developer settings → Personal access tokens でトークンを発行し、それをパスワードの代わりに貼り付けます。ここは詰まりやすいので、講師と一緒にやると早いです。
+                  </div>
+                  <h3>まず覚える5コマンド</h3>
+                  <div className="code-block">{`git clone <URL>     # リモートのリポジトリを手元に複製する
+git add .           # 変更をステージに載せる（コミット対象にする）
+git commit -m "メッセージ"   # 変更を履歴として記録する
+git push            # 手元の履歴をGitHubに送る
+git pull            # GitHubの最新を手元に取り込む`}</div>
+                  <p>日々の流れは「書く → add → commit → push」の繰り返しです。<strong>この5つだけで十分</strong>。branchやrebaseは後回しで構いません（チーム開発に入る段階で学びます）。</p>
+                  <h3>add と commit はなぜ2段階なのか</h3>
+                  <p>「保存するだけなのに、なぜ2回もコマンドを打つのか」——最初に必ず出る疑問です。Gitにはファイルの居場所が3つあり、addとcommitはその間を移動させる操作だからです。</p>
+                  <div className="code-block">{`[作業ディレクトリ]      [ステージ]           [リポジトリ]
+いま編集中のファイル  →  次のcommitに      →  履歴として確定
+              git add    載せるものを選ぶ    git commit
+
+例: 3ファイル直したが、そのうち2つだけ記録したい
+  git add index.html style.css   ← この2つだけステージに載せる
+  git commit -m "盤面の見た目を整える"`}</div>
+                  <p>つまりステージは「<strong>今回の記録に含めるものを選ぶ場所</strong>」です。慣れるまでは `git add .`（全部載せる）で構いません。ただ「この変更はまだ途中だから含めたくない」というときに、この2段階が効いてきます。</p>
+                  <h3>実は最初に覚えるべきは status と log</h3>
+                  <p>5コマンドより先に使うのがこの2つです。<strong>いま何が起きているかを確認するコマンド</strong>で、迷ったら必ずこれを打ちます。</p>
+                  <div className="code-block">{`git status     # いま何が変更されている？何がステージに載っている？
+git log        # これまでの履歴（q キーで抜ける）
+git log --oneline   # 1行ずつ簡潔に
+git diff       # 前回のcommitから何が変わったか`}</div>
+                  <div className="tip-box">
+                    <strong>💡 困ったら git status:</strong> Gitで詰まったときの9割は `git status` が答えを持っています。<strong>しかも親切に「次に打つべきコマンド」まで書いてくれます</strong>。エラーが出たら、まず status。これを習慣にしてください。
+                  </div>
+                  <h3>何を履歴に含めないか — .gitignore</h3>
+                  <p>リポジトリには<strong>入れてはいけないもの</strong>があります。パスワードなどの秘密情報、自動生成されるファイル、巨大なファイルです。これらは `.gitignore` というファイルに書いて除外します。</p>
+                  <div className="code-block">{`# .gitignore  ← この名前でリポジトリの一番上に置く
+
+node_modules/     # 自動で作られる。巨大なので入れない
+venv/             # Pythonの仮想環境（第5章）
+.env              # APIキーやパスワード。絶対に入れない
+*.db              # データベースファイル（第8章）
+.DS_Store         # Macが勝手に作るファイル`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 一度pushした秘密情報は消せないと思うこと:</strong> パスワードやAPIキーをcommitしてpushすると、<strong>あとからファイルを消しても履歴には残り続けます</strong>。公開リポジトリなら世界中から見える状態です。この場合の正しい対応は「ファイルを消す」ではなく「<strong>そのキーを無効化して作り直す</strong>」です。だから最初から .gitignore に入れておくことが重要になります。
+                  </div>
+                  <h3>commitメッセージの書き方</h3>
+                  <p>メッセージは未来の自分と相方へのメモです。<strong>「何をしたか」を短く</strong>書きます。凝る必要はありませんが、次のような書き方は避けてください。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">良くない例</th><th className="tbl-th">良い例</th><th className="tbl-th">なぜ</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">修正</td><td className="tbl-td">石が置けないバグを修正</td><td className="tbl-td">何を修正したか分からない</td></tr>
+                        <tr><td className="tbl-td">あああ</td><td className="tbl-td">盤面の8×8表示を追加</td><td className="tbl-td">検索しても見つけられない</td></tr>
+                        <tr><td className="tbl-td">いろいろ変えた</td><td className="tbl-td">手番の切り替えを実装</td><td className="tbl-td">1コミットに詰め込みすぎている合図</td></tr>
+                        <tr><td className="tbl-td">`WIP`</td><td className="tbl-td">裏返し判定の途中（縦横のみ対応）</td><td className="tbl-td">途中なら何がどこまでか書く</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 commitの粒度:</strong> 「1日の終わりにまとめて1回」ではなく、<strong>キリのいい単位でこまめに</strong>commitします。目安は「メッセージが1文で書ける範囲」。2つ以上のことを書きたくなったら、それは2回に分けるべきcommitです。
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 練習</p>
+                    <p>まず1人で慣れます。GitHubにリポジトリを作り、前章までのプロフィールカード（HTML・CSS・JSの3ファイル）をpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。そのあと `git log --oneline` で、自分が書いたメッセージが読めるものになっているか眺めてみてください。</p>
+                  </div>
+                  <h3>ここからが本番 — 2人で1つのものを作る</h3>
+                  <p>ここまでは1人で作ってきました。ここからは<strong>2人で1つのリポジトリを共有して</strong>オセロを作ります。これがこのコース最大の山場であり、いちばん面白いところです。</p>
+                  <div className="kv-box">
+                    <strong>📌 なぜオセロなのか:</strong> オセロは<strong>HTML・CSS・JavaScriptだけで完成させられます</strong>。新しい技術を覚える必要がなく、ここまでの知識だけで「ちゃんと遊べるもの」が作れる。だから技術ではなく<strong>進め方</strong>に集中できます。
+                  </div>
+                  <h3>いきなり書き始めない — まず機能に分解する</h3>
+                  <p>「オセロを作ろう」と言われても、どこから手をつけるか分かりません。実務でも同じで、<strong>まず何が必要かを洗い出して、小さな単位に割る</strong>ところから始めます。これを機能分解と呼びます。</p>
+                  <p>2人で話し合って、オセロに必要な機能を挙げてください。以下は例です。<strong>この表を鵜呑みにせず、自分たちで考えることが課題の本体</strong>です。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">機能</th><th className="tbl-th">やること</th><th className="tbl-th">難しさ</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">盤面を表示する</td><td className="tbl-td">8×8のマス目をHTML/CSSで作る</td><td className="tbl-td">易</td></tr>
+                        <tr><td className="tbl-td">石を置く</td><td className="tbl-td">クリックしたマスに石を表示する</td><td className="tbl-td">易</td></tr>
+                        <tr><td className="tbl-td">手番を管理する</td><td className="tbl-td">黒→白→黒…と交互に切り替える</td><td className="tbl-td">易</td></tr>
+                        <tr><td className="tbl-td">裏返す判定</td><td className="tbl-td">8方向を調べ、挟んだ石を裏返す</td><td className="tbl-td">難</td></tr>
+                        <tr><td className="tbl-td">置ける場所の判定</td><td className="tbl-td">裏返せる場所にしか置けないようにする</td><td className="tbl-td">難</td></tr>
+                        <tr><td className="tbl-td">パス処理</td><td className="tbl-td">置ける場所が無いとき手番を飛ばす</td><td className="tbl-td">中</td></tr>
+                        <tr><td className="tbl-td">勝敗判定</td><td className="tbl-td">全マス埋まったら石を数えて勝敗を出す</td><td className="tbl-td">中</td></tr>
+                        <tr><td className="tbl-td">石数の表示</td><td className="tbl-td">現在の黒白の数を画面に出す</td><td className="tbl-td">易</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 分解のコツ:</strong> 「1つの機能 = 半日〜1日で終わる大きさ」を目安にします。大きすぎると進捗が見えず、小さすぎると管理が面倒になります。難しさも一緒に見積もっておくと、後の分担が楽になります。
+                  </div>
+                  <h3>分担と順番を決める</h3>
+                  <p>機能が並んだら、<strong>どれから作るか</strong>と<strong>誰がやるか</strong>を決めます。順番のコツは「まず動く最小限を作る」こと。裏返し判定のような難所から始めると、何も動かない期間が長くなって心が折れます。</p>
+                  <ol>
+                    <li><strong>第1週</strong>: 盤面表示 + 石を置く（クリックしたら石が出る。ルールは無視）</li>
+                    <li><strong>第2週</strong>: 手番の切り替え + 石数表示（交互に置けるようになる）</li>
+                    <li><strong>第3週</strong>: 裏返し判定（ここが山。8方向のロジック）</li>
+                    <li><strong>第4週</strong>: 置ける場所の制限 + パス + 勝敗判定（ゲームとして完成）</li>
+                  </ol>
+                  <div className="kv-box">
+                    <strong>📌 「動くもの」を絶やさない:</strong> この順番には理由があります。毎週の終わりに<strong>必ず何かが動いている状態</strong>を保つためです。動くものがあると、次に何をすべきかが自然に見えます。逆に「全部作り終わるまで何も動かない」進め方は、詰まったときにどこが悪いのか切り分けられず、必ず行き詰まります。
+                  </div>
+                  <h3>2人で回すときの約束ごと</h3>
+                  <p>共同作業では、<strong>作業を始める前に必ず `git pull`</strong> します。相方が先に何かをpushしているかもしれないからです。これを飛ばすと衝突が増えます。</p>
+                  <div className="code-block">{`# 作業を始めるとき
+git pull                       # まず最新を取り込む
+# …コードを書く…
+git add .
+git commit -m "石数の表示を追加"
+git pull                       # pushの前にもう一度（相方が進んでいるかも）
+git push`}</div>
+                  <ul>
+                    <li><strong>始める前に pull、終わったら push</strong> — これを毎回やる</li>
+                    <li><strong>作業を手元に溜め込まない</strong> — 3日分まとめてpushすると衝突が大きくなる</li>
+                    <li><strong>担当ファイルをなるべく分ける</strong> — 同じ行を触らなければ衝突しない</li>
+                    <li><strong>動かない状態でpushしない</strong> — 相方がpullした瞬間に壊れる</li>
+                  </ul>
+                  <h3>コンフリクト — 起きて当たり前のもの</h3>
+                  <p>2人が同時に同じ行を変更してpushすると、Gitが「どちらを採用すべきか分からない」と止まります。これがコンフリクトです。<strong>事故ではなく正常な動作</strong>で、共同開発をしていれば必ず起きます。</p>
+                  <p>起きると、ファイルの中がこうなります。慌てず、落ち着いて読んでください。</p>
+                  <div className="code-block">{`<<<<<<< HEAD
+const CELL_SIZE = 60;        ← 自分が書いた内容
+=======
+const CELL_SIZE = 50;        ← 相方が書いた内容
+>>>>>>> main
+
+直し方: 2人でどちらを残すか決めて、
+       記号3行（<<<<<<<, =======, >>>>>>>）ごと消して
+       残したい形に書き直す。両方を活かす形でもよい。`}</div>
+                  <div className="code-block">{`# 直したあと
+git add .
+git commit -m "コンフリクトを解決"
+git push`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 記号を消し忘れるとコードが壊れます:</strong> `&lt;&lt;&lt;&lt;&lt;&lt;&lt;` や `=======` はGitが入れた目印であって、コードではありません。<strong>消し忘れたままcommitすると確実に動かなくなります</strong>。解決したら必ずブラウザで動作を確認してからpushしてください。
+                  </div>
+                  <h3>よくあるエラーと対処</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">エラー</th><th className="tbl-th">意味</th><th className="tbl-th">対処</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">not a git repository</td><td className="tbl-td">そのフォルダはGit管理下にない</td><td className="tbl-td">場所が違う。`cd` で移動するか `git init`</td></tr>
+                        <tr><td className="tbl-td">`rejected` / non-fast-forward</td><td className="tbl-td">相方が先にpushしている</td><td className="tbl-td">`git pull` してから push し直す</td></tr>
+                        <tr><td className="tbl-td">Please tell me who you are</td><td className="tbl-td">名前とメールが未設定</td><td className="tbl-td">`git config --global user.name` を設定</td></tr>
+                        <tr><td className="tbl-td">CONFLICT (content)</td><td className="tbl-td">コンフリクト発生</td><td className="tbl-td">上の手順で解決してcommit</td></tr>
+                        <tr><td className="tbl-td">nothing to commit</td><td className="tbl-td">変更がない、またはaddし忘れ</td><td className="tbl-td">`git status` で確認、`git add` を実行</td></tr>
+                        <tr><td className="tbl-td">Support for password authentication was removed</td><td className="tbl-td">パスワード認証が使えない</td><td className="tbl-td">アクセストークンを発行して使う</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <h3>進捗を見える形にする</h3>
+                  <p>GitHubには <strong>Issues</strong>（課題の一覧）という機能があります。分解した機能を1つずつIssueとして登録すると、「今どれをやっているか」「どこまで終わったか」が2人で共有できます。終わったらIssueを閉じる。これだけで進捗管理になります。</p>
+                  <p>リモートで離れて作業していると、相手が何をしているか見えません。Issueは<strong>その見えなさを埋めるための道具</strong>です。凝った使い方は要りません。「立てる・担当を書く・終わったら閉じる」の3つだけで十分機能します。</p>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロを2人で作る</p>
+                    <p className="assign-goal">共同リポジトリでオセロを完成させます。技術的な目的はGitの共同作業に慣れることですが、本当のゴールは<strong>「大きなものを小さく割って、順番に片付ける」進め方を体で覚える</strong>ことです。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>2人で1つのGitHubリポジトリを作り、両方がpushできるようにする（Collaborator に追加）</li>
+                      <li>`.gitignore` を最初に置いておく</li>
+                      <li>2人で話し合ってオセロの機能を洗い出し、Issueとして登録する</li>
+                      <li>どれから作るか順番を決め、担当を分ける</li>
+                      <li>週ごとに区切って進める。毎回こまめにcommit・pushする</li>
+                      <li>作業を始める前に必ず pull する習慣をつける</li>
+                      <li>相手のコードを読み、気付いたことを伝え合う</li>
+                      <li>完成したら2人で対戦してみる</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["2人とも遊べるオセロが動いている","リポジトリの履歴に、2人分のcommitが交互に並んでいる","Issueが立てられ、終わったものが閉じられている","「どの機能にどれくらいかかったか」を振り返って話せる","コンフリクトを最低1回は経験し、自力で解決した","commitメッセージを読むだけで、何をやってきたか追える"]} />
+                    <p className="assign-hint">💡 完璧を目指さないこと。まず「石が置けるだけ」の状態でいいので動かす。動くものがあると、次に何をすべきかが自然に見えてきます。逆に、全部作り終わるまで動かないやり方は必ず行き詰まります。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 詰まったときの合図:</strong> 裏返し判定は多くの人が詰まります。8方向をどう表現するか、で悩んだら「方向を [x, y] の組で配列に持つ」と考えてみてください。それ以上は自分たちで調べてみましょう。
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>`git branch` を試してみましょう。「作業用の枝を作って、そこで開発し、できたら本流に合流させる」やり方です。実務ではこちらが基本になります。2人とも余裕が出てきたら、Pull Request（変更をレビューしてもらってから合流させる仕組み）まで触ってみてください。第4章の時点では必須ではありません。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> オセロが完成しました。ただ、いまの対戦結果は<strong>ページを閉じれば消えます</strong>。次章からは「戦績を残す」ためにサーバ側の世界へ入っていきます。まずはその言語であるPythonからです。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["Gitが解決している問題を説明できる","clone / add / commit / push / pull の役割を言える","add と commit が2段階になっている理由が分かる","困ったとき git status を見る習慣がついている","自分のコードをGitHubにpushできる",".gitignore で秘密情報を除外できる","こまめにcommitする習慣がついている","大きな課題を機能単位に分解できる","2人で1つのリポジトリを共有して開発できた","コンフリクトを解決したことがある"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第5章「Python」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

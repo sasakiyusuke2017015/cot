@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第3章 - JavaScript</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "変数",
+    "desc": "値に名前を付けて保存する。const（再代入不可）と let"
+  },
+  {
+    "term": "条件分岐",
+    "desc": "if / else で条件に応じて処理を切り替える"
+  },
+  {
+    "term": "配列",
+    "desc": "複数の値を順番に持つ入れ物。length で要素数"
+  },
+  {
+    "term": "関数",
+    "desc": "処理をまとめて名前を付けたもの。何度でも呼べる"
+  },
+  {
+    "term": "DOM",
+    "desc": "ブラウザがHTMLを扱うための仕組み。JSから操作できる"
+  },
+  {
+    "term": "イベント",
+    "desc": "クリックや入力などの「出来事」。それを合図に処理を動かす"
+  },
+  {
+    "term": "console.log",
+    "desc": "変数の中身をコンソールに表示するデバッグの基本"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "JavaScriptの主な役割はどれか。",
+    "options": [
+      "ページの構造を定義する",
+      "ページに動き（ロジック）をつける",
+      "ページの配色を決める",
+      "サーバーの電源を管理する"
+    ],
+    "answer": 1,
+    "explain": "構造=HTML・見た目=CSS・動き=JavaScriptという役割分担である。"
+  },
+  {
+    "q": "JavaScriptで配列fruitsの要素数を調べる書き方はどれか。",
+    "options": [
+      "fruits.total",
+      "fruits.length",
+      "fruits.size()",
+      "count(fruits)"
+    ],
+    "answer": 1,
+    "explain": "JavaScriptの配列はlengthプロパティで要素数を取得する。"
+  },
+  {
+    "q": "const と let の使い分けとして正しいものはどれか。",
+    "options": [
+      "関数の外では const、中では let を使う",
+      "どちらも同じなので好きなほうを使う",
+      "再代入しないなら const、する必要があるなら let",
+      "数値には const、文字列には let を使う"
+    ],
+    "answer": 2,
+    "explain": "まずconstで書き、再代入が必要になったときだけletに変えるのが基本。何が変化する値なのかがコードから読み取れるようになる。"
+  },
+  {
+    "q": "ボタンがクリックされたときに処理を実行する書き方はどれか。",
+    "options": [
+      "btn.listen('click')",
+      "btn.click.run(() => { ... })",
+      "btn.onClick = { ... }",
+      "btn.addEventListener('click', () => { ... })"
+    ],
+    "answer": 3,
+    "explain": "addEventListenerで「どのイベントが起きたとき」「何をするか」を登録する。clickのほかinputやsubmitなど様々なイベントがある。"
+  },
+  {
+    "q": "思った通りに動かないとき、最初にやるべきこととして最も適切なものはどれか。",
+    "options": [
+      "コードを最初から全部書き直す",
+      "とりあえず動くまでいろいろな書き方を試す",
+      "コンソールを開いてエラー文を読み、console.logで変数の中身を確認する",
+      "詰まったらすぐ人に聞く"
+    ],
+    "answer": 2,
+    "explain": "「エラー文を読む→原因の仮説を立てる→調べる→修正する」という流れを身につけることが、文法の暗記より重要である。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch03';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第3章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-blue-700 to-blue-500">
+            <span className="tag bg-white/20 text-white">第3章 · フロントエンド</span>
+            <h1 className="text-2xl font-bold mt-2">⚡ JavaScript</h1>
+            <p className="text-blue-100 mt-1">ページに動きをつける</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> 変数・条件分岐・繰り返し・関数・配列を使えるようになり、<strong>クリックに反応して画面が変わる</strong>ものを作れるようになる。ここまでできればオセロが作れます。
+                  </div>
+                  <h3>JavaScriptとは何か</h3>
+                  <p>JavaScriptは、ページに<strong>動き（ロジック）</strong>を与えるプログラミング言語です。「ボタンを押したら表示を変える」「入力内容をチェックする」など、ユーザーの操作に反応する部分を担当します。</p>
+                  <p>HTMLとCSSは「こう表示せよ」と書くものでしたが、JavaScriptは<strong>手順を書く</strong>言語です。ここから本格的なプログラミングが始まります。</p>
+                  <h3>まず動かしてみる</h3>
+                  <p>`script.js` を作り、HTMLの `&lt;/body&gt;` の直前で読み込みます。<strong>head ではなく body の最後</strong>に置くのがポイントです（HTMLが読み込まれる前にJSが動くと、要素が見つからずエラーになるため）。</p>
+                  <div className="code-block">{`<!-- profile.html の </body> の直前 -->
+  <script src="script.js"></script>
+</body>`}</div>
+                  <div className="code-block">{`// script.js
+console.log("動いた！");`}</div>
+                  <p>ブラウザで開いて <strong>F12 → Console タブ</strong> を見てください。「動いた！」と出ていれば成功です。`console.log()` は画面ではなくコンソールに出力する命令で、<strong>この章を通じて最も使う道具</strong>になります。</p>
+                  <h3>変数 — 値に名前を付ける</h3>
+                  <div className="code-block">{`const name = "田中";     // 変えない値
+let count = 0;           // 後から変える値
+
+count = 5;               // let なので変更できる
+// name = "佐藤";        // const なのでエラーになる`}</div>
+                  <div className="kv-box">
+                    <strong>📌 まず const で書く:</strong> 「変わらないもの」として書いておくと、うっかり書き換えるミスを防げます。<strong>まず const で書き、変更が必要になったときだけ let に変える</strong>。これが実務での基本です。var という古い書き方もありますが、いまは使いません。
+                  </div>
+                  <h3>データの種類</h3>
+                  <div className="code-block">{`const num = 42;              // 数値
+const text = "こんにちは";    // 文字列（クォートで囲む）
+const flag = true;           // 真偽値（true / false）
+const list = [1, 2, 3];      // 配列
+const obj = { name: "田中", age: 25 };  // オブジェクト`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 数値と文字列は違うもの:</strong> `1 + 2` は 3 ですが、`"1" + "2"` は "12" になります。文字列の + は連結だからです。
+入力欄から取った値は<strong>必ず文字列</strong>なので、計算する前に `Number()` で数値に変換します。
+「なぜか計算がおかしい」ときはここを疑ってください。
+
+                  </div>
+                  <h3>条件分岐 — 場合分けする</h3>
+                  <div className="code-block">{`const score = 75;
+
+if (score >= 80) {
+  console.log("優秀");
+} else if (score >= 60) {
+  console.log("合格");
+} else {
+  console.log("再挑戦");
+}`}</div>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">演算子</th><th className="tbl-th">意味</th><th className="tbl-th">例</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">===</td><td className="tbl-td">等しい</td><td className="tbl-td">a === b</td></tr>
+                        <tr><td className="tbl-td">!==</td><td className="tbl-td">等しくない</td><td className="tbl-td">a !== b</td></tr>
+                        <tr><td className="tbl-td">&gt; / &lt;</td><td className="tbl-td">より大きい / 小さい</td><td className="tbl-td">a &gt; b</td></tr>
+                        <tr><td className="tbl-td">&gt;= / &lt;=</td><td className="tbl-td">以上 / 以下</td><td className="tbl-td">a &gt;= b</td></tr>
+                        <tr><td className="tbl-td">&amp;&amp;</td><td className="tbl-td">かつ</td><td className="tbl-td">a &gt; 0 &amp;&amp; b &gt; 0</td></tr>
+                        <tr><td className="tbl-td">||</td><td className="tbl-td">または</td><td className="tbl-td">a === 1 || a === 2</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 = と === は別物:</strong> `=` は代入（値を入れる）、`===` は比較（等しいか調べる）です。`if (a = 1)` と書くと比較ではなく代入になってしまい、意図しない動きをします。<strong>比較は必ず `===` を3つ</strong>と覚えてください。
+                  </div>
+                  <h3>繰り返し — 同じ処理を何度も</h3>
+                  <div className="code-block">{`// 決まった回数だけ繰り返す
+for (let i = 0; i < 8; i++) {
+  console.log(i);   // 0,1,2,3,4,5,6,7
+}
+
+// 配列の中身を1つずつ取り出す
+const fruits = ["りんご", "みかん", "バナナ"];
+for (const fruit of fruits) {
+  console.log(fruit);
+}`}</div>
+                  <div className="kv-box">
+                    <strong>📌 0から数える:</strong> プログラミングでは<strong>0から数える</strong>のが基本です。`for (let i = 0; i &lt; 8; i++)` は「0以上8未満」なので0〜7の<strong>8回</strong>回ります。8×8の盤面を扱うとき、この形をそのまま使います。
+                  </div>
+                  <h3>関数 — 処理に名前を付ける</h3>
+                  <div className="code-block">{`// 定義する
+function greet(who) {
+  return "こんにちは、" + who + "さん";
+}
+
+// 呼び出す
+const message = greet("田中");
+console.log(message);   // こんにちは、田中さん
+
+// 短い書き方（アロー関数）。同じ意味
+const greet2 = (who) => "こんにちは、" + who + "さん";`}</div>
+                  <p>同じ処理を何度も書かずに済むのが関数の利点ですが、それ以上に<strong>名前を付けることでコードが読みやすくなる</strong>のが大きな価値です。`checkCanPlace()` という名前を見れば、中身を読まなくても何をするか分かります。</p>
+                  <h3>配列 — オセロで最も使う</h3>
+                  <div className="code-block">{`const scores = [10, 25, 8];
+
+console.log(scores[0]);     // 10（0番目から数える）
+console.log(scores.length); // 3（個数）
+
+scores.push(30);            // 末尾に追加 → [10,25,8,30]
+scores[1] = 99;             // 1番目を書き換え
+
+// よく使うメソッド
+const doubled = scores.map(n => n * 2);       // 全部2倍にした新しい配列
+const big = scores.filter(n => n > 20);       // 20より大きいものだけ
+const total = scores.reduce((a, b) => a + b); // 合計`}</div>
+                  <h3>2次元配列 — 盤面の表現</h3>
+                  <p>オセロの盤面のような格子は、<strong>配列の中に配列を入れる</strong>ことで表現します。ここは最初混乱するところなので、丁寧に見ます。</p>
+                  <div className="code-block">{`// 3×3の盤面
+const board = [
+  ["", "", ""],     // 0行目
+  ["", "黒", ""],   // 1行目
+  ["", "", "白"],   // 2行目
+];
+
+console.log(board[1][1]);   // "黒"  → board[行][列]
+console.log(board[2][2]);   // "白"
+
+board[0][0] = "黒";         // 左上に黒を置く`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ [行][列] の順番:</strong> `board[1][2]` は「1行目の2列目」です。<strong>縦が先、横が後</strong>。ここを逆に覚えると盤面が転置してしまい、原因の分からないバグになります。紙に書いて確かめておくと確実です。
+                  </div>
+                  <div className="code-block">{`// 8×8の空の盤面を作る
+const board = [];
+for (let row = 0; row < 8; row++) {
+  board.push(["", "", "", "", "", "", "", ""]);
+}
+
+// 全マスを調べる（二重ループ）
+for (let row = 0; row < 8; row++) {
+  for (let col = 0; col < 8; col++) {
+    if (board[row][col] === "黒") {
+      console.log(row + "行" + col + "列に黒があります");
+    }
+  }
+}`}</div>
+                  <h3>DOM操作 — HTMLをJavaScriptから触る</h3>
+                  <p>ここからがWebらしい部分です。JavaScriptからHTMLの要素を取ってきて、中身を変えたり見た目を変えたりできます。この仕組みを<strong>DOM</strong>と呼びます。</p>
+                  <div className="code-block">{`// 要素を取ってくる（CSSと同じセレクタが使える）
+const title = document.querySelector("#title");   // idで
+const cards = document.querySelectorAll(".card"); // 複数まとめて
+
+// 中身を変える
+title.textContent = "新しいタイトル";
+
+// CSSクラスを付け外しする
+title.classList.add("active");
+title.classList.remove("active");
+title.classList.toggle("active");   // 有れば消す、無ければ付ける`}</div>
+                  <div className="kv-box">
+                    <strong>📌 見た目の変更はクラスで:</strong> JavaScriptから直接 `style.color = "red"` と書くこともできますが、<strong>CSSにクラスを定義しておいて付け外しするほうが良い</strong>です。見た目の定義がCSSに集まるので、後から変更しやすくなります。第2章で「構造と見た目を分ける」と言ったのと同じ理由です。
+                  </div>
+                  <h3>要素を作って追加する</h3>
+                  <p>オセロの盤面のように、<strong>同じものを大量に並べる</strong>場合はHTMLに手で書かずJavaScriptで生成します。</p>
+                  <div className="code-block">{`const boardEl = document.querySelector("#board");
+
+for (let row = 0; row < 8; row++) {
+  for (let col = 0; col < 8; col++) {
+    const cell = document.createElement("div");  // div を作る
+    cell.classList.add("cell");                  // クラスを付ける
+    cell.dataset.row = row;                      // 位置を覚えさせる
+    cell.dataset.col = col;
+    boardEl.appendChild(cell);                   // 画面に追加
+  }
+}`}</div>
+                  <p>これで64個のマスが生成されます。`dataset` は要素に自作の情報を持たせる仕組みで、「このマスは何行何列か」を覚えさせておくとクリック時に使えます。</p>
+                  <h3>イベント — 操作に反応する</h3>
+                  <div className="code-block">{`const btn = document.querySelector("#myButton");
+
+btn.addEventListener("click", () => {
+  console.log("押された！");
+});`}</div>
+                  <p>`addEventListener` は「<strong>どの要素で</strong>」「<strong>何が起きたとき</strong>」「<strong>何をするか</strong>」を登録します。clickのほか、input（入力）、submit（送信）、keydown（キー押下）などがあります。</p>
+                  <div className="code-block">{`// マスをクリックしたら、何行何列か分かる
+cell.addEventListener("click", () => {
+  const row = Number(cell.dataset.row);
+  const col = Number(cell.dataset.col);
+  console.log(row + "行" + col + "列がクリックされた");
+});`}</div>
+                  <h3>エラーとの付き合い方</h3>
+                  <div className="warn-box">
+                    <strong>⚠️ ここがこの章の本題:</strong> JavaScriptからは<strong>必ずエラーに出会います</strong>。むしろエラーが出ない日はありません。大事なのは文法を覚えることではなく、<strong>エラーが出たときに自力で直せること</strong>です。
+                  </div>
+                  <p>エラーが出たら、次の順番で対処します。この流れを体に入れてください。</p>
+                  <ol>
+                    <li><strong>エラー文を読む</strong> — コンソール（F12）に赤い文字で出ている</li>
+                    <li><strong>どこで起きたか見る</strong> — エラー文の右端にファイル名と行番号がある</li>
+                    <li><strong>原因の仮説を立てる</strong> — 「この変数が空なのでは？」など</li>
+                    <li><strong>console.log で確かめる</strong> — 仮説どおりか実際に見る</li>
+                    <li><strong>修正する</strong> — 原因が分かれば直し方も分かる</li>
+                  </ol>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">よく出るエラー</th><th className="tbl-th">意味</th><th className="tbl-th">主な原因</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">Cannot read properties of null</td><td className="tbl-td">nullに対して操作しようとした</td><td className="tbl-td">querySelectorが要素を見つけられていない</td></tr>
+                        <tr><td className="tbl-td">xxx is not defined</td><td className="tbl-td">その名前のものが無い</td><td className="tbl-td">変数名のタイプミス、定義の書き忘れ</td></tr>
+                        <tr><td className="tbl-td">xxx is not a function</td><td className="tbl-td">関数として呼べない</td><td className="tbl-td">メソッド名の間違い、対象が想定と違う</td></tr>
+                        <tr><td className="tbl-td">Unexpected token</td><td className="tbl-td">文法が壊れている</td><td className="tbl-td">括弧やクォートの閉じ忘れ</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 困ったら console.log:</strong> 「思っていた値と違う」がバグの正体であることがほとんどです。怪しい箇所の前後に
+`console.log(変数名)` を挟んで、<strong>実際に何が入っているか</strong>を見てください。
+
+想像で直そうとすると遠回りになります。事実を見るのが最短です。
+
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 30分ルール:</strong> 詰まったら30分は自分で調べてください。ただし<strong>30分たったら、分かったこと・試したこと・自分の仮説を持って聞く</strong>こと。「動きません」だけでは相手も答えられませんし、何より自分の力になりません。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: プロフィールカード（第3段階 — 動かす）</p>
+                    <p className="assign-goal">第2章までのカードに動きをつけます。3つのファイルがそれぞれ何を担当しているかを、自分の言葉で説明できるようになるのが本当のゴールです。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>`script.js` を作り、profile.html の &lt;/body&gt; 直前で読み込む</li>
+                      <li>「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする</li>
+                      <li>もう一度押すと隠れる（classList.toggle を使う）</li>
+                      <li>「いいね」ボタンを作り、押すたびに数が増えるようにする</li>
+                      <li>押した回数が10を超えたら、メッセージを変える</li>
+                      <li>スキル一覧を配列で持ち、JavaScriptでリストを生成して表示する</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["ボタンを押すと表示が変わる","script.js を読み込まなくしても、ページ自体は壊れずに表示される","表示の切り替えを style ではなく classList で行っている","HTML・CSS・JS がそれぞれ何をしているか説明できる","一度はエラーを出し、自力で直した"]} />
+                    <p className="assign-hint">💡 表示・非表示は CSS に `.hidden &#123; display: none; &#125;` を定義しておき、JSでそのクラスを付け外しする方法が定石です。JSから直接スタイルをいじるより、後から変更しやすくなります。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>オセロの盤面をJavaScriptで生成し、クリックしたマスに石が置けるところまで作ってみましょう。ルール（裏返し判定）はまだ不要で、「クリックしたら黒石が出る」だけで構いません。2次元配列とDOM生成、イベントの総合練習になります。第4章のオセロ開発がぐっと楽になります。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> ここまでで <strong>HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態</strong>になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。<strong>オセロはここまでの知識だけで作れます</strong>——新しい技術は必要ありません。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["const と let の使い分けが分かる","if / for / 関数 / 配列を組み合わせて書ける","2次元配列で board[行][列] と書ける","querySelector で要素を取得できる","classList でクラスを付け外しできる","createElement で要素を生成して追加できる","addEventListener でクリックに反応できる","エラーが出たらコンソールを読む習慣がある","console.log で変数の中身を確認する癖がついた"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第4章「Git」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

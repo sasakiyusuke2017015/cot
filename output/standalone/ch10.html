@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第10章 - TypeScript</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "TypeScript",
+    "desc": "JavaScriptに型を追加した言語。JSに変換されて動く"
+  },
+  {
+    "term": "型注釈",
+    "desc": "変数や引数に「: number」のように型を書くこと"
+  },
+  {
+    "term": "型推論",
+    "desc": "書かなくてもTypeScriptが型を推測してくれる仕組み"
+  },
+  {
+    "term": "interface",
+    "desc": "オブジェクト（データ）の形を定義する仕組み"
+  },
+  {
+    "term": "ユニオン型",
+    "desc": "「AかBのどちらか」を表す型。取りうる値を絞れる"
+  },
+  {
+    "term": "any",
+    "desc": "何でも入る型。使うと型の恩恵が消える"
+  },
+  {
+    "term": "コンパイル",
+    "desc": "TypeScriptをJavaScriptに変換すること"
+  },
+  {
+    "term": "型エラー",
+    "desc": "型が合わないときにエディタが出す警告。実行前に気付ける"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "TypeScriptの説明として正しいものはどれか。",
+    "options": [
+      "JavaScriptとは無関係の全く新しい言語",
+      "JavaScriptに型を追加した言語でJavaScriptに変換されて動く",
+      "データベース専用の言語",
+      "HTMLの新しいバージョン"
+    ],
+    "answer": 1,
+    "explain": "TypeScriptはJavaScriptの上位互換でありコンパイルするとJavaScriptになるため既存の知識がそのまま活きる。"
+  },
+  {
+    "q": "型注釈がある一番の利点はどれか。",
+    "options": [
+      "実行する前に間違いに気付ける",
+      "デザインが自動で良くなる",
+      "サーバー代が安くなる",
+      "コードの実行速度が2倍になる"
+    ],
+    "answer": 0,
+    "explain": "型があるとエディタが書いた瞬間に間違いを指摘してくれるため実行して初めてバグに気付くことが減る。"
+  },
+  {
+    "q": "オブジェクトの形（どんな項目を持つか）を定義するTypeScriptの仕組みはどれか。",
+    "options": [
+      "import",
+      "function",
+      "const",
+      "interface"
+    ],
+    "answer": 3,
+    "explain": "interfaceでデータの形を決めておくと、存在しない項目を参照したときにエディタが警告してくれる。APIから受け取るデータの形を定義するのに使う。"
+  },
+  {
+    "q": "石の色のように取りうる値が決まっているものに string 型を使うと起きる問題はどれか。",
+    "options": [
+      "日本語が使えなくなる",
+      "「黒」でも「くろ」でも「BLACK」でも通ってしまう",
+      "文字列が長すぎるとエラーになる",
+      "実行速度が極端に遅くなる"
+    ],
+    "answer": 1,
+    "explain": "取りうる値が限られているものは専用の型を作ると、想定外の値をエディタが弾いてくれる。型を細かく決めるほど間違いを早く見つけられる。"
+  },
+  {
+    "q": "すでに動いているオセロをTypeScriptに書き換える学習効果として適切なものはどれか。",
+    "options": [
+      "書き換えると必ずバグがなくなるため",
+      "JavaScriptのコードが不要になるため",
+      "動くものがある状態で型を入れるため、型の効果が差分として分かりやすい",
+      "TypeScriptでないとオセロは作れないため"
+    ],
+    "answer": 2,
+    "explain": "ゼロから型付きで書くより、動くコードに型を足すほうが「型があると何が変わるか」を体感しやすい。発展章として位置づけている理由でもある。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch10';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第10章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-violet-700 to-violet-500">
+            <span className="tag bg-white/20 text-white">第10章 · 発展</span>
+            <h1 className="text-2xl font-bold mt-2">🔷 TypeScript</h1>
+            <p className="text-violet-100 mt-1">型でオセロを安全にする（発展）</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> 「型があると実行する前に間違いに気付ける」価値を体感し、基本の型注釈とinterfaceを書けるようになる。<strong>完成したオセロを型付きに書き直す</strong>のが課題です。
+                  </div>
+                  <h3>TypeScriptとは何か</h3>
+                  <p>TypeScriptは、JavaScriptに<strong>型</strong>を追加した言語です。書いたコードはJavaScriptに変換されて動きます。つまり「JavaScriptの上位互換」で、これまで学んだ文法はそのまま使えます。</p>
+                  <p>型とは「<strong>この変数には何が入るか</strong>」の宣言です。数値なのか、文字列なのか、あるオブジェクトなのか。それを書いておくと、違うものを入れようとした瞬間にエディタが教えてくれます。</p>
+                  <h3>なぜ型が要るのか — オセロで起きたこと</h3>
+                  <p>抽象的な説明より、実際に起きやすいバグを見たほうが早いです。次のコードは<strong>JavaScriptでは何のエラーも出ません</strong>。</p>
+                  <div className="code-block">{`// 石を置く関数（片方が書いた）
+function putStone(row, col, color) {
+  board[row][col] = color;
+}
+
+// 呼ぶ側（もう片方が書いた）
+putStone(3, 4, "黒");      // ある人は日本語で
+putStone("3", "4", "black"); // 別の人は文字列と英語で
+
+// 数える側
+function countBlack() {
+  // "black" で数えている → 日本語の "黒" は数えられない
+}`}</div>
+                  <p>2人で開発していると、<strong>こういう食い違いが必ず起きます</strong>。しかもJavaScriptは何も言わずに動くので、「なぜか石数が合わない」という形で、ずっと後になってから発覚します。原因を探すのに何時間もかかることがあります。</p>
+                  <div className="kv-box">
+                    <strong>📌 型は「相方への約束」でもある:</strong> 型を書くということは、<strong>「この関数はこういうものを受け取ります」と明文化する</strong>ことです。共同開発では、相手のコードを全部読まなくても、型を見れば使い方が分かります。第4章でやった共同開発の苦労を、型が減らしてくれます。
+                  </div>
+                  <h3>型注釈の基本</h3>
+                  <div className="code-block">{`let count: number = 0;
+let name: string = '田中';
+let done: boolean = false;
+let tags: string[] = ['html', 'css'];
+
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+add(1, 2);      // OK
+add('1', '2');  // ← 実行する前にエラーで教えてくれる！`}</div>
+                  <p>関数の `): number` の部分は<strong>戻り値の型</strong>です。「この関数は必ず数値を返す」と宣言しています。書いておくと、うっかり `return` を忘れた場合もエラーで気付けます。</p>
+                  <h3>全部に型を書く必要はない</h3>
+                  <p>最初は「毎回書くのは面倒」と感じるはずです。実は<strong>書かなくてよい場面が多い</strong>——TypeScriptが自動で推測してくれるからです。これを型推論と呼びます。</p>
+                  <div className="code-block">{`let count = 0;          // number だと自動で分かる（書かなくてよい）
+let name = '田中';      // string だと分かる
+
+count = "あ";           // ← それでもここでエラーになる
+
+// 一方、引数は推論できないので書く必要がある
+function double(n: number) {
+  return n * 2;         // 戻り値は number だと推論される
+}`}</div>
+                  <div className="tip-box">
+                    <strong>💡 書くべき場所は「境界」:</strong> 目安は、<strong>関数の引数と、外から入ってくるデータ</strong>です。中の変数はほとんど推論に任せて構いません。型を書く量が減ると、TypeScriptは急に快適になります。
+                  </div>
+                  <h3>interface — データの形を決める</h3>
+                  <div className="code-block">{`interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+function showUser(user: User) {
+  console.log(user.name);
+  console.log(user.mail);  // ← 「mailは存在しない」と教えてくれる
+}`}</div>
+                  <p>これが特に効くのが、<strong>第7章で作ったAPIから返ってくるデータ</strong>です。どんな形で返ってくるかを1か所に書いておけば、以降は打ち間違いをすべてエディタが止めてくれます。</p>
+                  <div className="code-block">{`interface GameRecord {
+  id: number;
+  winner: string;
+  black_count: number;
+  white_count: number;
+  played_at: string;
+  memo?: string;          // ? は「無いかもしれない」
+}
+
+async function loadHistory(): Promise<GameRecord[]> {
+  const res = await fetch("/api/games");
+  return await res.json();
+}
+
+const games = await loadHistory();
+games[0].black_cnt;    // ← 打ち間違いをその場で指摘してくれる`}</div>
+                  <h3>ユニオン型 — 取りうる値を絞る</h3>
+                  <p>冒頭の「黒 / black / くろ」問題を根本から防ぐ書き方があります。<strong>取りうる値そのものを型にする</strong>のです。</p>
+                  <div className="code-block">{`type StoneColor = "black" | "white";     // このどちらか以外は許さない
+
+function putStone(row: number, col: number, color: StoneColor) {
+  board[row][col] = color;
+}
+
+putStone(3, 4, "black");   // OK
+putStone(3, 4, "黒");      // ← エラー。ここで止まる
+putStone(3, 4, "Black");   // ← エラー。大文字違いも止まる`}</div>
+                  <div className="kv-box">
+                    <strong>📌 これがTypeScriptのいちばん強い使い方:</strong> `string` にしておくと、あらゆる文字列が通ってしまいます。<strong>取りうる値が決まっているものは、その値だけを型にする</strong>。こうすると、間違った値が入る余地そのものが消えます。手番（`"black" | "white"`）、マスの状態（`0 | 1 | 2`）など、オセロには使える場所がたくさんあります。
+                  </div>
+                  <h3>any — 使うと全部台無しになる型</h3>
+                  <p>型エラーに困ったとき、`any` を書くと黙ります。<strong>が、これは型チェックを放棄する宣言です</strong>。</p>
+                  <div className="code-block">{`let data: any = await res.json();
+data.whatever.anything;      // 何を書いてもエラーにならない（実行時に落ちる）`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ anyで黙らせるのは最後の手段:</strong> エラーが出ると `any` を書きたくなりますが、<strong>それをやると型を入れた意味が消えます</strong>。TypeScriptを入れたのに全部 any、というコードは実務でもよく見かけますが、手間だけ増えて利点がゼロの状態です。まずはエラーメッセージを読んで、正しい型を考えてください。
+                  </div>
+                  <h3>導入と実行</h3>
+                  <p>すでにあるJSファイルを `.ts` に変えるところから始められます。段階的に移せるのがTypeScriptの良いところです。</p>
+                  <div className="code-block">{`npm install -D typescript      # 導入
+npx tsc --init                 # 設定ファイル tsconfig.json を作る
+npx tsc                        # .ts → .js に変換（コンパイル）
+npx tsc --watch                # 保存のたびに自動変換`}</div>
+                  <p>変換して出てきた `.js` をHTMLから読み込みます。<strong>ブラウザはTypeScriptをそのままでは実行できない</strong>ので、この変換が必ず要ります。次章で使うViteのようなツールを入れると、この手順は自動になります。</p>
+                  <h3>型エラーの読み方</h3>
+                  <p>TypeScriptのエラー文は長く見えますが、読むところは<strong>「何が」「どの型と」合わないか</strong>の2点だけです。</p>
+                  <div className="code-block">{`Argument of type 'string' is not assignable to parameter of type 'number'.
+   └ 渡したもの: string        └ 求められているもの: number
+
+Property 'mail' does not exist on type 'User'. Did you mean 'email'?
+   └ 無いもの: mail                          └ もしかして: email`}</div>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">エラーの言い回し</th><th className="tbl-th">意味</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">is not assignable to</td><td className="tbl-td">その型は入れられない</td></tr>
+                        <tr><td className="tbl-td">does not exist on type</td><td className="tbl-td">その名前はその型に無い（打ち間違い）</td></tr>
+                        <tr><td className="tbl-td">Object is possibly 'undefined'</td><td className="tbl-td">無いかもしれないので、確認してから使う必要がある</td></tr>
+                        <tr><td className="tbl-td">Did you mean …?</td><td className="tbl-td">似た名前の候補。だいたい正解</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 赤い波線にマウスを乗せる:</strong> VS Codeで赤い波線が出たらマウスを乗せてエラーメッセージを読む。<strong>電球マークが出たら、クリックすると修正候補を出してくれます</strong>。最初は候補に頼って構いません。何度も見ているうちに、読めるようになります。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロをTypeScriptに書き換える</p>
+                    <p className="assign-goal">完成して動いているオセロを、TypeScriptで書き直します。<strong>すでに動くものがある状態で型を入れる</strong>ので、型のありがたみが分かりやすい題材です。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>TypeScriptを導入し、既存のJSファイルを .ts に変える</li>
+                      <li>まず出てくるエラーの数を見る（多くても慌てない）</li>
+                      <li>盤面・石の色・座標に型をつける</li>
+                      <li>石の色をユニオン型にして、取りうる値を絞る</li>
+                      <li>関数の引数と戻り値に型注釈を書く</li>
+                      <li>APIから受け取る戦績データの形を interface で定義する</li>
+                      <li>エディタが出す型エラーを1つずつ解消する</li>
+                      <li>コンパイルして、ブラウザで今までどおり動くことを確認する</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["型エラーが出ない状態でオセロが動く","any を使っていない（使ったなら理由を説明できる）","「型を入れたことで見つかったバグ・書き間違い」を1つ以上挙げられる","型があると何が楽になるか、自分の言葉で説明できる"]} />
+                    <p className="assign-hint">💡 石の色を string にすると "黒" でも "くろ" でも通ってしまいます。取りうる値が決まっているものは、それ専用の型を作れないか考えてみてください。エラーが大量に出ても、1つ直すと連鎖して消えることが多いので、上から順に片付けていけば大丈夫です。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>サーバ側（Python）にも型を書いてみましょう。第7章の `class Game(BaseModel)` は、実はPythonの型注釈そのものです。<strong>フロントの interface とサーバの BaseModel が同じ形になっている</strong>ことを確認してみてください。ここが食い違うと422エラーになります。両側の型を合わせておくのが、API開発の基本です。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> 型でコードが安全になりました。次章のReactでは<strong>画面の作り方そのもの</strong>を変えます。TypeScriptとReactは実務でセットで使われることが多いので、この章をやっておくと次が理解しやすくなります。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["型が無いと何が起きるか、具体例で説明できる","number / string / boolean / 配列の型注釈が書ける","型推論があるので全部書かなくてよいと分かる","interfaceでデータの形を定義できる","ユニオン型で取りうる値を絞れる","any を安易に使わない理由が分かる","コンパイルして .js を作れる","エディタの型エラーを読んで直せる"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第11章「React」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

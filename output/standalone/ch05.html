@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第5章 - Python</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "Python",
+    "desc": "サーバ側でよく使われる言語。読みやすさを重視した文法"
+  },
+  {
+    "term": "インデント",
+    "desc": "行頭の空白。Pythonではこれがブロックの範囲を決める"
+  },
+  {
+    "term": "リスト / 辞書",
+    "desc": "JSの配列 / オブジェクトにあたるデータの入れ物"
+  },
+  {
+    "term": "仮想環境",
+    "desc": "プロジェクトごとにライブラリを分ける仕組み（venv）"
+  },
+  {
+    "term": "pip",
+    "desc": "ライブラリを入れるコマンド。JSのnpmにあたる"
+  },
+  {
+    "term": "f文字列",
+    "desc": "文字列の中に値を埋め込む書き方。JSのテンプレートリテラルにあたる"
+  },
+  {
+    "term": "None",
+    "desc": "「値が無い」を表す。JSの null にあたる"
+  },
+  {
+    "term": "import",
+    "desc": "他のファイルやライブラリの機能を持ち込む書き方"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "Pythonで処理のまとまり（ブロック）を表すものはどれか。",
+    "options": [
+      "セミコロン ;",
+      "BEGIN と END",
+      "波括弧 { }",
+      "行頭のインデント（空白）"
+    ],
+    "answer": 3,
+    "explain": "Pythonは「行頭のインデント（空白）」でブロックを表す。JavaScriptの波括弧にあたるものが無いため、インデントがずれると IndentationError になる。"
+  },
+  {
+    "q": "仮想環境（venv）を使う目的として正しいものはどれか。",
+    "options": [
+      "ソースコードを暗号化するため",
+      "プログラムの実行速度を上げるため",
+      "プロジェクトごとにライブラリを分けて管理するため",
+      "複数の言語を同時に動かすため"
+    ],
+    "answer": 2,
+    "explain": "仮想環境はプロジェクト専用のライブラリ置き場を作る仕組みで、別プロジェクトとの混在を防ぐ。venvフォルダは .gitignore に入れてcommitしない。"
+  },
+  {
+    "q": "JavaScriptの配列にあたるPythonのデータ構造はどれか。",
+    "options": [
+      "リスト",
+      "タプル",
+      "モジュール",
+      "セット"
+    ],
+    "answer": 0,
+    "explain": "JSの配列がPythonではリスト、JSのオブジェクトが辞書にあたる。リストはappendで追加し、lenで個数を取得する。"
+  },
+  {
+    "q": "ここでフロントエンドとは別の言語を学ぶ理由として最も適切なものはどれか。",
+    "options": [
+      "ブラウザの表示速度を上げるため",
+      "HTMLを自動生成するため",
+      "データを保存するにはブラウザの外側であるサーバが必要になるため",
+      "JavaScriptでは複雑な計算ができないため"
+    ],
+    "answer": 2,
+    "explain": "ブラウザの中だけで動くアプリはページを閉じるとデータが消える。戦績の保存やユーザー管理にはサーバ側のプログラムが要る。"
+  },
+  {
+    "q": "Pythonのコードを実行したら IndentationError が出た。最初に疑うべきものはどれか。",
+    "options": [
+      "セミコロンの付け忘れ",
+      "ライブラリのバージョン違い",
+      "変数名のスペルミス",
+      "行頭の空白の数が揃っていない"
+    ],
+    "answer": 3,
+    "explain": "Pythonはインデントでブロックを表すため、空白の数がずれるとエラーになる。タブとスペースの混在も原因になるのでエディタの設定を確認する。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch05';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第5章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
+            <span className="tag bg-white/20 text-white">第5章 · バックエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🐍 Python</h1>
+            <p className="text-emerald-100 mt-1">サーバ側の言語を覚える</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> Pythonの基本文法を身につけ、<strong>JavaScriptで書ける処理をPythonでも書ける</strong>状態になる。次章以降でサーバを書くための土台を作る。
+                  </div>
+                  <h3>なぜここで別の言語を学ぶのか</h3>
+                  <p>ここまで作ったオセロは、<strong>すべてブラウザの中だけで動いています</strong>。ページを閉じれば対戦結果は消え、他の人と共有もできません。「戦績を保存する」「ユーザーを作る」には、ブラウザの外——<strong>サーバ</strong>が必要です。</p>
+                  <p>サーバを書く言語はいくつもあり、JavaScriptでも書けます。ここでPythonを選ぶのは、<strong>文法が読みやすく、Web以外（データ処理・AI）でも使える</strong>からです。1つ目の言語を覚えた後に2つ目を学ぶと、「言語が違っても考え方は同じ」だと分かります。これは大きな収穫です。</p>
+                  <div className="kv-box">
+                    <strong>📌 ここが最初の大きな壁:</strong> ブラウザの中（フロントエンド）とサーバ（バックエンド）は<strong>別の場所で動く別のプログラム</strong>です。この2つがどう繋がるかが分かると、Webアプリの全体像が見えます。焦らず進めてください。
+                  </div>
+                  <h3>準備 — Pythonを入れて動かす</h3>
+                  <p>公式サイト（`python.org`）からインストーラを落として実行します。<strong>Windowsでは1点だけ必ず守ってください</strong>。</p>
+                  <div className="warn-box">
+                    <strong>⚠️ Add python.exe to PATH にチェックを入れる:</strong> インストーラの最初の画面の下に、小さくこのチェックボックスがあります。<strong>ここを入れ忘れると、ターミナルで `python` と打っても「見つかりません」になります</strong>。入れ忘れた場合はインストーラをもう一度実行して、Modify から直せます。初心者が最初に詰まる定番の箇所です。
+                  </div>
+                  <div className="code-block">{`python --version        # 3.12.x のように出れば成功
+python hello.py         # ファイルを実行する
+python                  # 対話モード（1行ずつ試せる。exit() で抜ける）`}</div>
+                  <p>動いたら、`hello.py` というファイルを作って1行だけ書いて実行してみてください。<strong>JavaScriptと違って、ブラウザを介さずターミナルで直接動く</strong>——これが「サーバ側の言語」の感触です。</p>
+                  <div className="code-block">{`print("こんにちは")`}</div>
+                  <h3>JavaScriptと比べてみる</h3>
+                  <p>まずは同じ処理を並べます。似ている部分が多いことに気付くはずです。</p>
+                  <div className="code-block">{`// JavaScript
+const name = "田中";
+let count = 0;
+
+if (count > 10) {
+  console.log("多い");
+} else {
+  console.log("少ない");
+}
+
+const fruits = ["りんご", "みかん"];
+for (const f of fruits) {
+  console.log(f);
+}
+
+function greet(who) {
+  return "こんにちは、" + who;
+}`}</div>
+                  <div className="code-block">{`# Python
+name = "田中"
+count = 0
+
+if count > 10:
+    print("多い")
+else:
+    print("少ない")
+
+fruits = ["りんご", "みかん"]
+for f in fruits:
+    print(f)
+
+def greet(who):
+    return "こんにちは、" + who`}</div>
+                  <h3>対応表で覚える</h3>
+                  <p>いちいち文法書を読むより、<strong>JSで知っていることの対応を押さえる</strong>ほうが早く書けるようになります。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">やりたいこと</th><th className="tbl-th">JavaScript</th><th className="tbl-th">Python</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">画面に出す</td><td className="tbl-td">`console.log(x)`</td><td className="tbl-td">`print(x)`</td></tr>
+                        <tr><td className="tbl-td">変数</td><td className="tbl-td">`const` / `let`</td><td className="tbl-td">宣言不要。`x = 1` だけ</td></tr>
+                        <tr><td className="tbl-td">真偽値</td><td className="tbl-td">`true` / `false`</td><td className="tbl-td">`True` / `False`（大文字始まり）</td></tr>
+                        <tr><td className="tbl-td">値が無い</td><td className="tbl-td">`null` / `undefined`</td><td className="tbl-td">`None`</td></tr>
+                        <tr><td className="tbl-td">かつ / または / 否定</td><td className="tbl-td">`&amp;&amp;` / `||` / `!`</td><td className="tbl-td">`and` / `or` / `not`</td></tr>
+                        <tr><td className="tbl-td">等しい</td><td className="tbl-td">`===`</td><td className="tbl-td">`==`（Pythonは1種類だけ）</td></tr>
+                        <tr><td className="tbl-td">配列</td><td className="tbl-td">`[1, 2, 3]`</td><td className="tbl-td">リスト。書き方は同じ</td></tr>
+                        <tr><td className="tbl-td">個数</td><td className="tbl-td">`arr.length`</td><td className="tbl-td">`len(arr)`</td></tr>
+                        <tr><td className="tbl-td">末尾に追加</td><td className="tbl-td">`arr.push(x)`</td><td className="tbl-td">`arr.append(x)`</td></tr>
+                        <tr><td className="tbl-td">文字列に値を埋める</td><td className="tbl-td">`` `$&#123;name&#125;さん` ``</td><td className="tbl-td">`f"&#123;name&#125;さん"`</td></tr>
+                        <tr><td className="tbl-td">コメント</td><td className="tbl-td">`// コメント`</td><td className="tbl-td">`# コメント`</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 Trueが大文字なのは地味に効く:</strong> JSの癖で `true` と書くと `NameError` になります。同じく `&amp;&amp;` を書くと構文エラーです。<strong>最初の1週間は必ずやります</strong>。エラーが出たらこの表に戻ってきてください。恥ずかしいことではありません。
+                  </div>
+                  <h3>決定的な違い — インデントがブロックを決める</h3>
+                  <p>JavaScriptは波括弧 `&#123; &#125;` で処理のまとまりを表しますが、<strong>Pythonは行頭の空白（インデント）でそれを表します</strong>。波括弧もセミコロンもありません。</p>
+                  <div className="code-block">{`def check(n):
+    if n > 0:
+        print("正の数")
+        print("この2行はif の中")
+    print("この行はif の外（関数の中）")
+print("この行は関数の外")`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 最初はここで必ず詰まる:</strong> インデントがずれると `IndentationError` というエラーになります。<strong>エラーが出たらまず行頭の空白を疑ってください</strong>。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 VS Code の設定を1つだけ:</strong> 画面右下に「スペース: 4」と出ているか確認してください。「タブのサイズ」表示になっていたらクリックして「スペースによるインデント」に変えます。<strong>タブとスペースが混ざったファイルは、見た目が同じでもPythonがエラーを出します</strong>。原因が目に見えないので、最初に設定しておくのが安全です。
+                  </div>
+                  <h3>繰り返しの書き方</h3>
+                  <p>オセロの盤面は8×8のマスなので、繰り返しを多用します。JSの `for (let i = 0; i &lt; 8; i++)` にあたるのが `range()` です。</p>
+                  <div className="code-block">{`for i in range(8):        # 0, 1, 2, ... 7（8は含まない）
+    print(i)
+
+for i in range(1, 9):     # 1 から 8 まで
+    print(i)
+
+# 中身を直接まわす（JSの for...of）
+for f in ["りんご", "みかん"]:
+    print(f)
+
+# 番号と中身の両方が欲しいとき
+for i, f in enumerate(["りんご", "みかん"]):
+    print(i, f)           # 0 りんご / 1 みかん
+
+# 条件が続く間くり返す
+count = 0
+while count < 3:
+    count = count + 1`}</div>
+                  <div className="kv-box">
+                    <strong>📌 range(8) が 0〜7 なのはJSと同じ考え方:</strong> 第3章で「0から数える」を学びました。Pythonも同じです。<strong>`range(8)` は「8個ぶん、0から数える」</strong> という意味なので、8は含まれません。8×8の盤面を全部まわすなら `for row in range(8): for col in range(8):` の二重ループになります。
+                  </div>
+                  <h3>リストと辞書</h3>
+                  <p>JSの配列がPythonでは<strong>リスト</strong>、JSのオブジェクトが<strong>辞書</strong>にあたります。オセロの盤面や戦績を扱うときに使います。</p>
+                  <div className="code-block">{`# リスト（JSの配列）
+scores = [10, 25, 8]
+scores.append(30)        # 追加（JSのpush）
+print(len(scores))       # 個数（JSのlength）
+print(scores[0])         # 10（0から数える）
+print(scores[-1])        # 30（末尾。Python独自で便利）
+
+# 辞書（JSのオブジェクト）
+player = {"name": "田中", "wins": 3}
+print(player["name"])    # 田中
+player["wins"] = 4       # 更新
+
+# 辞書のリスト（戦績データはこんな形になる）
+records = [
+    {"winner": "黒", "black": 38, "white": 26},
+    {"winner": "白", "black": 20, "white": 44},
+]
+for r in records:
+    print(r["winner"], r["black"], "-", r["white"])`}</div>
+                  <h3>2次元リスト — オセロの盤面</h3>
+                  <p>第3章でJavaScriptの2次元配列を扱いました。Pythonでもまったく同じ考え方で書けます。<strong>`board[行][列]`</strong> です。</p>
+                  <div className="code-block">{`# 8×8を空（0）で初期化する
+board = [[0] * 8 for _ in range(8)]
+
+# 中央4マスに初期配置（1=黒, 2=白）
+board[3][3] = 2
+board[3][4] = 1
+board[4][3] = 1
+board[4][4] = 2
+
+# 盤面を文字で表示する
+MARK = {0: ".", 1: "●", 2: "○"}
+for row in board:
+    print(" ".join(MARK[cell] for cell in row))`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ 盤面の作り方でよくある罠:</strong> `board = [[0] * 8] * 8` と書きたくなりますが、<strong>これは動きません</strong>。
+同じ行が8個並んでいるだけなので、1マス変えると8行すべてが変わります。
+
+正しくは `[[0] * 8 for _ in range(8)]` のように、行を8回作ります。
+これはPython特有の落とし穴で、多くの人が一度は踏みます。
+
+                  </div>
+                  <h3>関数と import</h3>
+                  <div className="code-block">{`def count_stones(board, color):
+    """盤面の中の指定色の石を数える"""
+    total = 0
+    for row in board:
+        for cell in row:
+            if cell == color:
+                total = total + 1
+    return total
+
+# 引数に既定値をつけられる
+def greet(name, greeting="こんにちは"):
+    return f"{greeting}、{name}さん"
+
+print(greet("田中"))                  # こんにちは、田中さん
+print(greet("田中", "おはよう"))       # おはよう、田中さん`}</div>
+                  <p>他のファイルやライブラリの機能を使うときは `import` します。次章以降で毎回書くことになります。</p>
+                  <div className="code-block">{`import sqlite3                  # 標準で入っているDB用の機能（第8章）
+from fastapi import FastAPI     # ライブラリから一部だけ持ち込む（第7章）
+from othello import count_stones  # 自分で書いた othello.py から持ち込む`}</div>
+                  <h3>環境を用意する</h3>
+                  <p>Pythonをインストールしたら、プロジェクトごとに<strong>仮想環境</strong>を作ります。これは「このプロジェクト専用のライブラリ置き場」で、別のプロジェクトと混ざらないようにする仕組みです。</p>
+                  <div className="code-block">{`python -m venv venv          # 仮想環境を作る（最初の1回だけ）
+
+# 有効化する（作業のたびに実行）
+venv\\Scripts\\activate        # Windows
+source venv/bin/activate     # Mac / Linux
+
+pip install fastapi          # ライブラリを入れる（次章で使う）
+pip list                     # 入っているものを確認
+pip freeze > requirements.txt  # 何を入れたかを記録（デプロイで使う）`}</div>
+                  <div className="tip-box">
+                    <strong>💡 コツ:</strong> 仮想環境を有効にすると、プロンプトの先頭に `(venv)` と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。<strong>venvフォルダは .gitignore に入れて、commitしないこと。</strong>
+                  </div>
+                  <h3>よく出るエラーと読み方</h3>
+                  <p>Pythonのエラーは<strong>下から読む</strong>のがコツです。一番下の行に「何が起きたか」、その上に「どのファイルの何行目か」が出ます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">エラー</th><th className="tbl-th">意味</th><th className="tbl-th">よくある原因</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">IndentationError</td><td className="tbl-td">インデントがおかしい</td><td className="tbl-td">行頭の空白がずれている / タブとスペースの混在</td></tr>
+                        <tr><td className="tbl-td">NameError</td><td className="tbl-td">その名前が見つからない</td><td className="tbl-td">打ち間違い / JSの癖で `true` と書いた</td></tr>
+                        <tr><td className="tbl-td">TypeError</td><td className="tbl-td">型が合わない</td><td className="tbl-td">数値と文字列を足そうとした</td></tr>
+                        <tr><td className="tbl-td">KeyError</td><td className="tbl-td">辞書にそのキーが無い</td><td className="tbl-td">キー名の打ち間違い</td></tr>
+                        <tr><td className="tbl-td">IndexError</td><td className="tbl-td">リストの範囲外</td><td className="tbl-td">`board[8]` のように0から数え忘れた</td></tr>
+                        <tr><td className="tbl-td">ModuleNotFoundError</td><td className="tbl-td">ライブラリが見つからない</td><td className="tbl-td">`pip install` 忘れ / 仮想環境が無効</td></tr>
+                        <tr><td className="tbl-td">SyntaxError</td><td className="tbl-td">文法が壊れている</td><td className="tbl-td">コロン忘れ / 括弧の閉じ忘れ</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 第3章の30分ルールはここでも同じ:</strong> エラー文をそのまま検索するのが最短です。<strong>Pythonのエラー文はJavaScriptより親切</strong>で、どの行で何が起きたかがはっきり出ます。30分調べて「分かったこと・試したこと・仮説」を持って聞く——このやり方をそのまま続けてください。
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: オセロのロジックをPythonで書き直す</p>
+                    <p className="assign-goal">すでにJavaScriptで動いているオセロの判定ロジックを、Pythonで書き直します。動くものを別の言語に移すことで、「言語の違い」と「考え方の共通部分」がはっきり分かります。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>Pythonを入れ、仮想環境を作って有効化する</li>
+                      <li>`othello.py` を作り、8×8の盤面をリストで表現する</li>
+                      <li>盤面をコンソールに文字で表示する関数を書く</li>
+                      <li>石を置いたとき裏返せるかを判定する関数を書く（JSから移植）</li>
+                      <li>石の数を数えて勝敗を返す関数を書く</li>
+                      <li>実際に何手か打たせて、正しく裏返るか確認する</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["Pythonだけでオセロの盤面が動く（画面は文字表示でよい）","JS版とPython版で、同じ手を打つと同じ結果になる","「JSとPythonで書き方が違った点」を3つ挙げられる","エラーが出たとき、メッセージを読んで自力で直せた"]} />
+                    <p className="assign-hint">💡 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。JS版のコードを横に開いて、1関数ずつ移していくと進めやすくなります。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>移植したPython版で、<strong>コンピュータに一手打たせて</strong>みましょう。「置ける場所を全部探して、その中からランダムに1つ選ぶ」だけで、とりあえず対戦相手になります。さらに「裏返せる石が一番多い場所を選ぶ」に変えると、少し強くなります。ここまで来るとアルゴリズムの入口です。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> Pythonが書けるようになりました。ただ、いまのままではデータは実行中しか残りません。次章では<strong>データを保存する場所（データベース）</strong>と、それを操作するSQLを学びます。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["Pythonをインストールしてファイルを実行できる","インデントでブロックを表すことを理解した","JSとPythonの書き方の対応が頭に入っている","リストと辞書を使い分けられる","2次元リストで8×8の盤面を作れる","関数を定義して呼び出せる","仮想環境を作って有効化できる","エラー文を読んで原因を特定できる","JSで書いた処理をPythonで書き直せた"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第6章「SQL」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>

@@ -18,6 +18,7 @@ import { QUESTION_HEADER } from '../scripts/lib/csv.mjs'
 
 const MATERIALS = path.join(ROOT, 'output', 'materials', 'web')
 const QUESTIONS = path.join(ROOT, 'output', 'questions', 'web')
+const STANDALONE = path.join(ROOT, 'output', 'standalone')
 const LEARNER = path.join(ROOT, 'output', 'index.html')
 const TEACHER = path.join(ROOT, 'output', 'teacher.html')
 const MATERIALS_IN = path.join(ROOT, 'input', 'materials', 'web')
@@ -318,6 +319,64 @@ function validateAudienceSeparation(chapterFiles) {
   }
 }
 
+/**
+ * 単体配布版（output/standalone/）を検証する。
+ * 成立条件は「1ファイルだけ渡しても読める」こと。つまり:
+ *   - 章 HTML としての構造は通常版と同じ（validateHtml を通す）
+ *   - 他ファイルへのリンクを持たない（目次・前後の章・ハブ）
+ *   - 受講者向けなので teaching: の内容が混ざっていない
+ */
+function validateStandalone(chapterFiles) {
+  if (!fs.existsSync(STANDALONE)) {
+    console.log('  － output/standalone がありません（npm run build:web:standalone で作れます）')
+    return
+  }
+  const files = fs.readdirSync(STANDALONE).filter((f) => /^ch\d+\.html$/.test(f)).sort()
+  const roadmap = path.join(STANDALONE, 'roadmap.html')
+
+  // 章の抜けを検出する（章を足したら単体版も作り直すこと）
+  for (const f of chapterFiles) {
+    if (!files.includes(f)) err('standalone', `${f} の単体配布版がありません`)
+  }
+
+  const targets = [...files.map((f) => path.join(STANDALONE, f))]
+  if (fs.existsSync(roadmap)) targets.push(roadmap)
+  else err('standalone/roadmap.html', 'ロードマップ単体版がありません')
+
+  for (const file of targets) {
+    const rel = path.relative(ROOT, file)
+    const html = fs.readFileSync(file, 'utf8')
+    // 相互リンクが残っていないか。
+    // 教材が HTML を扱う都合上、コード例にも本文にも href の字面が出る。そこで
+    //   - code-block（テンプレートリテラル）を外す
+    //   - タグの属性として書かれた href / src だけを見る（本文中の「`href="..."`」は拾わない）
+    const markup = stripTemplateLiterals(html)
+    for (const [, attr, url] of markup.matchAll(/<[A-Za-z][^>]*?\s(href|src)="([^"]+)"/g)) {
+      if (/^https?:\/\//.test(url) || url.startsWith('#')) continue
+      err(rel, `他ファイルへの参照が残っています（${attr}）: ${url}`)
+    }
+  }
+
+  // 章の単体版は通常版と同じ構造要件を満たすこと
+  for (const f of files) validateHtml(path.join(STANDALONE, f))
+
+  // 講師用メモの漏れ（受講者に配るファイルなので必須の検査）
+  if (fs.existsSync(MATERIALS_IN)) {
+    for (const y of fs.readdirSync(MATERIALS_IN).filter((f) => /^ch\d+\.ya?ml$/.test(f))) {
+      const t = yaml.load(fs.readFileSync(path.join(MATERIALS_IN, y), 'utf8'))?.teaching
+      if (!t) continue
+      for (const file of targets) {
+        const html = fs.readFileSync(file, 'utf8')
+        for (const key of ['goal', 'watch', 'ask']) {
+          if (t[key] && html.includes(t[key])) {
+            err(path.relative(ROOT, file), `講師用メモが配布用ファイルに漏れています（${y} の teaching.${key}）`)
+          }
+        }
+      }
+    }
+  }
+}
+
 function main() {
   if (!fs.existsSync(MATERIALS)) {
     console.error('output/materials/web がありません。先に node scripts/build-web.mjs を実行してください。')
@@ -326,9 +385,10 @@ function main() {
   const htmlFiles = fs.readdirSync(MATERIALS).filter((f) => /^ch\d+\.html$/.test(f)).sort()
   const csvFiles = fs.readdirSync(QUESTIONS).filter((f) => /^ch\d+-check\.csv$/.test(f)).sort()
 
-  console.log(`[validate-web] 章HTML ${htmlFiles.length} 本 / CSV ${csvFiles.length} 本 / ハブ2種（受講者用・講師用）を検証`)
+  console.log(`[validate-web] 章HTML ${htmlFiles.length} 本 / CSV ${csvFiles.length} 本 / ハブ2種（受講者用・講師用）/ 単体配布版 を検証`)
 
   validateAudienceSeparation(htmlFiles)
+  validateStandalone(htmlFiles)
 
   const quizByChapter = new Map()
   for (const f of htmlFiles) {

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web開発の虎の巻 第8章 - DB連携</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+.prose h3 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; color:#1e3a8a; padding-top:1.5rem; border-top:2px solid #e5e7eb; }
+.prose h3:first-child { margin-top:0.5rem; border-top:none; padding-top:0; }
+.prose p { margin-bottom:1.1rem; line-height:1.9; color:#374151; }
+.prose ul { list-style:disc; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ul li { margin-bottom:0.5rem; color:#374151; }
+.prose ol { list-style:decimal; padding-left:1.5rem; margin-bottom:1.1rem; }
+.prose ol li { margin-bottom:0.5rem; color:#374151; }
+.kv-box  { background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.warn-box{ background:#fff7ed; border-left:4px solid #f97316; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.tip-box { background:#f0fdf4; border-left:4px solid #10b981; padding:1rem 1.25rem; border-radius:0 0.5rem 0.5rem 0; margin:1.75rem 0; line-height:1.8; }
+.ex-box  { background:#faf5ff; border:2px dashed #7c3aed; padding:1.1rem 1.25rem; border-radius:0.75rem; margin:1.75rem 0; }
+.ex-box .ex-title { font-weight:700; color:#5b21b6; margin-bottom:0.75rem; }
+.chk-list { margin:0.5rem 0 1rem; }
+.chk-item { display:flex; gap:0.6rem; padding:0.45rem 0.5rem; font-size:0.875rem; color:#374151; align-items:flex-start; cursor:pointer; border-radius:0.375rem; transition:background 0.15s; }
+.chk-item:hover { background:#fff7ed; }
+.chk-item input { margin-top:0.25rem; width:1rem; height:1rem; accent-color:#f97316; cursor:pointer; flex-shrink:0; }
+.chk-item.done span { color:#9ca3af; text-decoration:line-through; }
+.quiz-option { cursor:pointer; padding:0.5rem 1rem; border:2px solid #e5e7eb; border-radius:0.5rem; margin:0.4rem 0; transition:all 0.2s; }
+.quiz-option:hover { border-color:#3b82f6; background:#eff6ff; }
+.quiz-option.correct { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+.quiz-option.wrong { border-color:#ef4444; background:#fef2f2; color:#991b1b; }
+.tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:9999px; font-size:0.7rem; font-weight:600; }
+.tag-core { background:#dbeafe; color:#1d4ed8; }
+.tag-user { background:#d1fae5; color:#065f46; }
+.code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+.assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
+.assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
+.assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
+.assign-h { font-weight:700; font-size:0.85rem; color:#92400e; margin:0.9rem 0 0.4rem; }
+.assign-steps { list-style:decimal; padding-left:1.5rem; margin-bottom:0.5rem; }
+.assign-steps li { margin-bottom:0.35rem; color:#451a03; }
+.assign-hint { margin-top:0.9rem; font-size:0.85rem; color:#78350f; background:#fffbeb; border-radius:0.5rem; padding:0.6rem 0.8rem; }
+.tbl-wrap { overflow-x:auto; margin:1.5rem 0; border:1px solid #e5e7eb; border-radius:0.5rem; }
+.tbl { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:480px; }
+.tbl-th { background:#1e3a8a; color:#fff; text-align:left; padding:0.6rem 0.8rem; font-weight:600; }
+.tbl-td { border-top:1px solid #e5e7eb; padding:0.6rem 0.8rem; vertical-align:top; color:#374151; }
+.tbl tbody tr:nth-child(even) { background:#f9fafb; }
+@media print { .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const KEYWORDS = [
+  {
+    "term": "3層構成",
+    "desc": "ブラウザ → API → DB。Webアプリの基本形"
+  },
+  {
+    "term": "コネクション",
+    "desc": "プログラムからDBへの接続"
+  },
+  {
+    "term": "commit",
+    "desc": "DBへの変更を確定させる操作。忘れると保存されない"
+  },
+  {
+    "term": "プレースホルダ",
+    "desc": "SQLに値を安全に埋め込む仕組み。? や %s で書く"
+  },
+  {
+    "term": "SQLインジェクション",
+    "desc": "入力値でSQLを改ざんされる攻撃。文字列連結が原因"
+  },
+  {
+    "term": "責務の分離",
+    "desc": "1つのファイル・関数に1つの役割だけを持たせる考え方"
+  },
+  {
+    "term": "環境変数",
+    "desc": "接続情報などをコードの外に出す仕組み"
+  },
+  {
+    "term": "ORM",
+    "desc": "SQLをコードとして書ける道具。型とDBがつながる"
+  }
+];
+
+const QUIZ = [
+  {
+    "q": "Webアプリの3層構成におけるAPIの位置づけはどれか。",
+    "options": [
+      "インターネット回線そのもの",
+      "画面のデザインを決める層",
+      "ブラウザとDBの橋渡しをする",
+      "DBの中に保存されるデータの一種"
+    ],
+    "answer": 2,
+    "explain": "ブラウザ（画面）→API（橋渡し）→DB（保存先）という3層がWebアプリの基本形である。この絵が描ければ全体像を理解できたと言える。"
+  },
+  {
+    "q": "SQLに値を埋め込むとき、プレースホルダ（? など）を使う理由はどれか。",
+    "options": [
+      "データベースの容量を節約するため",
+      "文字列連結よりも実行速度が速くなるため",
+      "SQLの文字数制限を回避するため",
+      "文字列連結だとSQLインジェクションで乗っ取られる危険があるため"
+    ],
+    "answer": 3,
+    "explain": "ユーザー入力を文字列連結でSQLに埋め込むと、入力次第で条件を無意味にされたりテーブルを削除されたりする。入力値は必ずプレースホルダで渡す。"
+  },
+  {
+    "q": "APIをDBに繋いだことで変わる点として正しいものはどれか。",
+    "options": [
+      "JavaScriptを書かなくてよくなる",
+      "通信速度が必ず速くなる",
+      "サーバを再起動してもデータが残るようになる",
+      "CORSの設定が不要になる"
+    ],
+    "answer": 2,
+    "explain": "変数（メモリ）に置いたデータは実行が終われば消える。DBに保存することで初めて「保存した」と言える状態になる。"
+  },
+  {
+    "q": "name の値に  ' OR '1'='1  を入れられたとき、文字列連結で組み立てたSQLはどうなるか。",
+    "options": [
+      "自動でエスケープされ問題は起きない",
+      "条件が常に真になり、全件が返ってしまう",
+      "該当0件として何も返らない",
+      "構文エラーになって安全に停止する"
+    ],
+    "answer": 1,
+    "explain": "入力がSQLの一部として解釈されるため条件が無意味になる。さらに悪意ある入力ではテーブルの削除も可能になる。プレースホルダを使えば値として扱われるため安全。"
+  },
+  {
+    "q": "ORMを使う前に生のSQLを学んでおくべき理由はどれか。",
+    "options": [
+      "ORMは実務では使われないため",
+      "生SQLのほうが記述量が少なくなるため",
+      "ORMは生SQLより動作が遅いため",
+      "詰まったときにORMが出しているSQLを確認して原因を追えるため"
+    ],
+    "answer": 3,
+    "explain": "ORMは便利だが中で何が起きているか分からないまま使うと問題解決ができない。仕組みを理解してから道具を使う順番が大事。"
+  }
+];
+
+// クリックでチェックできるリスト。状態は localStorage に残すので、
+// ページを閉じて開き直しても消えない（章ごと・項目ごとに保存）。
+function CheckList({ items }) {
+  const storeKey = 'cot-check-ch08';
+  const [checked, setChecked] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
+  const toggle = (text) => {
+    const next = { ...checked, [text]: !checked[text] };
+    setChecked(next);
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(next));
+    } catch (e) {
+      /* 保存できなくても表示は動かす */
+    }
+  };
+  return (
+    <div className="chk-list">
+      {items.map((text, i) => (
+        <label key={i} className={"chk-item" + (checked[text] ? ' done' : '')}>
+          <input type="checkbox" checked={!!checked[text]} onChange={() => toggle(text)} />
+          <span>{text}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function KeywordsPanel({ keywords }) {
+  if (!keywords || keywords.length === 0) return null;
+  return (
+    <aside className="w-64 shrink-0 no-print hidden lg:block">
+      <div className="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <p className="font-bold text-sm text-blue-900 mb-3">🔑 重要キーワード</p>
+        {keywords.map((k, i) => (
+          <div key={i} className="mb-3">
+            <p className="text-sm font-semibold text-gray-800">{k.term}</p>
+            <p className="text-xs text-gray-500 leading-relaxed">{k.desc}</p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function Quiz({ items }) {
+  const [answers, setAnswers] = useState({});
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-10 pt-6 border-t-2 border-gray-200">
+      <h3 className="text-lg font-bold text-purple-800 mb-4">📝 確認クイズ</h3>
+      {items.map((item, qi) => {
+        const selected = answers[qi];
+        return (
+          <div key={qi} className="mb-6">
+            <p className="font-semibold text-gray-800 mb-2">Q{qi + 1}. {item.q}</p>
+            {item.options.map((opt, oi) => {
+              let cls = 'quiz-option';
+              if (selected !== undefined) {
+                if (oi === item.answer) cls += ' correct';
+                else if (oi === selected) cls += ' wrong';
+              }
+              return (
+                <div key={oi} className={cls} onClick={() => setAnswers({ ...answers, [qi]: oi })}>{opt}</div>
+              );
+            })}
+            {selected !== undefined && (
+              <p className={"text-sm mt-2 p-3 rounded-lg " + (selected === item.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800')}>
+                {selected === item.answer ? '⭕ 正解！' : '❌ 不正解。'} {item.explain}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Page() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg no-print sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-3">
+          <p className="font-bold flex-1">🐯 Web開発の虎の巻</p>
+          <p className="text-sm text-blue-200">第8章 / 全11章</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto w-full flex-1">
+        <main className="flex-1 p-6 min-w-0">
+          <div className="rounded-2xl p-6 mb-6 text-white shadow-md bg-gradient-to-r from-emerald-700 to-emerald-500">
+            <span className="tag bg-white/20 text-white">第8章 · バックエンド</span>
+            <h1 className="text-2xl font-bold mt-2">🗄️ DB連携</h1>
+            <p className="text-emerald-100 mt-1">サーバからデータを保存する</p>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className="prose">
+                  <div className="kv-box">
+                    <strong>🎯 この章のゴール:</strong> 前章のAPIをDBに繋ぎ、<strong>サーバを再起動しても戦績が残る</strong>状態にする。Webアプリの3層構成を自分の言葉で説明できるようになる。
+                  </div>
+                  <h3>全体像がつながる</h3>
+                  <p>ここまでに作ったものが、いよいよ1本につながります。</p>
+                  <div className="code-block">{`[ブラウザ]          [サーバ]              [DB]
+オセロの画面   →    FastAPI        →    games テーブル
+HTML/CSS/JS   ←    Python         ←    players テーブル
+
+  fetch()          エンドポイント        SQL`}</div>
+                  <p>この3層の絵が描ければ、Webアプリの基本は理解できたと言えます。<strong>APIがブラウザとDBの橋渡しをしている</strong>——これがいちばん大事な理解です。</p>
+                  <div className="kv-box">
+                    <strong>📌 それぞれの持ち場:</strong> <strong>ブラウザ</strong>は「見せる・受け取る」だけ。<strong>API</strong>は「検査する・判断する・取り次ぐ」。<strong>DB</strong>は「正しく保管する」。この分担がはっきりしていると、不具合が起きたときどこを見ればいいかが即座に分かります。逆に、ブラウザに判断を書き、DBに検査を任せる——のように混ざると、途端に手に負えなくなります。
+                  </div>
+                  <h3>PythonからDBに繋ぐ</h3>
+                  <p>まずは生のSQLで動かします。SQLiteなら追加のインストールも要りません（Pythonに最初から入っています）。</p>
+                  <div className="code-block">{`# db.py
+import sqlite3
+
+def get_conn():
+    conn = sqlite3.connect("othello.db")
+    conn.row_factory = sqlite3.Row   # 辞書のように使えるようにする
+    return conn
+
+def init_db():
+    conn = get_conn()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS games (
+          id          INTEGER PRIMARY KEY AUTOINCREMENT,
+          winner      TEXT NOT NULL,
+          black_count INTEGER NOT NULL,
+          white_count INTEGER NOT NULL,
+          played_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()`}</div>
+                  <p>3つ、意味を確認しておきます。</p>
+                  <ul>
+                    <li><strong>`IF NOT EXISTS`</strong> … すでにテーブルがあれば何もしない。起動のたびに呼んでも安全</li>
+                    <li><strong>`row_factory = sqlite3.Row`</strong> … 結果を `row["winner"]` のように名前で取り出せるようにする。これが無いと番号（`row[0]`）でしか取れず、列を足したとき壊れます</li>
+                    <li><strong>`conn.close()`</strong> … 使い終わった接続を閉じる。閉じないと接続が溜まり、いずれ繋がらなくなります</li>
+                  </ul>
+                  <h3>なぜファイルを db.py と main.py に分けるのか</h3>
+                  <p>全部 `main.py` に書いても動きます。それでも分けるのは、<strong>1つのファイルに1つの役割</strong>を持たせるためです。これを責務の分離と呼びます。</p>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">ファイル</th><th className="tbl-th">役割</th><th className="tbl-th">ここに書かないもの</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">db.py</td><td className="tbl-td">DBへの接続とSQL</td><td className="tbl-td">URLの定義・HTTPの話</td></tr>
+                        <tr><td className="tbl-td">main.py</td><td className="tbl-td">エンドポイントの定義</td><td className="tbl-td">SQLの文字列</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>分けておくと、あとで「SQLiteをPostgreSQLに変える」となったとき <strong>`db.py` だけ直せば済みます</strong>。混ざっていると、全ファイルからSQLを探し出すことになります。<strong>コードレビューで最初に見られるのもここ</strong>です。</p>
+                  <h3>APIをDBに繋ぎ替える</h3>
+                  <p>前章では戦績をリスト（メモリ）に入れていました。そこをDBの読み書きに置き換えます。</p>
+                  <div className="code-block">{`# main.py
+from db import get_conn, init_db
+
+init_db()          # 起動時にテーブルを用意しておく
+
+@app.get("/api/games")
+def list_games():
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT * FROM games ORDER BY played_at DESC"
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.post("/api/games")
+def add_game(game: Game):
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO games (winner, black_count, white_count) VALUES (?, ?, ?)",
+        (game.winner, game.black_count, game.white_count),   # ← 値は別で渡す
+    )
+    conn.commit()
+    conn.close()
+    return {"ok": True}`}</div>
+                  <div className="warn-box">
+                    <strong>⚠️ commit を忘れると保存されません:</strong> `INSERT` や `UPDATE` を実行しただけでは、まだ確定していません。<strong>`conn.commit()` を呼んで初めてファイルに書き込まれます</strong>。「エラーは出ないのにデータが入らない」という症状の原因は、ほぼこれです。SELECTには要りません（読むだけなので）。
+                  </div>
+                  <div className="kv-box">
+                    <strong>📌 ここが本章のハイライト:</strong> この状態で<strong>サーバを再起動してから一覧を見てください</strong>。データが残っているはずです。前章までは消えていました。この違いが「保存する」ということです。
+                  </div>
+                  <h3>絶対にやってはいけない書き方</h3>
+                  <p>上のコードで、値を `?` で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、<strong>入力次第でSQLを乗っ取られます</strong>。</p>
+                  <div className="code-block">{`# ❌ 絶対にダメな書き方
+name = 受け取った値
+conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
+
+# もし name に  ' OR '1'='1  が入ったら、実行されるSQLは
+# SELECT * FROM players WHERE name = '' OR '1'='1'
+# → 全件が返ってくる（条件が無意味になる）
+
+# もっと悪いと  '; DROP TABLE games; --  で表ごと消される`}</div>
+                  <div className="code-block">{`# ⭕ 正しい書き方（プレースホルダを使う）
+conn.execute("SELECT * FROM players WHERE name = ?", (name,))`}</div>
+                  <p>なぜこれで防げるのか。<strong>プレースホルダを使うと、DBは「SQLの文」と「値」を別々に受け取ります</strong>。値の中に何が書かれていても、それはただの文字列として扱われ、命令としては解釈されません。文字列連結だと、DBには繋がった1本の文しか届かないので、区別のしようがないのです。</p>
+                  <div className="warn-box">
+                    <strong>⚠️ SQLインジェクション:</strong> これは<strong>実際に起き続けている代表的な攻撃</strong>です。「自分のアプリは小さいから大丈夫」ということはありません。<strong>ユーザーからの入力をSQLに文字列連結しない</strong>——これだけは例外なく守ってください。f文字列（`f\"... &#123;name&#125; ...\"`）で組み立てるのも同じく危険です。
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 一度実際に試してみる:</strong> 学習用の自分のDBで、わざと文字列連結版を書いて `' OR '1'='1` を入れてみてください。<strong>全件返ってくるのを自分の目で見ると、二度と忘れません</strong>。言葉で聞くだけでは身につかない部分です。必ず自分のPC上の練習用DBで行い、他人のシステムには絶対に試さないこと。
+                  </div>
+                  <h3>接続情報をコードに書かない</h3>
+                  <p>SQLiteはファイル名だけですが、PostgreSQLなどに移るとホスト名・ユーザー名・パスワードが必要になります。<strong>これらをコードに直接書いてはいけません</strong>。第4章で学んだとおり、pushした瞬間に公開されます。</p>
+                  <div className="code-block">{`# .env  ← .gitignore に入れる。commitしない
+DATABASE_URL=sqlite:///othello.db`}</div>
+                  <div className="code-block">{`# db.py
+import os
+DB_PATH = os.environ.get("DB_PATH", "othello.db")   # 環境変数から読む`}</div>
+                  <p>こうしておくと、<strong>手元では othello.db、公開先では本番のDB</strong>、とコードを変えずに切り替えられます。次章のデプロイでそのまま効いてきます。</p>
+                  <h3>ORM — SQLをコードで書く</h3>
+                  <p>生SQLで仕組みが分かったら、<strong>ORM</strong>という道具に進めます。SQLをPythonのコードとして書けるようになり、プレースホルダも自動で使われるので安全です。</p>
+                  <div className="code-block">{`# SQLAlchemy を使った例
+games = session.query(Game).order_by(Game.played_at.desc()).all()
+
+session.add(Game(winner="黒", black_count=38, white_count=26))
+session.commit()`}</div>
+                  <div className="tip-box">
+                    <strong>💡 なぜ生SQLを先にやったか:</strong> ORMは便利ですが、<strong>中で何が起きているか分からないまま使うと詰まったとき何もできません</strong>。生SQLを知っていれば「ORMがどんなSQLを出しているか」を確認して原因を追えます。順番が大事です。
+                  </div>
+                  <h3>「もし1万件あったら？」</h3>
+                  <p>いま戦績は数十件でしょう。だから `SELECT * FROM games` で全部取ってきても一瞬です。<strong>でも1万件になったら？</strong> 一覧画面を開くたびに1万行を読み、JSONに変換し、ブラウザに送ることになります。</p>
+                  <div className="code-block">{`-- ❌ 全部取ってきてから、Python側で最初の20件だけ使う
+SELECT * FROM games;
+
+-- ⭕ 必要な分だけDBに取ってこさせる
+SELECT * FROM games ORDER BY played_at DESC LIMIT 20;`}</div>
+                  <div className="kv-box">
+                    <strong>📌 データが増えたときを想像する癖:</strong> いま動いているコードに対して<strong>「もし100倍のデータがあったら、これは動くか」</strong>と自問してみてください。この問いを習慣にできるかどうかが、動くコードを書ける人と、使われるコードを書ける人の分かれ目です。
+                  </div>
+                  <h3>よくあるエラーと対処</h3>
+                  <div className="tbl-wrap">
+                    <table className="tbl">
+                      <thead><tr><th className="tbl-th">症状</th><th className="tbl-th">原因</th><th className="tbl-th">対処</th></tr></thead>
+                      <tbody>
+                        <tr><td className="tbl-td">エラーは無いがデータが入らない</td><td className="tbl-td">commit 忘れ</td><td className="tbl-td">`conn.commit()` を追加</td></tr>
+                        <tr><td className="tbl-td">no such table</td><td className="tbl-td">テーブルが作られていない</td><td className="tbl-td">`init_db()` を起動時に呼ぶ</td></tr>
+                        <tr><td className="tbl-td">no such column</td><td className="tbl-td">列名の食い違い</td><td className="tbl-td">CREATE TABLE の定義と見比べる</td></tr>
+                        <tr><td className="tbl-td">database is locked</td><td className="tbl-td">別のプロセスが掴んでいる</td><td className="tbl-td">DBブラウザを閉じる / close 忘れを直す</td></tr>
+                        <tr><td className="tbl-td">unable to open database file</td><td className="tbl-td">パスが違う</td><td className="tbl-td">サーバを起動した場所からの相対パスを確認</td></tr>
+                        <tr><td className="tbl-td">500 が返る</td><td className="tbl-td">サーバ内でPythonのエラー</td><td className="tbl-td">起動したターミナルのログを読む</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="assign-box">
+                    <p className="assign-title">🛠 課題: 戦績が消えないようにする</p>
+                    <p className="assign-goal">前章のAPIをDBに繋ぎます。<strong>サーバを再起動してもデータが残る</strong>ことを確認するのが、この章のいちばんの成果です。</p>
+                    <p className="assign-h">作るもの</p>
+                    <ol className="assign-steps">
+                      <li>第6章で設計したテーブルを、実際にDBに作る</li>
+                      <li>db.py と main.py にファイルを分ける</li>
+                      <li>GET /api/games を DBのSELECTに置き換える</li>
+                      <li>POST /api/games を DBのINSERTに置き換える</li>
+                      <li>オセロで何回か対戦し、戦績を貯める</li>
+                      <li><strong>サーバを再起動して、データが残っていることを確認する</strong></li>
+                      <li>DBファイルを直接開いて、中のデータを目で見る</li>
+                      <li>余裕があれば、プレイヤー名も保存してJOINで一覧を出す</li>
+                    </ol>
+                    <p className="assign-h">できたと言える条件</p>
+                    <CheckList items={["サーバを再起動しても戦績が消えない","ブラウザ → API → DB の3層を自分で図に描いて説明できる","なぜプレースホルダを使うのか説明できる","実際にDBファイルを開いて、中のデータを確認した","db.py と main.py の役割の違いを説明できる"]} />
+                    <p className="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。第7章で学んだ切り分けが、そのまま使えます。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
+                    <p>一覧APIに<strong>並び順と件数を指定できる</strong>ようにしてみましょう（例: `/api/games?limit=20&amp;order=desc`）。URLの後ろに付ける値をFastAPIでどう受け取るか調べる必要があります。あわせて「limitに100000が渡されたらどうするか」も考えてみてください。<strong>外から来る値には上限を設ける</strong>——これも「ブラウザから来るデータは信用しない」の一例です。</p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 次章への橋渡し:</strong> これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを<strong>誰でもアクセスできる場所に置きます</strong>。
+                  </div>
+                  <h3>チェックリスト</h3>
+                  <CheckList items={["ブラウザ → API → DB の3層を説明できる","それぞれの層が何を担当するか言える","PythonからDBに接続してSQLを実行できる","commit が必要な理由を説明できる","サーバを再起動してもデータが残ることを確認した","db.py と main.py を分ける理由を説明できる","プレースホルダを使う理由を説明できる","SQLインジェクションがどう起きるか説明できる","接続情報をコードに直接書かない理由が分かる"]} />
+                </div>
+                <Quiz items={QUIZ} />
+              </div>
+            </div>
+            <KeywordsPanel keywords={KEYWORDS} />
+          </div>
+
+          <div className="mt-8 text-center text-sm text-gray-500 no-print">
+            <p>この章はここまで。次は第9章「デプロイ」です。</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
+</script>
+</body>
+</html>
