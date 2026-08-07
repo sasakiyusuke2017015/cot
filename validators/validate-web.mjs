@@ -201,8 +201,9 @@ function validateHtml(file) {
     })
   }
 
-  // 画像アセット禁止
-  if (/<img\b/i.test(html)) err(rel, '画像アセット <img> が使われています')
+  // 画像アセット禁止。ただしコード例や表の中で <img> を「解説対象として」書くのは正しいので、
+  // 実際に描画される JSX 部分だけを見る（jsxOnly はテンプレートリテラルを除去済み）。
+  if (/<img\b/i.test(jsxOnly)) err(rel, '画像アセット <img> が使われています')
 
   // Page 関数内 JSX のタグ対応（render 呼び出し以降は JSX ではないので除外）
   const pageStart = jsx.indexOf('function Page()')

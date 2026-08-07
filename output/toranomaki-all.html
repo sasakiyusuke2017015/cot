@@ -131,41 +131,110 @@ details p { margin:.4rem 0; font-size:.88rem; }
     <h2>🏗️ HTML</h2>
     <p class="ch-sub">ページの骨組みを作る</p>
   </div>
-  <details class="teaching"><summary>👤 講師用メモ（2コマ）</summary>
-  <p><strong>ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。</p>
-  <p><strong>つまずき:</strong> 見た目を整えたがるので「それは次章」と切る。閉じタグ忘れは自分で気付かせる。</p>
-  <p><strong>問いかけ:</strong> 「なぜここは div ではなく h1 にした？」</p>
+  <details class="teaching"><summary>👤 講師用メモ（3コマ）</summary>
+  <p><strong>ねらい:</strong> タグで構造を書く感覚をつかませる。見た目の話はまだしない。「なぜこのタグか」を毎回言わせる。</p>
+  <p><strong>つまずき:</strong> 見た目を整えたがるので「それは次章」と切る。閉じタグ忘れ・入れ子の崩れは開発者ツールで自分に気付かせる。div だらけになったら「これは何を表す箱？」と聞く。</p>
+  <p><strong>問いかけ:</strong> 「なぜここは div ではなく h1 にした？このページ、CSSを全部外したら意味が通じる？」</p>
 </details>
   <div class="prose">
-<div class="kv-box"><strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、基本のタグでページの骨組みを作れるようになる。</div>
-<h3>HTMLとは何か</h3>
-<p>HTML（HyperText Markup Language）は、Webページの<strong>構造（骨組み）</strong>を記述する言語です。「ここは見出し」「ここは段落」「ここはリスト」と、内容に意味を与えていきます。色や配置などの見た目は次章のCSSが担当します。</p>
-<h3>要素とタグ</h3>
-<p>HTMLは「要素」の積み重ねでできています。要素は開始タグと終了タグで内容を挟んで書きます。</p>
-<pre class="code-block">&lt;h1&gt;今日の献立&lt;/h1&gt;
-&lt;p&gt;今日はカレーを作ります。&lt;/p&gt;
-&lt;ul&gt;
+<div class="kv-box"><strong>🎯 この章のゴール:</strong> HTMLが「見た目」ではなく「構造」を書く言語だと理解し、意味に合ったタグを選んでページの骨組みを作れるようになる。最終的にオセロの盤面もHTMLで組みます。</div>
+<h3>そもそもWebページとは何でできているか</h3>
+<p>普段見ているWebページは、実は<strong>ただのテキストファイル</strong>です。ブラウザがそのテキストを読んで、解釈して、画面に描いています。魔法は何もありません。</p>
+<p>そのテキストは3種類の役割に分かれています。この分担がWeb開発の土台なので、最初に頭に入れてください。</p>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">言語</th><th class="tbl-th">役割</th><th class="tbl-th">例えるなら</th></tr></thead><tbody><tr><td class="tbl-td">HTML</td><td class="tbl-td">構造（何がどこにあるか）</td><td class="tbl-td">家の骨組み・間取り</td></tr><tr><td class="tbl-td">CSS</td><td class="tbl-td">見た目（どう見えるか）</td><td class="tbl-td">内装・壁紙・家具の配置</td></tr><tr><td class="tbl-td">JavaScript</td><td class="tbl-td">動き（何が起きるか）</td><td class="tbl-td">電気・水道などの設備</td></tr></tbody></table></div>
+<p>この章で扱うのはHTMLだけです。<strong>見た目が地味でも気にしないでください</strong>。骨組みが正しくできていれば、あとから内装はいくらでも変えられます。</p>
+<h3>最小のHTMLファイル</h3>
+<p>まずは動くものを見ます。テキストエディタで次を書いて `index.html` という名前で保存し、ダブルクリックしてブラウザで開いてください。</p>
+<pre class="code-block">&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;はじめてのページ&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;こんにちは&lt;/h1&gt;
+    &lt;p&gt;これが最初のWebページです。&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+<p>表示されましたか。これで<strong>もうWebページを作ったことになります</strong>。順に何を書いたか見ていきます。</p>
+<ul><li><strong>`&lt;!DOCTYPE html&gt;`</strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li><li><strong>`&lt;html lang="ja"&gt;`</strong> … 全体を包む要素。lang="ja" は日本語のページだという情報</li><li><strong>`&lt;head&gt;`</strong> … ページの設定を書く場所。<strong>画面には表示されない</strong></li><li><strong>`&lt;meta charset="UTF-8"&gt;`</strong> … 文字コードの指定。これが無いと日本語が文字化けする</li><li><strong>`&lt;title&gt;`</strong> … ブラウザのタブに出る名前</li><li><strong>`&lt;body&gt;`</strong> … 実際に画面に表示される中身。ここが本体</li></ul>
+<div class="warn-box"><strong>⚠️ 文字化けしたら:</strong> 日本語が「譁�蟄怜喧縺�」のように壊れて見えたら、ほぼ `&lt;meta charset="UTF-8"&gt;` の書き忘れです。ファイル自体の保存形式がUTF-8になっているかも確認してください（VS Codeなら右下に表示されます）。</div>
+<h3>要素とタグ — HTMLの基本単位</h3>
+<p>HTMLは<strong>要素</strong>の積み重ねでできています。要素は「開始タグ」「中身」「終了タグ」の3つで1組です。</p>
+<pre class="code-block">&lt;p&gt;これが段落です。&lt;/p&gt;
+↑            ↑        ↑
+開始タグ     中身     終了タグ（/ が付く）</pre>
+<p>終了タグを忘れると、そこから後ろが全部おかしくなります。慣れるまでは<strong>開始タグを書いたらすぐ終了タグも書いて、後から中身を埋める</strong>やり方が安全です。</p>
+<h3>入れ子（ネスト）— 箱の中に箱を入れる</h3>
+<p>要素の中に別の要素を入れられます。これを入れ子と呼びます。HTMLの構造はすべてこの入れ子でできています。</p>
+<pre class="code-block">&lt;ul&gt;
   &lt;li&gt;じゃがいも&lt;/li&gt;
   &lt;li&gt;にんじん&lt;/li&gt;
   &lt;li&gt;玉ねぎ&lt;/li&gt;
-&lt;/ul&gt;
-&lt;a href="https://example.com"&gt;レシピを見る&lt;/a&gt;</pre>
+&lt;/ul&gt;</pre>
+<div class="warn-box"><strong>⚠️ 閉じる順番は「後に開けたものを先に閉じる」:</strong> 箱を入れ子にするのと同じで、順番を守らないと壊れます。
+
+⭕ 正しい: &lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;
+❌ 誤り:   &lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;
+</div>
+<div class="tip-box"><strong>💡 インデントを付ける:</strong> 入れ子になったら、中の要素は半角スペース2つ分ずらして書きます。<strong>ブラウザの動作には影響しませんが、人間が読むときに構造が一目で分かります</strong>。これは実務でも必ず守られている習慣です。</div>
+<h3>属性 — 要素に情報を足す</h3>
+<p>タグには<strong>属性</strong>という追加情報を書けます。「開始タグの中に、名前=\"値\" の形で書く」と覚えてください。</p>
+<pre class="code-block">&lt;a href="https://example.com"&gt;リンクの文字&lt;/a&gt;
+   ↑    ↑
+   属性名 値（ダブルクォートで囲む）
+
+&lt;img src="cat.jpg" alt="猫の写真"&gt;
+&lt;div id="board" class="game-area"&gt;…&lt;/div&gt;</pre>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">属性</th><th class="tbl-th">使うタグ</th><th class="tbl-th">意味</th></tr></thead><tbody><tr><td class="tbl-td">href</td><td class="tbl-td">a</td><td class="tbl-td">リンク先のURL</td></tr><tr><td class="tbl-td">src</td><td class="tbl-td">img</td><td class="tbl-td">画像ファイルの場所</td></tr><tr><td class="tbl-td">alt</td><td class="tbl-td">img</td><td class="tbl-td">画像が表示できないときの代替文。読み上げにも使われる</td></tr><tr><td class="tbl-td">id</td><td class="tbl-td">どの要素にも</td><td class="tbl-td">その要素だけの名前。<strong>ページ内で重複させない</strong></td></tr><tr><td class="tbl-td">class</td><td class="tbl-td">どの要素にも</td><td class="tbl-td">グループ名。同じclassを複数の要素に付けてよい</td></tr></tbody></table></div>
+<div class="kv-box"><strong>📌 id と class は後で効いてくる:</strong> いまは「名前を付けるもの」という理解で十分です。ただし<strong>次章のCSSと第3章のJavaScriptで多用します</strong>。CSSは「この名前の要素をこう見せる」、JavaScriptは「この名前の要素を操作する」ために使います。ここで名前を付ける習慣をつけておくと後が楽です。</div>
 <h3>まず覚えるタグ</h3>
-<ul><li><strong>h1〜h6</strong> … 見出し（h1が最上位）</li><li><strong>p</strong> … 段落</li><li><strong>ul / ol / li</strong> … リスト（黒丸 / 番号つき）</li><li><strong>a</strong> … リンク（href属性で行き先を指定）</li><li><strong>img</strong> … 画像（src属性でファイルを指定）</li><li><strong>div / span</strong> … 意味を持たないグループ化の入れ物</li></ul>
-<div class="tip-box"><strong>💡 コツ:</strong> ブラウザで右クリック →「検証」（開発者ツール）を開くと、どんなページもHTMLの構造を見られます。好きなサイトの骨組みを覗いてみるのが一番の教材です。</div>
+<p>HTMLのタグは100種類以上ありますが、実際によく使うのは20個程度です。まずは次のものから覚えてください。</p>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">タグ</th><th class="tbl-th">意味</th><th class="tbl-th">補足</th></tr></thead><tbody><tr><td class="tbl-td">h1〜h6</td><td class="tbl-td">見出し</td><td class="tbl-td">h1が最上位。<strong>1ページにh1は1つが基本</strong></td></tr><tr><td class="tbl-td">p</td><td class="tbl-td">段落</td><td class="tbl-td">文章のかたまり</td></tr><tr><td class="tbl-td">ul / li</td><td class="tbl-td">順序なしリスト</td><td class="tbl-td">黒丸のリスト。liはulの中にだけ書く</td></tr><tr><td class="tbl-td">ol / li</td><td class="tbl-td">順序つきリスト</td><td class="tbl-td">番号が振られる</td></tr><tr><td class="tbl-td">a</td><td class="tbl-td">リンク</td><td class="tbl-td">href属性で行き先を指定</td></tr><tr><td class="tbl-td">img</td><td class="tbl-td">画像</td><td class="tbl-td">終了タグが無い（中身を持たないため）</td></tr><tr><td class="tbl-td">table</td><td class="tbl-td">表</td><td class="tbl-td">オセロの盤面にも使える</td></tr><tr><td class="tbl-td">button</td><td class="tbl-td">ボタン</td><td class="tbl-td">押せる要素。JSと組み合わせる</td></tr><tr><td class="tbl-td">input</td><td class="tbl-td">入力欄</td><td class="tbl-td">終了タグが無い</td></tr><tr><td class="tbl-td">div</td><td class="tbl-td">意味を持たない箱</td><td class="tbl-td">グループ化のための入れ物</td></tr><tr><td class="tbl-td">span</td><td class="tbl-td">意味を持たない箱（文中用）</td><td class="tbl-td">文章の一部を囲むとき</td></tr></tbody></table></div>
+<h3>div と span の違い</h3>
+<p>初心者がよく混乱する2つです。役割は同じ「意味を持たない箱」ですが、<strong>表示のされ方</strong>が違います。</p>
+<ul><li><strong>div</strong> … 前後で改行される（縦に積まれる）。<strong>ブロック要素</strong>と呼ぶ</li><li><strong>span</strong> … 改行されず、文章の中に収まる。<strong>インライン要素</strong>と呼ぶ</li></ul>
+<pre class="code-block">&lt;div&gt;これは箱1&lt;/div&gt;
+&lt;div&gt;これは箱2&lt;/div&gt;
+&lt;!-- → 縦に2段で表示される --&gt;
+
+&lt;p&gt;この文の&lt;span&gt;ここだけ&lt;/span&gt;を囲む&lt;/p&gt;
+&lt;!-- → 1行のまま。spanは流れを乱さない --&gt;</pre>
+<h3>「見た目」でタグを選んではいけない</h3>
+<p>ここがこの章でいちばん大事な話です。<strong>「文字を大きくしたいからh1を使う」という選び方をしないでください</strong>。h1は「このページの主題」を表すタグであって、文字を大きくするタグではありません。</p>
+<pre class="code-block">❌ 悪い例（見た目で選んでいる）
+&lt;h1&gt;会社概要&lt;/h1&gt;
+&lt;h1&gt;お問い合わせ&lt;/h1&gt;     ← 大きくしたいから h1 にした
+
+⭕ 良い例（意味で選んでいる）
+&lt;h1&gt;株式会社サンプル&lt;/h1&gt;  ← ページの主題は1つ
+&lt;h2&gt;会社概要&lt;/h2&gt;
+&lt;h2&gt;お問い合わせ&lt;/h2&gt;</pre>
+<p>意味に合ったタグを選ぶことを<strong>セマンティック</strong>なHTMLと言います。なぜ大事かというと、HTMLを読むのは人間の目だけではないからです。</p>
+<ul><li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する</li><li><strong>スクリーンリーダー</strong> … 目の不自由な人が使う読み上げソフト。見出しを辿って移動する</li><li><strong>将来の自分と仲間</strong> … 構造が意味を持っていれば、コードを読むだけで内容が分かる</li></ul>
+<div class="tip-box"><strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。</div>
 <h3>なぜ「構造」と「見た目」を分けるのか</h3>
-<p>HTMLには文字を大きくしたり色を付けたりするタグも一応あります。ですが今はほとんど使いません。<strong>構造と見た目を混ぜると、後から変更するのが地獄になる</strong>からです。</p>
-<p>たとえば「見出しの色を全部変えたい」とき、構造と見た目が分かれていればCSSの1行を直すだけで済みます。混ざっていると、全ページの全見出しを手で直すことになります。この分離の恩恵は次章で実感できます。</p>
+<p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（`&lt;font&gt;` など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
+<p>例えば100ページのサイトで「見出しの色を変えたい」となったとき——構造と見た目が分かれていればCSSの1行を直すだけで全ページに反映されます。混ざっていると、100ページ分の全見出しを手作業で直すことになります。この差は決定的です。</p>
+<h3>開発者ツールを開いてみる</h3>
+<p>ブラウザには、表示中のページのHTMLを見る機能が標準で付いています。<strong>世の中の全Webページが教材になる</strong>ので、必ず使えるようになってください。</p>
+<ol><li>好きなWebページを開く</li><li>気になる部分を右クリック →「検証」（または F12）</li><li>画面が分割され、そのページのHTMLが表示される</li><li>HTMLの行にマウスを乗せると、画面上の対応する場所が光る</li></ol>
+<div class="tip-box"><strong>💡 使い方のコツ:</strong> 「このボタン、どう作られているんだろう」と思ったら右クリック→検証。<strong>プロが書いたHTMLをいくらでも読めます</strong>。最初は複雑で面食らいますが、知っているタグを探すだけでも勉強になります。</div>
+<h3>よくあるエラーと直し方</h3>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">原因</th><th class="tbl-th">直し方</th></tr></thead><tbody><tr><td class="tbl-td">日本語が文字化けする</td><td class="tbl-td">charset の指定漏れ</td><td class="tbl-td">`&lt;meta charset="UTF-8"&gt;` を head に入れる</td></tr><tr><td class="tbl-td">途中から表示が崩れる</td><td class="tbl-td">終了タグの書き忘れ</td><td class="tbl-td">開発者ツールで入れ子を確認する</td></tr><tr><td class="tbl-td">リンクが飛ばない</td><td class="tbl-td">href のスペルミス・クォート忘れ</td><td class="tbl-td">`href="..."` の形になっているか</td></tr><tr><td class="tbl-td">画像が出ない</td><td class="tbl-td">ファイルの場所が違う</td><td class="tbl-td">HTMLファイルから見た相対パスを確認</td></tr><tr><td class="tbl-td">変更が反映されない</td><td class="tbl-td">保存していない / キャッシュ</td><td class="tbl-td">保存して Ctrl+Shift+R で再読み込み</td></tr></tbody></table></div>
+<div class="warn-box"><strong>⚠️ HTMLはエラーで止まらない:</strong> プログラミング言語と違い、HTMLは間違っていても<strong>エラーを出さずに勝手に解釈して表示します</strong>。「なんか崩れてる」だけで原因を教えてくれません。だからこそ開発者ツールで構造を確認する習慣が重要になります。</div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: プロフィールカード（第1段階）</p>
-  <p class="assign-goal">自分のプロフィールカードをHTMLだけで作ります。この課題は第2章・第3章で育てていくので、消さずに取っておいてください。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`profile.html` というファイルを作る</li><li>名前を h1、肩書き（学習中のことなど）を p で書く</li><li>「できること」を ul のリストで3つ以上書く</li><li>好きなサイトへのリンクを a で貼る</li><li>ブラウザで開いて表示を確認する</li></ol>
-  <p class="assign-h">できたと言える条件</p><div class="chk-item">ブラウザで開くと内容が表示される</div><div class="chk-item">開発者ツールで見たとき、意図した入れ子になっている</div><div class="chk-item">なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）</div>
-  <p class="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。</p>
+  <p class="assign-goal">自分のプロフィールカードをHTMLだけで作ります。この課題は第2章・第3章で育てていくので、消さずに取っておいてください。見た目は次章で整えるので、<strong>いまは構造だけに集中</strong>します。</p>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`profile.html` を作り、DOCTYPE から body までの骨組みを書く</li><li>タブに表示される title を自分の名前にする</li><li>名前を h1、肩書き（学習中のことなど）を p で書く</li><li>「できること」を ul のリストで3つ以上書く</li><li>好きなサイトへのリンクを a で貼る（新しいタブで開く方法も調べてみる）</li><li>自己紹介文を p で2〜3段落書く</li><li>各パーツを div で囲み、id か class で名前を付けておく（次章で使う）</li><li>ブラウザで開いて表示を確認し、開発者ツールで構造を見る</li></ol>
+  <p class="assign-h">できたと言える条件</p><div class="chk-item">ブラウザで開くと内容が表示される</div><div class="chk-item">開発者ツールで見たとき、意図した入れ子になっている</div><div class="chk-item">なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）</div><div class="chk-item">文字化けしていない</div><div class="chk-item">h1 が1つだけになっている</div>
+  <p class="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、`a` タグの属性を調べてみてください。</p>
 </div>
-<h3>チェックリスト</h3><div class="chk-item">HTMLの役割は「構造」だと説明できる</div><div class="chk-item">開始タグ・終了タグ・属性の書き方が分かる</div><div class="chk-item">開発者ツールで他のページの構造を見たことがある</div><div class="chk-item">profile.html を作ってブラウザで表示できた</div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>第4章で作るオセロの<strong>盤面だけ</strong>をHTMLで書いてみましょう。8×8のマス目です。table タグを使う方法と、div を並べる方法の2通りが考えられます。どちらが良さそうか考えながら書いてみてください（正解はありません。第2章で見た目を付けるときに違いが分かります）。</p></div>
+<div class="tip-box"><strong>💡 次章への橋渡し:</strong> 骨組みができました。ただ、いまは真っ白で味気ないはずです。次章のCSSで<strong>同じHTMLのまま見た目だけを変えられる</strong>ことを体験します。HTMLを書き直す必要はありません——それが構造と見た目を分ける利点です。</div>
+<h3>チェックリスト</h3><div class="chk-item">HTMLの役割は「構造」だと説明できる</div><div class="chk-item">開始タグ・終了タグ・属性の書き方が分かる</div><div class="chk-item">入れ子を正しい順番で閉じられる</div><div class="chk-item">div と span の違いを説明できる</div><div class="chk-item">見た目ではなく意味でタグを選べる</div><div class="chk-item">開発者ツールで他のページの構造を見たことがある</div><div class="chk-item">profile.html を作ってブラウザで表示できた</div>
   </div>
-  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">HTML</span>Webページの構造（骨組み）を記述する言語</div><div class="kw"><span class="kw-term">タグ</span>要素の始まりと終わりを示す目印。&lt;p&gt;〜&lt;/p&gt; のように書く</div><div class="kw"><span class="kw-term">要素</span>タグで挟まれたページの構成単位。見出し・段落など</div><div class="kw"><span class="kw-term">属性</span>要素に追加する情報。href や src など</div><div class="kw"><span class="kw-term">開発者ツール</span>ブラウザ内蔵の解析ツール。右クリック→検証で開く</div></div>
+  <div class="kw-panel"><p class="kw-title">🔑 重要キーワード</p><div class="kw"><span class="kw-term">HTML</span>Webページの構造（骨組み）を記述する言語</div><div class="kw"><span class="kw-term">タグ</span>要素の始まりと終わりを示す目印。&lt;p&gt;〜&lt;/p&gt; のように書く</div><div class="kw"><span class="kw-term">要素</span>タグで挟まれたページの構成単位。見出し・段落など</div><div class="kw"><span class="kw-term">属性</span>要素に追加する情報。href や src、id、class など</div><div class="kw"><span class="kw-term">入れ子（ネスト）</span>要素の中に要素を入れること。順番通りに閉じる必要がある</div><div class="kw"><span class="kw-term">セマンティック</span>見た目でなく意味でタグを選ぶ考え方</div><div class="kw"><span class="kw-term">開発者ツール</span>ブラウザ内蔵の解析ツール。右クリック→検証で開く</div></div>
   <div class="quiz-wrap"><p class="quiz-title">📝 確認クイズ</p><div class="quiz">
   <p class="quiz-q">Q1. HTMLの役割として最も適切なものはどれか。</p>
   <ul class="quiz-opts"><li>ページの構造（骨組み）を記述する</li><li>ページの見た目を装飾する</li><li>ページに動きをつける</li><li>データベースを操作する</li></ul>
