@@ -62,7 +62,7 @@ const KEYWORDS = [
   },
   {
     "term": "タグ",
-    "desc": "要素の始まりと終わりを示す目印。<p>〜</p> のように書く"
+    "desc": "要素の始まりと終わりを示す目印。\u003Cp>〜\u003C/p> のように書く"
   },
   {
     "term": "要素",
@@ -112,10 +112,10 @@ const QUIZ = [
   {
     "q": "次のうち、入れ子の閉じ方が正しいものはどれか。",
     "options": [
-      "<strong><p>これは大事</strong></p>",
-      "<p>これは<strong>大事です</p>",
-      "<p>これは<strong>大事</p></strong>",
-      "<p>これは<strong>大事</strong>です</p>"
+      "\u003Cstrong>\u003Cp>これは大事\u003C/strong>\u003C/p>",
+      "\u003Cp>これは\u003Cstrong>大事です\u003C/p>",
+      "\u003Cp>これは\u003Cstrong>大事\u003C/p>\u003C/strong>",
+      "\u003Cp>これは\u003Cstrong>大事\u003C/strong>です\u003C/p>"
     ],
     "answer": 3,
     "explain": "入れ子は「後に開けたものを先に閉じる」のが原則。順番が入れ替わると表示が崩れる原因になる。"
@@ -314,13 +314,13 @@ function Page() {
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <title>はじめてのページ</title>
-  </head>
+    <title>はじめてのページ<\/title>
+  <\/head>
   <body>
-    <h1>こんにちは</h1>
-    <p>これが最初のWebページです。</p>
-  </body>
-</html>`}</div>
+    <h1>こんにちは<\/h1>
+    <p>これが最初のWebページです。<\/p>
+  <\/body>
+<\/html>`}</div>
                   <p>表示されましたか。これで<strong>もうWebページを作ったことになります</strong>。順に何を書いたか見ていきます。</p>
                   <ul>
                     <li><strong>`&lt;!DOCTYPE html&gt;`</strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li>
@@ -335,17 +335,17 @@ function Page() {
                   </div>
                   <h3>要素とタグ — HTMLの基本単位</h3>
                   <p>HTMLは<strong>要素</strong>の積み重ねでできています。要素は「開始タグ」「中身」「終了タグ」の3つで1組です。</p>
-                  <div className="code-block">{`<p>これが段落です。</p>
+                  <div className="code-block">{`<p>これが段落です。<\/p>
 ↑            ↑        ↑
 開始タグ     中身     終了タグ（/ が付く）`}</div>
                   <p>終了タグを忘れると、そこから後ろが全部おかしくなります。慣れるまでは<strong>開始タグを書いたらすぐ終了タグも書いて、後から中身を埋める</strong>やり方が安全です。</p>
                   <h3>入れ子（ネスト）— 箱の中に箱を入れる</h3>
                   <p>要素の中に別の要素を入れられます。これを入れ子と呼びます。HTMLの構造はすべてこの入れ子でできています。</p>
                   <div className="code-block">{`<ul>
-  <li>じゃがいも</li>
-  <li>にんじん</li>
-  <li>玉ねぎ</li>
-</ul>`}</div>
+  <li>じゃがいも<\/li>
+  <li>にんじん<\/li>
+  <li>玉ねぎ<\/li>
+<\/ul>`}</div>
                   <div className="warn-box">
                     <strong>⚠️ 閉じる順番は「後に開けたものを先に閉じる」:</strong> 箱を入れ子にするのと同じで、順番を守らないと壊れます。
 
@@ -358,12 +358,12 @@ function Page() {
                   </div>
                   <h3>属性 — 要素に情報を足す</h3>
                   <p>タグには<strong>属性</strong>という追加情報を書けます。「開始タグの中に、名前=\"値\" の形で書く」と覚えてください。</p>
-                  <div className="code-block">{`<a href="https://example.com">リンクの文字</a>
+                  <div className="code-block">{`<a href="https://example.com">リンクの文字<\/a>
    ↑    ↑
    属性名 値（ダブルクォートで囲む）
 
 <img src="cat.jpg" alt="猫の写真">
-<div id="board" class="game-area">…</div>`}</div>
+<div id="board" class="game-area">…<\/div>`}</div>
                   <div className="tbl-wrap">
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">属性</th><th className="tbl-th">使うタグ</th><th className="tbl-th">意味</th></tr></thead>
@@ -405,22 +405,22 @@ function Page() {
                     <li><strong>div</strong> … 前後で改行される（縦に積まれる）。<strong>ブロック要素</strong>と呼ぶ</li>
                     <li><strong>span</strong> … 改行されず、文章の中に収まる。<strong>インライン要素</strong>と呼ぶ</li>
                   </ul>
-                  <div className="code-block">{`<div>これは箱1</div>
-<div>これは箱2</div>
+                  <div className="code-block">{`<div>これは箱1<\/div>
+<div>これは箱2<\/div>
 <!-- → 縦に2段で表示される -->
 
-<p>この文の<span>ここだけ</span>を囲む</p>
+<p>この文の<span>ここだけ<\/span>を囲む<\/p>
 <!-- → 1行のまま。spanは流れを乱さない -->`}</div>
                   <h3>「見た目」でタグを選んではいけない</h3>
                   <p>ここがこの章でいちばん大事な話です。<strong>「文字を大きくしたいからh1を使う」という選び方をしないでください</strong>。h1は「このページの主題」を表すタグであって、文字を大きくするタグではありません。</p>
                   <div className="code-block">{`❌ 悪い例（見た目で選んでいる）
-<h1>会社概要</h1>
-<h1>お問い合わせ</h1>     ← 大きくしたいから h1 にした
+<h1>会社概要<\/h1>
+<h1>お問い合わせ<\/h1>     ← 大きくしたいから h1 にした
 
 ⭕ 良い例（意味で選んでいる）
-<h1>株式会社サンプル</h1>  ← ページの主題は1つ
-<h2>会社概要</h2>
-<h2>お問い合わせ</h2>`}</div>
+<h1>株式会社サンプル<\/h1>  ← ページの主題は1つ
+<h2>会社概要<\/h2>
+<h2>お問い合わせ<\/h2>`}</div>
                   <p>意味に合ったタグを選ぶことを<strong>セマンティック</strong>なHTMLと言います。なぜ大事かというと、HTMLを読むのは人間の目だけではないからです。</p>
                   <ul>
                     <li><strong>検索エンジン</strong> … h1やタグ構造を見てページの内容を理解する。検索結果での見え方が変わる</li>
@@ -429,18 +429,18 @@ function Page() {
                   </ul>
                   <p>3つ目が分かりにくいので、具体例を出します。次の2つは<strong>画面上はまったく同じに見えます</strong>。半年後にこのコードを開いて、どこを直せばいいか分かるのはどちらでしょうか。</p>
                   <div className="code-block">{`❌ 全部 div で書いた場合
-<div class="t1">料金プラン</div>
+<div class="t1">料金プラン<\/div>
 <div class="b1">
-  <div class="t2">無料プラン</div>
-  <div class="x">月0円</div>
-</div>
+  <div class="t2">無料プラン<\/div>
+  <div class="x">月0円<\/div>
+<\/div>
 
 ⭕ 意味のあるタグで書いた場合
-<h2>料金プラン</h2>
+<h2>料金プラン<\/h2>
 <section>
-  <h3>無料プラン</h3>
-  <p>月0円</p>
-</section>`}</div>
+  <h3>無料プラン<\/h3>
+  <p>月0円<\/p>
+<\/section>`}</div>
                   <p>上は `t1` `b1` `x` が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
                   <div className="tip-box">
                     <strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。

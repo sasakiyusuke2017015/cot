@@ -256,9 +256,9 @@ function Page() {
                   <p>HTMLとCSSは「こう表示せよ」と書くものでしたが、JavaScriptは<strong>手順を書く</strong>言語です。ここから本格的なプログラミングが始まります。</p>
                   <h3>まず動かしてみる</h3>
                   <p>`script.js` を作り、HTMLの `&lt;/body&gt;` の直前で読み込みます。<strong>head ではなく body の最後</strong>に置くのがポイントです（HTMLが読み込まれる前にJSが動くと、要素が見つからずエラーになるため）。</p>
-                  <div className="code-block">{`<!-- profile.html の </body> の直前 -->
-  <script src="script.js"></script>
-</body>`}</div>
+                  <div className="code-block">{`<!-- profile.html の <\/body> の直前 -->
+  <script src="script.js"><\/script>
+<\/body>`}</div>
                   <div className="code-block">{`// script.js
 console.log("動いた！");`}</div>
                   <p>ブラウザで開いて <strong>F12 → Console タブ</strong> を見てください。「動いた！」と出ていれば成功です。`console.log()` は画面ではなくコンソールに出力する命令で、<strong>この章を通じて最も使う道具</strong>になります。</p>
