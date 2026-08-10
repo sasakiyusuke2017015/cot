@@ -6,13 +6,32 @@
 //
 // 生徒向けの chNN.html と違い React は使わない（静的な読み物・印刷して使う想定）。
 
-/** `**強調**` を <strong> に。HTML エスケープつき。 */
+/** `**強調**` を <strong>、`` `コード` `` を <code> に。HTML エスケープつき。 */
 function inline(text) {
-  return String(text ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  return code(
+    String(text ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'),
+  )
+}
+
+// 二重形 ``…`` の退避印。本文に絶対現れない制御文字を使う。
+const HOLD = String.fromCharCode(0)
+const HOLD_RE = new RegExp(HOLD + '(\\d+)' + HOLD, 'g')
+
+/**
+ * `コード` を <code> に。
+ * 二重形 ``…`` は中身にバッククォートを含むコードを表すので、先に取り出して退避し、
+ * 単一形の処理が中のバッククォートを食わないようにする（Markdown と同じ挙動）。
+ */
+function code(text) {
+  const held = []
+  return text
+    .replace(/``(.+?)``/g, (_, s) => HOLD + (held.push(s.trim()) - 1) + HOLD)
+    .replace(/`([^`]+?)`/g, '<code>$1</code>')
+    .replace(HOLD_RE, (_, i) => '<code>' + held[Number(i)] + '</code>')
 }
 
 const COLOR = {
@@ -369,6 +388,8 @@ function pageShell({ course, teacher, sections, switchLink = '', titleSuffix, la
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas,Monaco,monospace; font-size:.86em;
+  border-radius:4px; padding:.1em .35em; word-break:break-word; }
 @media print { .no-print { display:none; } a { text-decoration:none; color:inherit; } }
 </style>
 </head>

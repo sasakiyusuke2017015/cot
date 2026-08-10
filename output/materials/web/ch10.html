@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -290,7 +292,7 @@ function add(a: number, b: number): number {
 
 add(1, 2);      // OK
 add('1', '2');  // ← 実行する前にエラーで教えてくれる！`}</div>
-                  <p>関数の `): number` の部分は<strong>戻り値の型</strong>です。「この関数は必ず数値を返す」と宣言しています。書いておくと、うっかり `return` を忘れた場合もエラーで気付けます。</p>
+                  <p>関数の <code>): number</code> の部分は<strong>戻り値の型</strong>です。「この関数は必ず数値を返す」と宣言しています。書いておくと、うっかり <code>return</code> を忘れた場合もエラーで気付けます。</p>
                   <h3>全部に型を書く必要はない</h3>
                   <p>最初は「毎回書くのは面倒」と感じるはずです。実は<strong>書かなくてよい場面が多い</strong>——TypeScriptが自動で推測してくれるからです。これを型推論と呼びます。</p>
                   <div className="code-block">{`let count = 0;          // number だと自動で分かる（書かなくてよい）
@@ -345,22 +347,22 @@ putStone(3, 4, "black");   // OK
 putStone(3, 4, "黒");      // ← エラー。ここで止まる
 putStone(3, 4, "Black");   // ← エラー。大文字違いも止まる`}</div>
                   <div className="kv-box">
-                    <strong>📌 これがTypeScriptのいちばん強い使い方:</strong> `string` にしておくと、あらゆる文字列が通ってしまいます。<strong>取りうる値が決まっているものは、その値だけを型にする</strong>。こうすると、間違った値が入る余地そのものが消えます。手番（`"black" | "white"`）、マスの状態（`0 | 1 | 2`）など、オセロには使える場所がたくさんあります。
+                    <strong>📌 これがTypeScriptのいちばん強い使い方:</strong> <code>string</code> にしておくと、あらゆる文字列が通ってしまいます。<strong>取りうる値が決まっているものは、その値だけを型にする</strong>。こうすると、間違った値が入る余地そのものが消えます。手番（<code>"black" | "white"</code>）、マスの状態（<code>0 | 1 | 2</code>）など、オセロには使える場所がたくさんあります。
                   </div>
                   <h3>any — 使うと全部台無しになる型</h3>
-                  <p>型エラーに困ったとき、`any` を書くと黙ります。<strong>が、これは型チェックを放棄する宣言です</strong>。</p>
+                  <p>型エラーに困ったとき、<code>any</code> を書くと黙ります。<strong>が、これは型チェックを放棄する宣言です</strong>。</p>
                   <div className="code-block">{`let data: any = await res.json();
 data.whatever.anything;      // 何を書いてもエラーにならない（実行時に落ちる）`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ anyで黙らせるのは最後の手段:</strong> エラーが出ると `any` を書きたくなりますが、<strong>それをやると型を入れた意味が消えます</strong>。TypeScriptを入れたのに全部 any、というコードは実務でもよく見かけますが、手間だけ増えて利点がゼロの状態です。まずはエラーメッセージを読んで、正しい型を考えてください。
+                    <strong>⚠️ anyで黙らせるのは最後の手段:</strong> エラーが出ると <code>any</code> を書きたくなりますが、<strong>それをやると型を入れた意味が消えます</strong>。TypeScriptを入れたのに全部 any、というコードは実務でもよく見かけますが、手間だけ増えて利点がゼロの状態です。まずはエラーメッセージを読んで、正しい型を考えてください。
                   </div>
                   <h3>導入と実行</h3>
-                  <p>すでにあるJSファイルを `.ts` に変えるところから始められます。段階的に移せるのがTypeScriptの良いところです。</p>
+                  <p>すでにあるJSファイルを <code>.ts</code> に変えるところから始められます。段階的に移せるのがTypeScriptの良いところです。</p>
                   <div className="code-block">{`npm install -D typescript      # 導入
 npx tsc --init                 # 設定ファイル tsconfig.json を作る
 npx tsc                        # .ts → .js に変換（コンパイル）
 npx tsc --watch                # 保存のたびに自動変換`}</div>
-                  <p>変換して出てきた `.js` をHTMLから読み込みます。<strong>ブラウザはTypeScriptをそのままでは実行できない</strong>ので、この変換が必ず要ります。次章で使うViteのようなツールを入れると、この手順は自動になります。</p>
+                  <p>変換して出てきた <code>.js</code> をHTMLから読み込みます。<strong>ブラウザはTypeScriptをそのままでは実行できない</strong>ので、この変換が必ず要ります。次章で使うViteのようなツールを入れると、この手順は自動になります。</p>
                   <h3>型エラーの読み方</h3>
                   <p>TypeScriptのエラー文は長く見えますが、読むところは<strong>「何が」「どの型と」合わないか</strong>の2点だけです。</p>
                   <div className="code-block">{`Argument of type 'string' is not assignable to parameter of type 'number'.
@@ -402,7 +404,7 @@ Property 'mail' does not exist on type 'User'. Did you mean 'email'?
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
-                    <p>サーバ側（Python）にも型を書いてみましょう。第7章の `class Game(BaseModel)` は、実はPythonの型注釈そのものです。<strong>フロントの interface とサーバの BaseModel が同じ形になっている</strong>ことを確認してみてください。ここが食い違うと422エラーになります。両側の型を合わせておくのが、API開発の基本です。</p>
+                    <p>サーバ側（Python）にも型を書いてみましょう。第7章の <code>class Game(BaseModel)</code> は、実はPythonの型注釈そのものです。<strong>フロントの interface とサーバの BaseModel が同じ形になっている</strong>ことを確認してみてください。ここが食い違うと422エラーになります。両側の型を合わせておくのが、API開発の基本です。</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 次章への橋渡し:</strong> 型でコードが安全になりました。次章のReactでは<strong>画面の作り方そのもの</strong>を変えます。TypeScriptとReactは実務でセットで使われることが多いので、この章をやっておくと次が理解しやすくなります。

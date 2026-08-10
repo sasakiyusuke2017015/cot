@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -272,7 +274,7 @@ HTML/CSS/JS      ？      Python + DB
                   <p>素朴な疑問として「JavaScriptから直接データベースを触れば早いのでは」と思うはずです。<strong>技術的にできなくはないが、絶対にやってはいけない</strong>——理由は3つあります。</p>
                   <ul>
                     <li><strong>接続情報が丸見えになる</strong> … ブラウザに送ったコードは誰でも読めます。DBのパスワードを書けば、全世界に公開したのと同じです</li>
-                    <li><strong>何でもできてしまう</strong> … DBに直接繋げるなら、`DELETE FROM games` を打たれても止められません</li>
+                    <li><strong>何でもできてしまう</strong> … DBに直接繋げるなら、<code>DELETE FROM games</code> を打たれても止められません</li>
                     <li><strong>ルールを置く場所が無くなる</strong> … 「石数は0〜64の範囲」のような検証を、信用できない場所（ブラウザ）でしか行えなくなります</li>
                   </ul>
                   <div className="kv-box">
@@ -305,7 +307,7 @@ HTML/CSS/JS      ？      Python + DB
                   <div className="tip-box">
                     <strong>💡 前章とのつながり:</strong> この4つは、SQLで学んだ <strong>CRUD</strong>（INSERT / SELECT / UPDATE / DELETE）ときれいに対応します。APIは「外から使えるようにしたCRUD」だと考えると分かりやすくなります。
                   </div>
-                  <p>URLに<strong>同じ `/api/games` が2回出てくる</strong>ことに注目してください。URLは「何を扱うか（戦績というデータ）」を表し、メソッドが「それをどうするか」を表します。この分け方が身につくと、API設計で迷わなくなります。</p>
+                  <p>URLに<strong>同じ <code>/api/games</code> が2回出てくる</strong>ことに注目してください。URLは「何を扱うか（戦績というデータ）」を表し、メソッドが「それをどうするか」を表します。この分け方が身につくと、API設計で迷わなくなります。</p>
                   <h3>ステータスコード — 結果は番号で返る</h3>
                   <p>レスポンスには必ず3桁の番号が付きます。<strong>最初の1桁を見れば、誰のせいかが分かります</strong>。</p>
                   <div className="tbl-wrap">
@@ -361,19 +363,19 @@ def list_games():
 def add_game(game: Game):
     games.append(game)
     return {"ok": True, "count": len(games)}`}</div>
-                  <p>`@app.get("/api/games")` の部分が「このURLにGETが来たら、下の関数を動かす」という指定です。関数が返した辞書やリストは、<strong>FastAPIが自動でJSONに変換して</strong>返してくれます。</p>
+                  <p><code>@app.get("/api/games")</code> の部分が「このURLにGETが来たら、下の関数を動かす」という指定です。関数が返した辞書やリストは、<strong>FastAPIが自動でJSONに変換して</strong>返してくれます。</p>
                   <div className="kv-box">
-                    <strong>📌 class Game が検査をしている:</strong> `BaseModel` を継承したクラスは、<strong>受け取るデータの形の宣言</strong>です。`black_count: int` と書いておけば、文字列が送られてきた時点でFastAPIが自動で弾き、<strong>422</strong>を返します。さきほどの「ブラウザから来るデータは信用しない」を、書くだけで実現してくれる仕組みです。
+                    <strong>📌 class Game が検査をしている:</strong> <code>BaseModel</code> を継承したクラスは、<strong>受け取るデータの形の宣言</strong>です。<code>black_count: int</code> と書いておけば、文字列が送られてきた時点でFastAPIが自動で弾き、<strong>422</strong>を返します。さきほどの「ブラウザから来るデータは信用しない」を、書くだけで実現してくれる仕組みです。
                   </div>
                   <div className="code-block">{`uvicorn main:app --reload      # サーバを起動する
 # → http://127.0.0.1:8000 で動く
 # 止めるときは Ctrl + C`}</div>
-                  <p>`127.0.0.1` は「自分のPC」を指す特別なアドレスで、`localhost` と書いても同じです。`:8000` は<strong>ポート番号</strong>——1台のPCの中で複数のサーバを区別するための番号です。すでに使われていると `Address already in use` と出るので、その場合は別の番号にします。</p>
+                  <p><code>127.0.0.1</code> は「自分のPC」を指す特別なアドレスで、<code>localhost</code> と書いても同じです。<code>:8000</code> は<strong>ポート番号</strong>——1台のPCの中で複数のサーバを区別するための番号です。すでに使われていると <code>Address already in use</code> と出るので、その場合は別の番号にします。</p>
                   <div className="kv-box">
-                    <strong>📌 まずは /docs を開くこと:</strong> サーバを起動したら `http://127.0.0.1:8000/docs` を開いてください。<strong>FastAPIが自動で作ったAPIの操作画面</strong>が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に<strong>サーバだけで動作確認できます</strong>。切り分けができるので、詰まったときの強い味方になります。
+                    <strong>📌 まずは /docs を開くこと:</strong> サーバを起動したら <code>http://127.0.0.1:8000/docs</code> を開いてください。<strong>FastAPIが自動で作ったAPIの操作画面</strong>が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に<strong>サーバだけで動作確認できます</strong>。切り分けができるので、詰まったときの強い味方になります。
                   </div>
                   <h3>ブラウザ側から呼ぶ</h3>
-                  <p>サーバが動いたら、オセロの画面から呼びます。JavaScriptの `fetch` を使います。</p>
+                  <p>サーバが動いたら、オセロの画面から呼びます。JavaScriptの <code>fetch</code> を使います。</p>
                   <div className="code-block">{`// 対戦が終わったら結果を送る
 async function saveResult(winner, black, white) {
   const res = await fetch("http://127.0.0.1:8000/api/games", {
@@ -396,8 +398,8 @@ async function loadHistory() {
   return games;
 }`}</div>
                   <h3>async と await — 返事を待つということ</h3>
-                  <p>見慣れない `async` と `await` が出てきました。<strong>通信は時間がかかる</strong>——ここまでの処理と決定的に違う点です。</p>
-                  <p>サーバへのリクエストは、返事が来るまで数十ミリ秒〜数秒かかります。その間ブラウザが固まっては困るので、JavaScriptは「<strong>返事は後で来るので、先に進んでおく</strong>」という動き方をします。`await` は「ここは返事を待ってから次に進む」という指示です。</p>
+                  <p>見慣れない <code>async</code> と <code>await</code> が出てきました。<strong>通信は時間がかかる</strong>——ここまでの処理と決定的に違う点です。</p>
+                  <p>サーバへのリクエストは、返事が来るまで数十ミリ秒〜数秒かかります。その間ブラウザが固まっては困るので、JavaScriptは「<strong>返事は後で来るので、先に進んでおく</strong>」という動き方をします。<code>await</code> は「ここは返事を待ってから次に進む」という指示です。</p>
                   <div className="code-block">{`// ❌ awaitを付け忘れると
 const res = fetch(url);
 console.log(res);        // → Promise { <pending> } と出る（まだ返事が来ていない）
@@ -407,10 +409,10 @@ const res = await fetch(url);
 const data = await res.json();   // json() も時間がかかるので await が要る
 console.log(data);       // → 中身が出る`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ await は async の中でしか書けません:</strong> `await` を使う関数には必ず `async` を付けます。忘れると `await is only valid in async functions` というエラーになります。<strong>「Promise &#123; pending &#125; と表示された」ときは、ほぼ await の付け忘れ</strong>です。この2つはセットだと覚えてください。
+                    <strong>⚠️ await は async の中でしか書けません:</strong> <code>await</code> を使う関数には必ず <code>async</code> を付けます。忘れると <code>await is only valid in async functions</code> というエラーになります。<strong>「Promise &#123; pending &#125; と表示された」ときは、ほぼ await の付け忘れ</strong>です。この2つはセットだと覚えてください。
                   </div>
                   <h3>失敗したときの処理も書く</h3>
-                  <p>通信は失敗します。サーバが落ちている、URLが違う、ネットワークが切れている——どれも普通に起きます。<strong>`fetch` は404や500でもエラーにならない</strong>ので、自分で確認する必要があります。</p>
+                  <p>通信は失敗します。サーバが落ちている、URLが違う、ネットワークが切れている——どれも普通に起きます。<strong><code>fetch</code> は404や500でもエラーにならない</strong>ので、自分で確認する必要があります。</p>
                   <div className="code-block">{`async function loadHistory() {
   try {
     const res = await fetch("http://127.0.0.1:8000/api/games");
@@ -451,7 +453,7 @@ app.add_middleware(
                   <h3>詰まったときの切り分け</h3>
                   <p>うまく動かないとき、<strong>ブラウザ側とサーバ側のどちらで失敗しているか</strong>を先に切り分けます。想像で直そうとすると必ず遠回りになります。</p>
                   <ol>
-                    <li>`/docs` でサーバ単体を試す → ここで失敗するならサーバ側の問題</li>
+                    <li><code>/docs</code> でサーバ単体を試す → ここで失敗するならサーバ側の問題</li>
                     <li>ブラウザの Network タブを開く → リクエストが飛んでいるか確認する</li>
                     <li>飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）</li>
                     <li>サーバを起動したターミナルを見る → Pythonのエラーが出ていないか</li>
@@ -463,8 +465,8 @@ app.add_middleware(
                         <tr><td className="tbl-td">Networkに何も出ない</td><td className="tbl-td">JSがそこまで到達していない。Consoleタブのエラーを見る</td></tr>
                         <tr><td className="tbl-td">CORS policy と出る</td><td className="tbl-td">サーバ側にCORS設定を追加する</td></tr>
                         <tr><td className="tbl-td">Failed to fetch</td><td className="tbl-td">サーバが起動していない / URLやポート番号の間違い</td></tr>
-                        <tr><td className="tbl-td">404</td><td className="tbl-td">URLの綴り。`/api/games` の前後のスラッシュも確認</td></tr>
-                        <tr><td className="tbl-td">422</td><td className="tbl-td">送ったJSONの形。`/docs` の例と見比べる</td></tr>
+                        <tr><td className="tbl-td">404</td><td className="tbl-td">URLの綴り。<code>/api/games</code> の前後のスラッシュも確認</td></tr>
+                        <tr><td className="tbl-td">422</td><td className="tbl-td">送ったJSONの形。<code>/docs</code> の例と見比べる</td></tr>
                         <tr><td className="tbl-td">500</td><td className="tbl-td">サーバのターミナルにPythonのエラーが出ている</td></tr>
                       </tbody>
                     </table>
@@ -475,7 +477,7 @@ app.add_middleware(
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
                       <li>FastAPIを入れ、main.py を作ってサーバを起動する</li>
-                      <li>`/docs` を開き、画面から戦績を1件登録してみる</li>
+                      <li><code>/docs</code> を開き、画面から戦績を1件登録してみる</li>
                       <li>GET /api/games と POST /api/games を作る</li>
                       <li>オセロ側で、対戦が終わったら結果を自動でPOSTする</li>
                       <li>「戦績一覧」ボタンを作り、GETした結果を画面に表示する</li>
@@ -484,11 +486,11 @@ app.add_middleware(
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
                     <CheckList items={["オセロで対戦を終えると、サーバにデータが届く","一覧ボタンで過去の戦績が表示される","Networkタブでリクエストとレスポンスの中身を説明できる","サーバを止めると画面側でどうなるか確認した","404 と 500 を意図的に起こして、違いを見た"]} />
-                    <p className="assign-hint">💡 いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
+                    <p className="assign-hint">💡 いきなりオセロに組み込まず、まず <code>/docs</code> でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
-                    <p>`DELETE /api/games/&#123;id&#125;` を作って、一覧から1件消せるようにしてみましょう。URLの一部（`&#123;id&#125;`）を受け取る書き方を調べる必要があります。あわせて「存在しないidを指定されたら404を返す」処理も入れてみてください。<strong>正常系だけでなく異常系も設計する</strong>という、実務で最も差が出る部分の練習になります。</p>
+                    <p><code>DELETE /api/games/&#123;id&#125;</code> を作って、一覧から1件消せるようにしてみましょう。URLの一部（<code>&#123;id&#125;</code>）を受け取る書き方を調べる必要があります。あわせて「存在しないidを指定されたら404を返す」処理も入れてみてください。<strong>正常系だけでなく異常系も設計する</strong>という、実務で最も差が出る部分の練習になります。</p>
                   </div>
                   <div className="warn-box">
                     <strong>⚠️ まだデータは消えます:</strong> いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。<strong>サーバを再起動すると全部消えます</strong>。次章でDBに繋いで、本当に保存されるようにします。

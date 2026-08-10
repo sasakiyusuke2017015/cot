@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -269,7 +271,7 @@ GitHubへ push
    ↓
 https://あなたのアプリ.vercel.app  ← 世界中からアクセスできる`}</div>
                   <h3>なぜ localhost では駄目なのか</h3>
-                  <p>前章までのオセロは `http://127.0.0.1:8000` で動いていました。この住所は「<strong>自分のPC</strong>」を指しています。同じURLを友達に送っても、相手のPCの中を見に行くだけで、あなたのアプリには繋がりません。</p>
+                  <p>前章までのオセロは <code>http://127.0.0.1:8000</code> で動いていました。この住所は「<strong>自分のPC</strong>」を指しています。同じURLを友達に送っても、相手のPCの中を見に行くだけで、あなたのアプリには繋がりません。</p>
                   <div className="tbl-wrap">
                     <table className="tbl">
                       <thead><tr><th className="tbl-th"></th><th className="tbl-th">localhost</th><th className="tbl-th">デプロイ後</th></tr></thead>
@@ -311,10 +313,10 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
                     <li>Deploy を押す。数分待つとURLが発行される</li>
                   </ol>
                   <div className="tip-box">
-                    <strong>💡 pushしたら自動で反映される:</strong> 一度つなげば、あとは `git push` するだけで公開版が更新されます。<strong>手作業でファイルをアップロードする必要はありません</strong>。「pushしたら数分後に本番が変わる」という感覚を、ここで一度味わっておいてください。
+                    <strong>💡 pushしたら自動で反映される:</strong> 一度つなげば、あとは <code>git push</code> するだけで公開版が更新されます。<strong>手作業でファイルをアップロードする必要はありません</strong>。「pushしたら数分後に本番が変わる」という感覚を、ここで一度味わっておいてください。
                   </div>
                   <h3>環境変数 — 秘密をコードの外に置く</h3>
-                  <p>第8章で `.env` に接続情報を書きました。このファイルは `.gitignore` に入れているので、<strong>GitHubには上がっていません</strong>。ということは、公開先のサーバにも届いていません。</p>
+                  <p>第8章で <code>.env</code> に接続情報を書きました。このファイルは <code>.gitignore</code> に入れているので、<strong>GitHubには上がっていません</strong>。ということは、公開先のサーバにも届いていません。</p>
                   <p>そこで、<strong>ホスティングサービスの管理画面から環境変数を設定します</strong>。多くのサービスに「Environment Variables」という項目があります。</p>
                   <div className="code-block">{`手元（.env ファイル）        公開先（サービスの管理画面）
   DB_PATH=othello.db    →    DB_PATH=/data/othello.db
@@ -348,7 +350,7 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
                     <strong>⚠️ SQLiteファイルが消えることがある:</strong> サービスによっては、<strong>再起動のたびにファイルが初期状態に戻ります</strong>（アプリを動かす場所と、データを残す場所が別になっているため）。手元では消えないのに本番だけ消える、という現象の正体はこれです。対処は、そのサービスが提供する永続ディスクを使うか、<strong>PostgreSQLなどの独立したDBサービスに移す</strong>ことです。第6章で「SQLは製品が変わってもほぼ同じ」と書いたのは、ここで効いてきます。
                   </div>
                   <h3>ログを読む</h3>
-                  <p>本番では `print` の出力が画面に見えません。代わりに、<strong>サービスの管理画面に「Logs」という項目</strong>があります。第7章でターミナルのエラーを読んだのと同じことを、ここで行います。</p>
+                  <p>本番では <code>print</code> の出力が画面に見えません。代わりに、<strong>サービスの管理画面に「Logs」という項目</strong>があります。第7章でターミナルのエラーを読んだのと同じことを、ここで行います。</p>
                   <ol>
                     <li>管理画面の Logs（またはDeploy Logs）を開く</li>
                     <li>デプロイ時のエラーか、実行時のエラーかを見分ける</li>
@@ -383,7 +385,7 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
-                    <p>独自ドメイン（`othello-tanaka.com` のような自分専用のURL）を取って割り当ててみましょう。年間千円台から取得できます。あわせて、<strong>pushしたら自動でテストを走らせてから公開する</strong>仕組み（GitHub Actions など）も調べてみてください。「壊れたコードが本番に出ない」ようにする、実務では当たり前の仕組みです。</p>
+                    <p>独自ドメイン（<code>othello-tanaka.com</code> のような自分専用のURL）を取って割り当ててみましょう。年間千円台から取得できます。あわせて、<strong>pushしたら自動でテストを走らせてから公開する</strong>仕組み（GitHub Actions など）も調べてみてください。「壊れたコードが本番に出ない」ようにする、実務では当たり前の仕組みです。</p>
                   </div>
                   <h3>ここまで来たら</h3>
                   <p>必修範囲はここで終わりです。振り返ると、<strong>HTMLでページを書き、CSSで整え、JavaScriptで動かし、Gitで2人で共同開発し、Pythonでサーバを書き、SQLでデータを設計し、APIで繋ぎ、DBに保存し、世界に公開した</strong>——Webアプリを一通り自分の手で作ったことになります。</p>

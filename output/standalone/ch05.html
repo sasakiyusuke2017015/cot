@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -262,14 +264,14 @@ function Page() {
                     <strong>📌 ここが最初の大きな壁:</strong> ブラウザの中（フロントエンド）とサーバ（バックエンド）は<strong>別の場所で動く別のプログラム</strong>です。この2つがどう繋がるかが分かると、Webアプリの全体像が見えます。焦らず進めてください。
                   </div>
                   <h3>準備 — Pythonを入れて動かす</h3>
-                  <p>公式サイト（`python.org`）からインストーラを落として実行します。<strong>Windowsでは1点だけ必ず守ってください</strong>。</p>
+                  <p>公式サイト（<code>python.org</code>）からインストーラを落として実行します。<strong>Windowsでは1点だけ必ず守ってください</strong>。</p>
                   <div className="warn-box">
-                    <strong>⚠️ Add python.exe to PATH にチェックを入れる:</strong> インストーラの最初の画面の下に、小さくこのチェックボックスがあります。<strong>ここを入れ忘れると、ターミナルで `python` と打っても「見つかりません」になります</strong>。入れ忘れた場合はインストーラをもう一度実行して、Modify から直せます。初心者が最初に詰まる定番の箇所です。
+                    <strong>⚠️ Add python.exe to PATH にチェックを入れる:</strong> インストーラの最初の画面の下に、小さくこのチェックボックスがあります。<strong>ここを入れ忘れると、ターミナルで <code>python</code> と打っても「見つかりません」になります</strong>。入れ忘れた場合はインストーラをもう一度実行して、Modify から直せます。初心者が最初に詰まる定番の箇所です。
                   </div>
                   <div className="code-block">{`python --version        # 3.12.x のように出れば成功
 python hello.py         # ファイルを実行する
 python                  # 対話モード（1行ずつ試せる。exit() で抜ける）`}</div>
-                  <p>動いたら、`hello.py` というファイルを作って1行だけ書いて実行してみてください。<strong>JavaScriptと違って、ブラウザを介さずターミナルで直接動く</strong>——これが「サーバ側の言語」の感触です。</p>
+                  <p>動いたら、<code>hello.py</code> というファイルを作って1行だけ書いて実行してみてください。<strong>JavaScriptと違って、ブラウザを介さずターミナルで直接動く</strong>——これが「サーバ側の言語」の感触です。</p>
                   <div className="code-block">{`print("こんにちは")`}</div>
                   <h3>JavaScriptと比べてみる</h3>
                   <p>まずは同じ処理を並べます。似ている部分が多いことに気付くはずです。</p>
@@ -312,25 +314,25 @@ def greet(who):
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">やりたいこと</th><th className="tbl-th">JavaScript</th><th className="tbl-th">Python</th></tr></thead>
                       <tbody>
-                        <tr><td className="tbl-td">画面に出す</td><td className="tbl-td">`console.log(x)`</td><td className="tbl-td">`print(x)`</td></tr>
-                        <tr><td className="tbl-td">変数</td><td className="tbl-td">`const` / `let`</td><td className="tbl-td">宣言不要。`x = 1` だけ</td></tr>
-                        <tr><td className="tbl-td">真偽値</td><td className="tbl-td">`true` / `false`</td><td className="tbl-td">`True` / `False`（大文字始まり）</td></tr>
-                        <tr><td className="tbl-td">値が無い</td><td className="tbl-td">`null` / `undefined`</td><td className="tbl-td">`None`</td></tr>
-                        <tr><td className="tbl-td">かつ / または / 否定</td><td className="tbl-td">`&amp;&amp;` / `||` / `!`</td><td className="tbl-td">`and` / `or` / `not`</td></tr>
-                        <tr><td className="tbl-td">等しい</td><td className="tbl-td">`===`</td><td className="tbl-td">`==`（Pythonは1種類だけ）</td></tr>
-                        <tr><td className="tbl-td">配列</td><td className="tbl-td">`[1, 2, 3]`</td><td className="tbl-td">リスト。書き方は同じ</td></tr>
-                        <tr><td className="tbl-td">個数</td><td className="tbl-td">`arr.length`</td><td className="tbl-td">`len(arr)`</td></tr>
-                        <tr><td className="tbl-td">末尾に追加</td><td className="tbl-td">`arr.push(x)`</td><td className="tbl-td">`arr.append(x)`</td></tr>
-                        <tr><td className="tbl-td">文字列に値を埋める</td><td className="tbl-td">`` `$&#123;name&#125;さん` ``</td><td className="tbl-td">`f"&#123;name&#125;さん"`</td></tr>
-                        <tr><td className="tbl-td">コメント</td><td className="tbl-td">`// コメント`</td><td className="tbl-td">`# コメント`</td></tr>
+                        <tr><td className="tbl-td">画面に出す</td><td className="tbl-td"><code>console.log(x)</code></td><td className="tbl-td"><code>print(x)</code></td></tr>
+                        <tr><td className="tbl-td">変数</td><td className="tbl-td"><code>const</code> / <code>let</code></td><td className="tbl-td">宣言不要。<code>x = 1</code> だけ</td></tr>
+                        <tr><td className="tbl-td">真偽値</td><td className="tbl-td"><code>true</code> / <code>false</code></td><td className="tbl-td"><code>True</code> / <code>False</code>（大文字始まり）</td></tr>
+                        <tr><td className="tbl-td">値が無い</td><td className="tbl-td"><code>null</code> / <code>undefined</code></td><td className="tbl-td"><code>None</code></td></tr>
+                        <tr><td className="tbl-td">かつ / または / 否定</td><td className="tbl-td"><code>&amp;&amp;</code> / <code>||</code> / <code>!</code></td><td className="tbl-td"><code>and</code> / <code>or</code> / <code>not</code></td></tr>
+                        <tr><td className="tbl-td">等しい</td><td className="tbl-td"><code>===</code></td><td className="tbl-td"><code>==</code>（Pythonは1種類だけ）</td></tr>
+                        <tr><td className="tbl-td">配列</td><td className="tbl-td"><code>[1, 2, 3]</code></td><td className="tbl-td">リスト。書き方は同じ</td></tr>
+                        <tr><td className="tbl-td">個数</td><td className="tbl-td"><code>arr.length</code></td><td className="tbl-td"><code>len(arr)</code></td></tr>
+                        <tr><td className="tbl-td">末尾に追加</td><td className="tbl-td"><code>arr.push(x)</code></td><td className="tbl-td"><code>arr.append(x)</code></td></tr>
+                        <tr><td className="tbl-td">文字列に値を埋める</td><td className="tbl-td"><code>`$&#123;name&#125;さん`</code></td><td className="tbl-td"><code>f"&#123;name&#125;さん"</code></td></tr>
+                        <tr><td className="tbl-td">コメント</td><td className="tbl-td"><code>// コメント</code></td><td className="tbl-td"><code># コメント</code></td></tr>
                       </tbody>
                     </table>
                   </div>
                   <div className="tip-box">
-                    <strong>💡 Trueが大文字なのは地味に効く:</strong> JSの癖で `true` と書くと `NameError` になります。同じく `&amp;&amp;` を書くと構文エラーです。<strong>最初の1週間は必ずやります</strong>。エラーが出たらこの表に戻ってきてください。恥ずかしいことではありません。
+                    <strong>💡 Trueが大文字なのは地味に効く:</strong> JSの癖で <code>true</code> と書くと <code>NameError</code> になります。同じく <code>&amp;&amp;</code> を書くと構文エラーです。<strong>最初の1週間は必ずやります</strong>。エラーが出たらこの表に戻ってきてください。恥ずかしいことではありません。
                   </div>
                   <h3>決定的な違い — インデントがブロックを決める</h3>
-                  <p>JavaScriptは波括弧 `&#123; &#125;` で処理のまとまりを表しますが、<strong>Pythonは行頭の空白（インデント）でそれを表します</strong>。波括弧もセミコロンもありません。</p>
+                  <p>JavaScriptは波括弧 <code>&#123; &#125;</code> で処理のまとまりを表しますが、<strong>Pythonは行頭の空白（インデント）でそれを表します</strong>。波括弧もセミコロンもありません。</p>
                   <div className="code-block">{`def check(n):
     if n > 0:
         print("正の数")
@@ -338,13 +340,13 @@ def greet(who):
     print("この行はif の外（関数の中）")
 print("この行は関数の外")`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ 最初はここで必ず詰まる:</strong> インデントがずれると `IndentationError` というエラーになります。<strong>エラーが出たらまず行頭の空白を疑ってください</strong>。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。
+                    <strong>⚠️ 最初はここで必ず詰まる:</strong> インデントがずれると <code>IndentationError</code> というエラーになります。<strong>エラーが出たらまず行頭の空白を疑ってください</strong>。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。
                   </div>
                   <div className="tip-box">
                     <strong>💡 VS Code の設定を1つだけ:</strong> 画面右下に「スペース: 4」と出ているか確認してください。「タブのサイズ」表示になっていたらクリックして「スペースによるインデント」に変えます。<strong>タブとスペースが混ざったファイルは、見た目が同じでもPythonがエラーを出します</strong>。原因が目に見えないので、最初に設定しておくのが安全です。
                   </div>
                   <h3>繰り返しの書き方</h3>
-                  <p>オセロの盤面は8×8のマスなので、繰り返しを多用します。JSの `for (let i = 0; i &lt; 8; i++)` にあたるのが `range()` です。</p>
+                  <p>オセロの盤面は8×8のマスなので、繰り返しを多用します。JSの <code>for (let i = 0; i &lt; 8; i++)</code> にあたるのが <code>range()</code> です。</p>
                   <div className="code-block">{`for i in range(8):        # 0, 1, 2, ... 7（8は含まない）
     print(i)
 
@@ -364,7 +366,7 @@ count = 0
 while count < 3:
     count = count + 1`}</div>
                   <div className="kv-box">
-                    <strong>📌 range(8) が 0〜7 なのはJSと同じ考え方:</strong> 第3章で「0から数える」を学びました。Pythonも同じです。<strong>`range(8)` は「8個ぶん、0から数える」</strong> という意味なので、8は含まれません。8×8の盤面を全部まわすなら `for row in range(8): for col in range(8):` の二重ループになります。
+                    <strong>📌 range(8) が 0〜7 なのはJSと同じ考え方:</strong> 第3章で「0から数える」を学びました。Pythonも同じです。<strong><code>range(8)</code> は「8個ぶん、0から数える」</strong> という意味なので、8は含まれません。8×8の盤面を全部まわすなら <code>for row in range(8): for col in range(8):</code> の二重ループになります。
                   </div>
                   <h3>リストと辞書</h3>
                   <p>JSの配列がPythonでは<strong>リスト</strong>、JSのオブジェクトが<strong>辞書</strong>にあたります。オセロの盤面や戦績を扱うときに使います。</p>
@@ -388,7 +390,7 @@ records = [
 for r in records:
     print(r["winner"], r["black"], "-", r["white"])`}</div>
                   <h3>2次元リスト — オセロの盤面</h3>
-                  <p>第3章でJavaScriptの2次元配列を扱いました。Pythonでもまったく同じ考え方で書けます。<strong>`board[行][列]`</strong> です。</p>
+                  <p>第3章でJavaScriptの2次元配列を扱いました。Pythonでもまったく同じ考え方で書けます。<strong><code>board[行][列]</code></strong> です。</p>
                   <div className="code-block">{`# 8×8を空（0）で初期化する
 board = [[0] * 8 for _ in range(8)]
 
@@ -403,12 +405,8 @@ MARK = {0: ".", 1: "●", 2: "○"}
 for row in board:
     print(" ".join(MARK[cell] for cell in row))`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ 盤面の作り方でよくある罠:</strong> `board = [[0] * 8] * 8` と書きたくなりますが、<strong>これは動きません</strong>。
-同じ行が8個並んでいるだけなので、1マス変えると8行すべてが変わります。
-
-正しくは `[[0] * 8 for _ in range(8)]` のように、行を8回作ります。
-これはPython特有の落とし穴で、多くの人が一度は踏みます。
-
+                    <strong>⚠️ 盤面の作り方でよくある罠:</strong> <code>board = [[0] * 8] * 8</code> と書きたくなりますが、<strong>これは動きません</strong>。<br />同じ行が8個並んでいるだけなので、1マス変えると8行すべてが変わります。
+                    <p className="mt-2">正しくは <code>[[0] * 8 for _ in range(8)]</code> のように、行を8回作ります。<br />これはPython特有の落とし穴で、多くの人が一度は踏みます。</p>
                   </div>
                   <h3>関数と import</h3>
                   <div className="code-block">{`def count_stones(board, color):
@@ -426,7 +424,7 @@ def greet(name, greeting="こんにちは"):
 
 print(greet("田中"))                  # こんにちは、田中さん
 print(greet("田中", "おはよう"))       # おはよう、田中さん`}</div>
-                  <p>他のファイルやライブラリの機能を使うときは `import` します。次章以降で毎回書くことになります。</p>
+                  <p>他のファイルやライブラリの機能を使うときは <code>import</code> します。次章以降で毎回書くことになります。</p>
                   <div className="code-block">{`import sqlite3                  # 標準で入っているDB用の機能（第8章）
 from fastapi import FastAPI     # ライブラリから一部だけ持ち込む（第7章）
 from othello import count_stones  # 自分で書いた othello.py から持ち込む`}</div>
@@ -442,7 +440,7 @@ pip install fastapi          # ライブラリを入れる（次章で使う）
 pip list                     # 入っているものを確認
 pip freeze > requirements.txt  # 何を入れたかを記録（デプロイで使う）`}</div>
                   <div className="tip-box">
-                    <strong>💡 コツ:</strong> 仮想環境を有効にすると、プロンプトの先頭に `(venv)` と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。<strong>venvフォルダは .gitignore に入れて、commitしないこと。</strong>
+                    <strong>💡 コツ:</strong> 仮想環境を有効にすると、プロンプトの先頭に <code>(venv)</code> と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。<strong>venvフォルダは .gitignore に入れて、commitしないこと。</strong>
                   </div>
                   <h3>よく出るエラーと読み方</h3>
                   <p>Pythonのエラーは<strong>下から読む</strong>のがコツです。一番下の行に「何が起きたか」、その上に「どのファイルの何行目か」が出ます。</p>
@@ -451,11 +449,11 @@ pip freeze > requirements.txt  # 何を入れたかを記録（デプロイで�
                       <thead><tr><th className="tbl-th">エラー</th><th className="tbl-th">意味</th><th className="tbl-th">よくある原因</th></tr></thead>
                       <tbody>
                         <tr><td className="tbl-td">IndentationError</td><td className="tbl-td">インデントがおかしい</td><td className="tbl-td">行頭の空白がずれている / タブとスペースの混在</td></tr>
-                        <tr><td className="tbl-td">NameError</td><td className="tbl-td">その名前が見つからない</td><td className="tbl-td">打ち間違い / JSの癖で `true` と書いた</td></tr>
+                        <tr><td className="tbl-td">NameError</td><td className="tbl-td">その名前が見つからない</td><td className="tbl-td">打ち間違い / JSの癖で <code>true</code> と書いた</td></tr>
                         <tr><td className="tbl-td">TypeError</td><td className="tbl-td">型が合わない</td><td className="tbl-td">数値と文字列を足そうとした</td></tr>
                         <tr><td className="tbl-td">KeyError</td><td className="tbl-td">辞書にそのキーが無い</td><td className="tbl-td">キー名の打ち間違い</td></tr>
-                        <tr><td className="tbl-td">IndexError</td><td className="tbl-td">リストの範囲外</td><td className="tbl-td">`board[8]` のように0から数え忘れた</td></tr>
-                        <tr><td className="tbl-td">ModuleNotFoundError</td><td className="tbl-td">ライブラリが見つからない</td><td className="tbl-td">`pip install` 忘れ / 仮想環境が無効</td></tr>
+                        <tr><td className="tbl-td">IndexError</td><td className="tbl-td">リストの範囲外</td><td className="tbl-td"><code>board[8]</code> のように0から数え忘れた</td></tr>
+                        <tr><td className="tbl-td">ModuleNotFoundError</td><td className="tbl-td">ライブラリが見つからない</td><td className="tbl-td"><code>pip install</code> 忘れ / 仮想環境が無効</td></tr>
                         <tr><td className="tbl-td">SyntaxError</td><td className="tbl-td">文法が壊れている</td><td className="tbl-td">コロン忘れ / 括弧の閉じ忘れ</td></tr>
                       </tbody>
                     </table>
@@ -469,7 +467,7 @@ pip freeze > requirements.txt  # 何を入れたかを記録（デプロイで�
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
                       <li>Pythonを入れ、仮想環境を作って有効化する</li>
-                      <li>`othello.py` を作り、8×8の盤面をリストで表現する</li>
+                      <li><code>othello.py</code> を作り、8×8の盤面をリストで表現する</li>
                       <li>盤面をコンソールに文字で表示する関数を書く</li>
                       <li>石を置いたとき裏返せるかを判定する関数を書く（JSから移植）</li>
                       <li>石の数を数えて勝敗を返す関数を書く</li>
@@ -477,7 +475,7 @@ pip freeze > requirements.txt  # 何を入れたかを記録（デプロイで�
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
                     <CheckList items={["Pythonだけでオセロの盤面が動く（画面は文字表示でよい）","JS版とPython版で、同じ手を打つと同じ結果になる","「JSとPythonで書き方が違った点」を3つ挙げられる","エラーが出たとき、メッセージを読んで自力で直せた"]} />
-                    <p className="assign-hint">💡 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。JS版のコードを横に開いて、1関数ずつ移していくと進めやすくなります。</p>
+                    <p className="assign-hint">💡 画面表示は凝らなくて構いません。<code>print</code> で <code>. ● ○</code> のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。JS版のコードを横に開いて、1関数ずつ移していくと進めやすくなります。</p>
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>

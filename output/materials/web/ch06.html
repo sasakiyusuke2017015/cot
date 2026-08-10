@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -263,8 +265,8 @@ function Page() {
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">やりたいこと</th><th className="tbl-th">ファイルでやると</th><th className="tbl-th">DBなら</th></tr></thead>
                       <tbody>
-                        <tr><td className="tbl-td">直近5件だけ見たい</td><td className="tbl-td">全部読んで並べ替えて切り出す</td><td className="tbl-td">`ORDER BY ... LIMIT 5` の1行</td></tr>
-                        <tr><td className="tbl-td">黒の勝ち数を数えたい</td><td className="tbl-td">全行を読んで自分で数える</td><td className="tbl-td">`COUNT` で一発</td></tr>
+                        <tr><td className="tbl-td">直近5件だけ見たい</td><td className="tbl-td">全部読んで並べ替えて切り出す</td><td className="tbl-td"><code>ORDER BY ... LIMIT 5</code> の1行</td></tr>
+                        <tr><td className="tbl-td">黒の勝ち数を数えたい</td><td className="tbl-td">全行を読んで自分で数える</td><td className="tbl-td"><code>COUNT</code> で一発</td></tr>
                         <tr><td className="tbl-td">2人が同時に書き込む</td><td className="tbl-td">片方の書き込みが消える事故が起きる</td><td className="tbl-td">DBが順番を管理してくれる</td></tr>
                         <tr><td className="tbl-td">数値の列に文字が入る</td><td className="tbl-td">気付かず壊れたまま進む</td><td className="tbl-td">型が合わないと拒否してくれる</td></tr>
                       </tbody>
@@ -283,7 +285,7 @@ function Page() {
                     </table>
                   </div>
                   <div className="tip-box">
-                    <strong>💡 SQLiteの見方:</strong> SQLiteは `othello.db` のような<strong>ただのファイル</strong>です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。<strong>表として目で見られる状態にしておくと、SQLの結果が腹落ちします</strong>。
+                    <strong>💡 SQLiteの見方:</strong> SQLiteは <code>othello.db</code> のような<strong>ただのファイル</strong>です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。<strong>表として目で見られる状態にしておくと、SQLの結果が腹落ちします</strong>。
                   </div>
                   <h3>テーブル = 表</h3>
                   <p>DBの中では、データを<strong>テーブル</strong>という表の形で持ちます。Excelのシートを思い浮かべてください。列（どんな項目か）と行（1件ずつのデータ）でできています。</p>
@@ -333,7 +335,7 @@ function Page() {
                     <li><strong>PRIMARY KEY</strong> … その行を特定する列。重複できない</li>
                     <li><strong>NOT NULL</strong> … 空を許さない</li>
                   </ul>
-                  <p>主キーには<strong>その行だけを指せる値</strong>を入れます。ふつうは連番の `id` で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。</p>
+                  <p>主キーには<strong>その行だけを指せる値</strong>を入れます。ふつうは連番の <code>id</code> で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。</p>
                   <h3>4つの基本操作（CRUD）</h3>
                   <div className="code-block">{`-- Create: 追加する
 INSERT INTO games (winner, black_count, white_count)
@@ -352,10 +354,10 @@ UPDATE games SET winner = '白' WHERE id = 1;
 -- Delete: 消す
 DELETE FROM games WHERE id = 1;`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ WHERE を忘れると全部消える:</strong> `DELETE FROM games;` と書くと<strong>全行が消えます</strong>。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。
+                    <strong>⚠️ WHERE を忘れると全部消える:</strong> <code>DELETE FROM games;</code> と書くと<strong>全行が消えます</strong>。<code>UPDATE</code> も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。
                   </div>
                   <h3>条件の書き方</h3>
-                  <p>WHERE には条件を組み合わせて書けます。JavaScriptの `if` に近い感覚です。</p>
+                  <p>WHERE には条件を組み合わせて書けます。JavaScriptの <code>if</code> に近い感覚です。</p>
                   <div className="code-block">{`WHERE winner = '黒' AND black_count > 40      -- かつ
 WHERE winner = '黒' OR winner = '白'          -- または
 WHERE winner IN ('黒', '白')                  -- 上と同じ意味。こちらが簡潔
@@ -364,7 +366,7 @@ WHERE winner LIKE '黒%'                       -- 「黒」で始まる
 WHERE played_at >= '2026-08-01'               -- 日付で絞る
 WHERE memo IS NULL                            -- 値が入っていない行`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ NULL は `= NULL` では取れません:</strong> 「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、`= NULL` は真にも偽にもなりません。<strong>`IS NULL` / `IS NOT NULL` を使ってください</strong>。ここは初心者が必ず一度は引っかかる箇所です。
+                    <strong>⚠️ NULL は <code>= NULL</code> では取れません:</strong> 「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、<code>= NULL</code> は真にも偽にもなりません。<strong><code>IS NULL</code> / <code>IS NOT NULL</code> を使ってください</strong>。ここは初心者が必ず一度は引っかかる箇所です。
                   </div>
                   <h3>数える・集計する</h3>
                   <p>ランキングを作るには集計が要ります。<strong>「全部取ってきてPythonで数える」より、SQLで数えたほうが圧倒的に速く、コードも短くなります</strong>。</p>
@@ -413,7 +415,7 @@ FROM games g
 JOIN players b ON g.black_player = b.id
 JOIN players w ON g.white_player = w.id
 ORDER BY g.played_at DESC;`}</div>
-                  <p>`FROM games g` の `g` は<strong>別名</strong>です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。`ON` の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。</p>
+                  <p><code>FROM games g</code> の <code>g</code> は<strong>別名</strong>です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。<code>ON</code> の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。</p>
                   <div className="tip-box">
                     <strong>💡 まずは分けずに作ってもいい:</strong> 最初から完璧な設計を目指すと進みません。<strong>1つのテーブルで作ってみて、不便を感じてから分ける</strong>ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。
                   </div>

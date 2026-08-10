@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -288,7 +290,7 @@ othello_最終_田中さん修正版.html      ← どれが最新？`}</div>
                     </table>
                   </div>
                   <h3>準備 — Gitを入れて名前を設定する</h3>
-                  <p>第1章と同じく、ここも一度やれば以降ずっと使う設定です。まず `Git for Windows`（Macなら公式サイトの案内）で検索してインストールしてください。選択肢はすべて既定のままで構いません。</p>
+                  <p>第1章と同じく、ここも一度やれば以降ずっと使う設定です。まず <code>Git for Windows</code>（Macなら公式サイトの案内）で検索してインストールしてください。選択肢はすべて既定のままで構いません。</p>
                   <p>入ったら、VS Codeのターミナル（表示 → ターミナル）で次を実行します。<strong>これは履歴に残る「誰がやったか」の名前</strong>なので、最初に必ず設定します。</p>
                   <div className="code-block">{`git --version                                  # 入ったか確認
 git config --global user.name "Tanaka Taro"    # 履歴に残る名前
@@ -317,7 +319,7 @@ git pull            # GitHubの最新を手元に取り込む`}</div>
 例: 3ファイル直したが、そのうち2つだけ記録したい
   git add index.html style.css   ← この2つだけステージに載せる
   git commit -m "盤面の見た目を整える"`}</div>
-                  <p>つまりステージは「<strong>今回の記録に含めるものを選ぶ場所</strong>」です。慣れるまでは `git add .`（全部載せる）で構いません。ただ「この変更はまだ途中だから含めたくない」というときに、この2段階が効いてきます。</p>
+                  <p>つまりステージは「<strong>今回の記録に含めるものを選ぶ場所</strong>」です。慣れるまでは <code>git add .</code>（全部載せる）で構いません。ただ「この変更はまだ途中だから含めたくない」というときに、この2段階が効いてきます。</p>
                   <h3>実は最初に覚えるべきは status と log</h3>
                   <p>5コマンドより先に使うのがこの2つです。<strong>いま何が起きているかを確認するコマンド</strong>で、迷ったら必ずこれを打ちます。</p>
                   <div className="code-block">{`git status     # いま何が変更されている？何がステージに載っている？
@@ -325,10 +327,10 @@ git log        # これまでの履歴（q キーで抜ける）
 git log --oneline   # 1行ずつ簡潔に
 git diff       # 前回のcommitから何が変わったか`}</div>
                   <div className="tip-box">
-                    <strong>💡 困ったら git status:</strong> Gitで詰まったときの9割は `git status` が答えを持っています。<strong>しかも親切に「次に打つべきコマンド」まで書いてくれます</strong>。エラーが出たら、まず status。これを習慣にしてください。
+                    <strong>💡 困ったら git status:</strong> Gitで詰まったときの9割は <code>git status</code> が答えを持っています。<strong>しかも親切に「次に打つべきコマンド」まで書いてくれます</strong>。エラーが出たら、まず status。これを習慣にしてください。
                   </div>
                   <h3>何を履歴に含めないか — .gitignore</h3>
-                  <p>リポジトリには<strong>入れてはいけないもの</strong>があります。パスワードなどの秘密情報、自動生成されるファイル、巨大なファイルです。これらは `.gitignore` というファイルに書いて除外します。</p>
+                  <p>リポジトリには<strong>入れてはいけないもの</strong>があります。パスワードなどの秘密情報、自動生成されるファイル、巨大なファイルです。これらは <code>.gitignore</code> というファイルに書いて除外します。</p>
                   <div className="code-block">{`# .gitignore  ← この名前でリポジトリの一番上に置く
 
 node_modules/     # 自動で作られる。巨大なので入れない
@@ -348,7 +350,7 @@ venv/             # Pythonの仮想環境（第5章）
                         <tr><td className="tbl-td">修正</td><td className="tbl-td">石が置けないバグを修正</td><td className="tbl-td">何を修正したか分からない</td></tr>
                         <tr><td className="tbl-td">あああ</td><td className="tbl-td">盤面の8×8表示を追加</td><td className="tbl-td">検索しても見つけられない</td></tr>
                         <tr><td className="tbl-td">いろいろ変えた</td><td className="tbl-td">手番の切り替えを実装</td><td className="tbl-td">1コミットに詰め込みすぎている合図</td></tr>
-                        <tr><td className="tbl-td">`WIP`</td><td className="tbl-td">裏返し判定の途中（縦横のみ対応）</td><td className="tbl-td">途中なら何がどこまでか書く</td></tr>
+                        <tr><td className="tbl-td"><code>WIP</code></td><td className="tbl-td">裏返し判定の途中（縦横のみ対応）</td><td className="tbl-td">途中なら何がどこまでか書く</td></tr>
                       </tbody>
                     </table>
                   </div>
@@ -357,7 +359,7 @@ venv/             # Pythonの仮想環境（第5章）
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 練習</p>
-                    <p>まず1人で慣れます。GitHubにリポジトリを作り、前章までのプロフィールカード（HTML・CSS・JSの3ファイル）をpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。そのあと `git log --oneline` で、自分が書いたメッセージが読めるものになっているか眺めてみてください。</p>
+                    <p>まず1人で慣れます。GitHubにリポジトリを作り、前章までのプロフィールカード（HTML・CSS・JSの3ファイル）をpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。そのあと <code>git log --oneline</code> で、自分が書いたメッセージが読めるものになっているか眺めてみてください。</p>
                   </div>
                   <h3>ここからが本番 — 2人で1つのものを作る</h3>
                   <p>ここまでは1人で作ってきました。ここからは<strong>2人で1つのリポジトリを共有して</strong>オセロを作ります。これがこのコース最大の山場であり、いちばん面白いところです。</p>
@@ -397,7 +399,7 @@ venv/             # Pythonの仮想環境（第5章）
                     <strong>📌 「動くもの」を絶やさない:</strong> この順番には理由があります。毎週の終わりに<strong>必ず何かが動いている状態</strong>を保つためです。動くものがあると、次に何をすべきかが自然に見えます。逆に「全部作り終わるまで何も動かない」進め方は、詰まったときにどこが悪いのか切り分けられず、必ず行き詰まります。
                   </div>
                   <h3>2人で回すときの約束ごと</h3>
-                  <p>共同作業では、<strong>作業を始める前に必ず `git pull`</strong> します。相方が先に何かをpushしているかもしれないからです。これを飛ばすと衝突が増えます。</p>
+                  <p>共同作業では、<strong>作業を始める前に必ず <code>git pull</code></strong> します。相方が先に何かをpushしているかもしれないからです。これを飛ばすと衝突が増えます。</p>
                   <div className="code-block">{`# 作業を始めるとき
 git pull                       # まず最新を取り込む
 # …コードを書く…
@@ -428,18 +430,18 @@ git add .
 git commit -m "コンフリクトを解決"
 git push`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ 記号を消し忘れるとコードが壊れます:</strong> `&lt;&lt;&lt;&lt;&lt;&lt;&lt;` や `=======` はGitが入れた目印であって、コードではありません。<strong>消し忘れたままcommitすると確実に動かなくなります</strong>。解決したら必ずブラウザで動作を確認してからpushしてください。
+                    <strong>⚠️ 記号を消し忘れるとコードが壊れます:</strong> <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> や <code>=======</code> はGitが入れた目印であって、コードではありません。<strong>消し忘れたままcommitすると確実に動かなくなります</strong>。解決したら必ずブラウザで動作を確認してからpushしてください。
                   </div>
                   <h3>よくあるエラーと対処</h3>
                   <div className="tbl-wrap">
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">エラー</th><th className="tbl-th">意味</th><th className="tbl-th">対処</th></tr></thead>
                       <tbody>
-                        <tr><td className="tbl-td">not a git repository</td><td className="tbl-td">そのフォルダはGit管理下にない</td><td className="tbl-td">場所が違う。`cd` で移動するか `git init`</td></tr>
-                        <tr><td className="tbl-td">`rejected` / non-fast-forward</td><td className="tbl-td">相方が先にpushしている</td><td className="tbl-td">`git pull` してから push し直す</td></tr>
-                        <tr><td className="tbl-td">Please tell me who you are</td><td className="tbl-td">名前とメールが未設定</td><td className="tbl-td">`git config --global user.name` を設定</td></tr>
+                        <tr><td className="tbl-td">not a git repository</td><td className="tbl-td">そのフォルダはGit管理下にない</td><td className="tbl-td">場所が違う。<code>cd</code> で移動するか <code>git init</code></td></tr>
+                        <tr><td className="tbl-td"><code>rejected</code> / non-fast-forward</td><td className="tbl-td">相方が先にpushしている</td><td className="tbl-td"><code>git pull</code> してから push し直す</td></tr>
+                        <tr><td className="tbl-td">Please tell me who you are</td><td className="tbl-td">名前とメールが未設定</td><td className="tbl-td"><code>git config --global user.name</code> を設定</td></tr>
                         <tr><td className="tbl-td">CONFLICT (content)</td><td className="tbl-td">コンフリクト発生</td><td className="tbl-td">上の手順で解決してcommit</td></tr>
-                        <tr><td className="tbl-td">nothing to commit</td><td className="tbl-td">変更がない、またはaddし忘れ</td><td className="tbl-td">`git status` で確認、`git add` を実行</td></tr>
+                        <tr><td className="tbl-td">nothing to commit</td><td className="tbl-td">変更がない、またはaddし忘れ</td><td className="tbl-td"><code>git status</code> で確認、<code>git add</code> を実行</td></tr>
                         <tr><td className="tbl-td">Support for password authentication was removed</td><td className="tbl-td">パスワード認証が使えない</td><td className="tbl-td">アクセストークンを発行して使う</td></tr>
                       </tbody>
                     </table>
@@ -453,7 +455,7 @@ git push`}</div>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
                       <li>2人で1つのGitHubリポジトリを作り、両方がpushできるようにする（Collaborator に追加）</li>
-                      <li>`.gitignore` を最初に置いておく</li>
+                      <li><code>.gitignore</code> を最初に置いておく</li>
                       <li>2人で話し合ってオセロの機能を洗い出し、Issueとして登録する</li>
                       <li>どれから作るか順番を決め、担当を分ける</li>
                       <li>週ごとに区切って進める。毎回こまめにcommit・pushする</li>
@@ -470,7 +472,7 @@ git push`}</div>
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
-                    <p>`git branch` を試してみましょう。「作業用の枝を作って、そこで開発し、できたら本流に合流させる」やり方です。実務ではこちらが基本になります。2人とも余裕が出てきたら、Pull Request（変更をレビューしてもらってから合流させる仕組み）まで触ってみてください。第4章の時点では必須ではありません。</p>
+                    <p><code>git branch</code> を試してみましょう。「作業用の枝を作って、そこで開発し、できたら本流に合流させる」やり方です。実務ではこちらが基本になります。2人とも余裕が出てきたら、Pull Request（変更をレビューしてもらってから合流させる仕組み）まで触ってみてください。第4章の時点では必須ではありません。</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 次章への橋渡し:</strong> オセロが完成しました。ただ、いまの対戦結果は<strong>ページを閉じれば消えます</strong>。次章からは「戦績を残す」ためにサーバ側の世界へ入っていきます。まずはその言語であるPythonからです。

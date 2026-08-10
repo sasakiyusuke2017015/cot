@@ -2,7 +2,12 @@
 // web（虎の巻）種別の content_blocks → JSX 文字列。
 // lvN 用の render-blocks.mjs とはボックスの体裁が異なる（title と text を同一行に置く等）ため別実装。
 
-/** `**強調**` を <strong> に。HTML 特殊文字は最小限エスケープ（JSX テキストはエンティティを解釈する）。 */
+/**
+ * `**強調**` を <strong>、`` `コード` `` を <code> に。
+ * HTML 特殊文字は最小限エスケープ（JSX テキストはエンティティを解釈する）。
+ * 波括弧は JSX の式展開と衝突するのでエンティティにするが、<code> の中でも
+ * JSX がエンティティを解釈するので `{ }` はそのまま表示される。
+ */
 function inline(text) {
   const esc = String(text ?? '')
     .replaceAll('&', '&amp;')
@@ -10,7 +15,38 @@ function inline(text) {
     .replaceAll('>', '&gt;')
     .replaceAll('{', '&#123;')
     .replaceAll('}', '&#125;')
-  return esc.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  // 段落内の改行は著者が意図した折り返し（対比・箇条）。JSX は生の改行を空白に潰すので <br /> にする。
+  return code(esc.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')).replace(/\n/g, '<br />')
+}
+
+// 二重形 ``…`` の退避印。本文に絶対現れない制御文字を使う。
+const HOLD = String.fromCharCode(0)
+const HOLD_RE = new RegExp(HOLD + '(\\d+)' + HOLD, 'g')
+
+/**
+ * `コード` を <code> に。
+ * 二重形 ``…`` は中身にバッククォートを含むコードを表すので、先に取り出して退避し、
+ * 単一形の処理が中のバッククォートを食わないようにする（Markdown と同じ挙動）。
+ */
+function code(text) {
+  const held = []
+  return text
+    .replace(/``(.+?)``/g, (_, s) => HOLD + (held.push(s.trim()) - 1) + HOLD)
+    .replace(/`([^`]+?)`/g, '<code>$1</code>')
+    .replace(HOLD_RE, (_, i) => '<code>' + held[Number(i)] + '</code>')
+}
+
+/**
+ * CheckList の項目は JS の文字列として渡り `{text}` で描画されるため、マークアップを持てない。
+ * `**強調**` と `` `コード` `` の記号だけ落として素のテキストにする。
+ */
+function plain(text) {
+  return String(text ?? '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/``(.+?)``/g, '$1')
+    .replace(/`([^`]+?)`/g, '$1')
+    .replace(/\s*\n\s*/g, ' ')
+    .trim()
 }
 
 /** JS テンプレートリテラルに安全に埋め込めるようエスケープ。 */
@@ -38,8 +74,14 @@ function renderList(b, tag) {
 
 // kv-box / warn-box / tip-box: <strong>タイトル</strong> 本文 を同一行に。
 // タイトルの絵文字は YAML 側に書く（renderer は付けない）。
+// 本文が複数段落なら 2 段落目以降を <p> で続ける（JSX は生の改行を空白に潰すため）。
 function renderBox(b, cls) {
-  return `${P}<div className="${cls}">\n${P}  <strong>${inline(b.title)}</strong> ${inline(b.text)}\n${P}</div>`
+  const [first, ...rest] = String(b.text ?? '')
+    .split(/\n\s*\n/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const tail = rest.map((s) => `\n${P}  <p className="mt-2">${inline(s)}</p>`).join('')
+  return `${P}<div className="${cls}">\n${P}  <strong>${inline(b.title)}</strong> ${inline(first ?? '')}${tail}\n${P}</div>`
 }
 
 function renderExBox(b) {
@@ -48,7 +90,7 @@ function renderExBox(b) {
 
 // checklist: <h3>チェックリスト</h3> + クリックで実際にチェックできるリスト
 function renderChecklist(b) {
-  const items = JSON.stringify(b.items ?? [])
+  const items = JSON.stringify((b.items ?? []).map(plain))
   return `${P}<h3>${inline(b.title ?? 'チェックリスト')}</h3>\n${P}<CheckList items={${items}} />`
 }
 
@@ -66,7 +108,7 @@ function renderAssignment(b) {
     .map((s, i) => `${P}    <li>${inline(s)}</li>`)
     .join('\n')
   const done = (b.done ?? []).length
-    ? `${P}  <p className="assign-h">できたと言える条件</p>\n${P}  <CheckList items={${JSON.stringify(b.done)}} />`
+    ? `${P}  <p className="assign-h">できたと言える条件</p>\n${P}  <CheckList items={${JSON.stringify(b.done.map(plain))}} />`
     : ''
   return `${P}<div className="assign-box">
 ${P}  <p className="assign-title">🛠 課題: ${inline(b.title)}</p>

@@ -49,6 +49,9 @@ header.top p { margin:0; opacity:.95; font-size:.9rem; }
 .chk-item::before { content:"☐"; color:#f97316; flex:none; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas,Monaco,monospace; font-size:.8rem;
   line-height:1.65; border-radius:8px; padding:12px 14px; overflow-x:auto; margin:1.1rem 0; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas,Monaco,monospace; font-size:.86em;
+  border-radius:4px; padding:.1em .35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:10px; padding:14px 16px; margin:1.6rem 0; }
 .assign-title { font-weight:700; font-size:1rem; color:#92400e; margin:0 0 .4rem; }
 .assign-goal { color:#78350f; margin:0 0 .7rem; }
@@ -142,7 +145,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
 <p>本題に入る前に、開発に使う道具を用意します。<strong>ここは一度やれば以降ずっと使うもの</strong>なので、面倒でも最初にきちんと整えてください。必要なのは「エディタ」と「ブラウザ」の2つだけです。</p>
 <h3>① VS Code を入れる</h3>
 <p>コードを書くための専用エディタです。メモ帳でも書けますが、色分け・入力補完・エラー表示があるかどうかで学習効率がまるで変わります。<strong>現場で最も使われているエディタ</strong>でもあります。</p>
-<ol><li>`Visual Studio Code` で検索し、公式サイトからダウンロードする（無料）</li><li>インストーラを実行する。選択肢はすべて既定のままでよい</li><li>起動して、真っ黒な画面が出れば成功</li></ol>
+<ol><li><code>Visual Studio Code</code> で検索し、公式サイトからダウンロードする（無料）</li><li>インストーラを実行する。選択肢はすべて既定のままでよい</li><li>起動して、真っ黒な画面が出れば成功</li></ol>
 <p>起動したら、<strong>拡張機能</strong>を入れます。左側の四角が4つ並んだアイコン（Extensions）をクリックし、名前で検索してインストールしてください。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">拡張機能</th><th class="tbl-th">何ができるか</th><th class="tbl-th">必須度</th></tr></thead><tbody><tr><td class="tbl-td">Japanese Language Pack</td><td class="tbl-td">VS Code のメニューが日本語になる</td><td class="tbl-td">好みで</td></tr><tr><td class="tbl-td">Live Server</td><td class="tbl-td"><strong>保存すると自動でブラウザが更新される</strong></td><td class="tbl-td">ほぼ必須</td></tr><tr><td class="tbl-td">HTML CSS Support</td><td class="tbl-td">HTMLの中でCSSクラス名を補完してくれる</td><td class="tbl-td">あると楽</td></tr></tbody></table></div>
 <div class="kv-box"><strong>📌 Live Server がいちばん効く:</strong> これを入れると、HTMLファイルを右クリック →「Open with Live Server」で開けます。<strong>以降はファイルを保存するだけでブラウザが自動更新される</strong>ので、「保存 → ブラウザに切り替え → 再読み込み」の繰り返しが不要になります。地味ですが学習速度がかなり変わります。</div>
@@ -153,11 +156,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
   ├─ style.css             ← 第2章で追加
   └─ script.js             ← 第3章で追加</pre>
 <p>フォルダを作ったら、VS Code の「ファイル → フォルダーを開く」でそのフォルダを開いてください。左側にファイル一覧が出れば準備完了です。</p>
-<div class="warn-box"><strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると
-<strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。
-
-エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。
-</div>
+<div class="warn-box"><strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると<br><strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。<p class="mt-2">エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。</p></div>
 <h3>③ ブラウザと開発者ツール</h3>
 <p>ブラウザは <strong>Chrome か Edge</strong> を使ってください。どちらも同じ仕組みで動いており、開発者向けの機能が充実しています。</p>
 <p>準備できたら、いま見ているこのページで <strong>F12キー</strong> を押してみてください。画面が分割されて、コードのようなものが出れば成功です。これが<strong>開発者ツール</strong>で、この先ずっと使います（詳しい使い方はこの章の後半で説明します）。</p>
@@ -168,7 +167,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">言語</th><th class="tbl-th">役割</th><th class="tbl-th">例えるなら</th></tr></thead><tbody><tr><td class="tbl-td">HTML</td><td class="tbl-td">構造（何がどこにあるか）</td><td class="tbl-td">家の骨組み・間取り</td></tr><tr><td class="tbl-td">CSS</td><td class="tbl-td">見た目（どう見えるか）</td><td class="tbl-td">内装・壁紙・家具の配置</td></tr><tr><td class="tbl-td">JavaScript</td><td class="tbl-td">動き（何が起きるか）</td><td class="tbl-td">電気・水道などの設備</td></tr></tbody></table></div>
 <p>この章で扱うのはHTMLだけです。<strong>見た目が地味でも気にしないでください</strong>。骨組みが正しくできていれば、あとから内装はいくらでも変えられます。</p>
 <h3>最小のHTMLファイル</h3>
-<p>まずは動くものを見ます。テキストエディタで次を書いて `index.html` という名前で保存し、ダブルクリックしてブラウザで開いてください。</p>
+<p>まずは動くものを見ます。テキストエディタで次を書いて <code>index.html</code> という名前で保存し、ダブルクリックしてブラウザで開いてください。</p>
 <pre class="code-block">&lt;!DOCTYPE html&gt;
 &lt;html lang="ja"&gt;
   &lt;head&gt;
@@ -181,8 +180,8 @@ details p { margin:.4rem 0; font-size:.88rem; }
   &lt;/body&gt;
 &lt;/html&gt;</pre>
 <p>表示されましたか。これで<strong>もうWebページを作ったことになります</strong>。順に何を書いたか見ていきます。</p>
-<ul><li><strong>`&lt;!DOCTYPE html&gt;`</strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li><li><strong>`&lt;html lang="ja"&gt;`</strong> … 全体を包む要素。lang="ja" は日本語のページだという情報</li><li><strong>`&lt;head&gt;`</strong> … ページの設定を書く場所。<strong>画面には表示されない</strong></li><li><strong>`&lt;meta charset="UTF-8"&gt;`</strong> … 文字コードの指定。これが無いと日本語が文字化けする</li><li><strong>`&lt;title&gt;`</strong> … ブラウザのタブに出る名前</li><li><strong>`&lt;body&gt;`</strong> … 実際に画面に表示される中身。ここが本体</li></ul>
-<div class="warn-box"><strong>⚠️ 文字化けしたら:</strong> 日本語が「譁�蟄怜喧縺�」のように壊れて見えたら、ほぼ `&lt;meta charset="UTF-8"&gt;` の書き忘れです。ファイル自体の保存形式がUTF-8になっているかも確認してください（VS Codeなら右下に表示されます）。</div>
+<ul><li><strong><code>&lt;!DOCTYPE html&gt;</code></strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li><li><strong><code>&lt;html lang="ja"&gt;</code></strong> … 全体を包む要素。lang="ja" は日本語のページだという情報</li><li><strong><code>&lt;head&gt;</code></strong> … ページの設定を書く場所。<strong>画面には表示されない</strong></li><li><strong><code>&lt;meta charset="UTF-8"&gt;</code></strong> … 文字コードの指定。これが無いと日本語が文字化けする</li><li><strong><code>&lt;title&gt;</code></strong> … ブラウザのタブに出る名前</li><li><strong><code>&lt;body&gt;</code></strong> … 実際に画面に表示される中身。ここが本体</li></ul>
+<div class="warn-box"><strong>⚠️ 文字化けしたら:</strong> 日本語が「譁�蟄怜喧縺�」のように壊れて見えたら、ほぼ <code>&lt;meta charset="UTF-8"&gt;</code> の書き忘れです。ファイル自体の保存形式がUTF-8になっているかも確認してください（VS Codeなら右下に表示されます）。</div>
 <h3>要素とタグ — HTMLの基本単位</h3>
 <p>HTMLは<strong>要素</strong>の積み重ねでできています。要素は「開始タグ」「中身」「終了タグ」の3つで1組です。</p>
 <pre class="code-block">&lt;p&gt;これが段落です。&lt;/p&gt;
@@ -196,11 +195,7 @@ details p { margin:.4rem 0; font-size:.88rem; }
   &lt;li&gt;にんじん&lt;/li&gt;
   &lt;li&gt;玉ねぎ&lt;/li&gt;
 &lt;/ul&gt;</pre>
-<div class="warn-box"><strong>⚠️ 閉じる順番は「後に開けたものを先に閉じる」:</strong> 箱を入れ子にするのと同じで、順番を守らないと壊れます。
-
-⭕ 正しい: &lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;
-❌ 誤り:   &lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;
-</div>
+<div class="warn-box"><strong>⚠️ 閉じる順番は「後に開けたものを先に閉じる」:</strong> 箱を入れ子にするのと同じで、順番を守らないと壊れます。<p class="mt-2">⭕ 正しい: &lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;<br>❌ 誤り:   &lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;</p></div>
 <div class="tip-box"><strong>💡 インデントを付ける:</strong> 入れ子になったら、中の要素は半角スペース2つ分ずらして書きます。<strong>ブラウザの動作には影響しませんが、人間が読むときに構造が一目で分かります</strong>。これは実務でも必ず守られている習慣です。</div>
 <h3>属性 — 要素に情報を足す</h3>
 <p>タグには<strong>属性</strong>という追加情報を書けます。「開始タグの中に、名前=\"値\" の形で書く」と覚えてください。</p>
@@ -250,24 +245,24 @@ details p { margin:.4rem 0; font-size:.88rem; }
   &lt;h3&gt;無料プラン&lt;/h3&gt;
   &lt;p&gt;月0円&lt;/p&gt;
 &lt;/section&gt;</pre>
-<p>上は `t1` `b1` `x` が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
+<p>上は <code>t1</code> <code>b1</code> <code>x</code> が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
 <div class="tip-box"><strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。</div>
 <h3>なぜ「構造」と「見た目」を分けるのか</h3>
-<p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（`&lt;font&gt;` など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
+<p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（<code>&lt;font&gt;</code> など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
 <p>例えば100ページのサイトで「見出しの色を変えたい」となったとき——構造と見た目が分かれていればCSSの1行を直すだけで全ページに反映されます。混ざっていると、100ページ分の全見出しを手作業で直すことになります。この差は決定的です。</p>
 <h3>開発者ツールを開いてみる</h3>
 <p>ブラウザには、表示中のページのHTMLを見る機能が標準で付いています。<strong>世の中の全Webページが教材になる</strong>ので、必ず使えるようになってください。</p>
 <ol><li>好きなWebページを開く</li><li>気になる部分を右クリック →「検証」（または F12）</li><li>画面が分割され、そのページのHTMLが表示される</li><li>HTMLの行にマウスを乗せると、画面上の対応する場所が光る</li></ol>
 <div class="tip-box"><strong>💡 使い方のコツ:</strong> 「このボタン、どう作られているんだろう」と思ったら右クリック→検証。<strong>プロが書いたHTMLをいくらでも読めます</strong>。最初は複雑で面食らいますが、知っているタグを探すだけでも勉強になります。</div>
 <h3>よくあるエラーと直し方</h3>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">原因</th><th class="tbl-th">直し方</th></tr></thead><tbody><tr><td class="tbl-td">日本語が文字化けする</td><td class="tbl-td">charset の指定漏れ</td><td class="tbl-td">`&lt;meta charset="UTF-8"&gt;` を head に入れる</td></tr><tr><td class="tbl-td">途中から表示が崩れる</td><td class="tbl-td">終了タグの書き忘れ</td><td class="tbl-td">開発者ツールで入れ子を確認する</td></tr><tr><td class="tbl-td">リンクが飛ばない</td><td class="tbl-td">href のスペルミス・クォート忘れ</td><td class="tbl-td">`href="..."` の形になっているか</td></tr><tr><td class="tbl-td">画像が出ない</td><td class="tbl-td">ファイルの場所が違う</td><td class="tbl-td">HTMLファイルから見た相対パスを確認</td></tr><tr><td class="tbl-td">変更が反映されない</td><td class="tbl-td">保存していない / キャッシュ</td><td class="tbl-td">保存して Ctrl+Shift+R で再読み込み</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">原因</th><th class="tbl-th">直し方</th></tr></thead><tbody><tr><td class="tbl-td">日本語が文字化けする</td><td class="tbl-td">charset の指定漏れ</td><td class="tbl-td"><code>&lt;meta charset="UTF-8"&gt;</code> を head に入れる</td></tr><tr><td class="tbl-td">途中から表示が崩れる</td><td class="tbl-td">終了タグの書き忘れ</td><td class="tbl-td">開発者ツールで入れ子を確認する</td></tr><tr><td class="tbl-td">リンクが飛ばない</td><td class="tbl-td">href のスペルミス・クォート忘れ</td><td class="tbl-td"><code>href="..."</code> の形になっているか</td></tr><tr><td class="tbl-td">画像が出ない</td><td class="tbl-td">ファイルの場所が違う</td><td class="tbl-td">HTMLファイルから見た相対パスを確認</td></tr><tr><td class="tbl-td">変更が反映されない</td><td class="tbl-td">保存していない / キャッシュ</td><td class="tbl-td">保存して Ctrl+Shift+R で再読み込み</td></tr></tbody></table></div>
 <div class="warn-box"><strong>⚠️ HTMLはエラーで止まらない:</strong> プログラミング言語と違い、HTMLは間違っていても<strong>エラーを出さずに勝手に解釈して表示します</strong>。「なんか崩れてる」だけで原因を教えてくれません。だからこそ開発者ツールで構造を確認する習慣が重要になります。</div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: プロフィールカード（第1段階）</p>
   <p class="assign-goal">自分のプロフィールカードをHTMLだけで作ります。この課題は第2章・第3章で育てていくので、消さずに取っておいてください。見た目は次章で整えるので、<strong>いまは構造だけに集中</strong>します。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`profile.html` を作り、DOCTYPE から body までの骨組みを書く</li><li>タブに表示される title を自分の名前にする</li><li>名前を h1、肩書き（学習中のことなど）を p で書く</li><li>「できること」を ul のリストで3つ以上書く</li><li>好きなサイトへのリンクを a で貼る（新しいタブで開く方法も調べてみる）</li><li>自己紹介文を p で2〜3段落書く</li><li>各パーツを div で囲み、id か class で名前を付けておく（次章で使う）</li><li>ブラウザで開いて表示を確認し、開発者ツールで構造を見る</li></ol>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li><code>profile.html</code> を作り、DOCTYPE から body までの骨組みを書く</li><li>タブに表示される title を自分の名前にする</li><li>名前を h1、肩書き（学習中のことなど）を p で書く</li><li>「できること」を ul のリストで3つ以上書く</li><li>好きなサイトへのリンクを a で貼る（新しいタブで開く方法も調べてみる）</li><li>自己紹介文を p で2〜3段落書く</li><li>各パーツを div で囲み、id か class で名前を付けておく（次章で使う）</li><li>ブラウザで開いて表示を確認し、開発者ツールで構造を見る</li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">ブラウザで開くと内容が表示される</div><div class="chk-item">開発者ツールで見たとき、意図した入れ子になっている</div><div class="chk-item">なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）</div><div class="chk-item">文字化けしていない</div><div class="chk-item">h1 が1つだけになっている</div>
-  <p class="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、`a` タグの属性を調べてみてください。</p>
+  <p class="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、<code>a</code> タグの属性を調べてみてください。</p>
 </div>
 <div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>第4章で作るオセロの<strong>盤面だけ</strong>をHTMLで書いてみましょう。8×8のマス目です。table タグを使う方法と、div を並べる方法の2通りが考えられます。どちらが良さそうか考えながら書いてみてください（正解はありません。第2章で見た目を付けるときに違いが分かります）。</p></div>
 <div class="tip-box"><strong>💡 次章への橋渡し:</strong> 骨組みができました。ただ、いまは真っ白で味気ないはずです。次章のCSSで<strong>同じHTMLのまま見た目だけを変えられる</strong>ことを体験します。HTMLを書き直す必要はありません——それが構造と見た目を分ける利点です。</div>
@@ -341,9 +336,9 @@ h1 {
   color: #1e3a8a;      /* 文字色を紺色に */
   font-size: 2rem;     /* 文字の大きさを2倍に */
 }</pre>
-<ul><li><strong>セレクタ</strong> … どの要素に当てるか（h1、.card など）</li><li><strong>プロパティ</strong> … 何を変えるか（color、font-size など）</li><li><strong>値</strong> … どうするか（#1e3a8a、2rem など）</li><li>行の終わりには必ず<strong>セミコロン `;`</strong> を付ける</li><li>`/* */` で囲むとコメント（メモ書き）になる</li></ul>
+<ul><li><strong>セレクタ</strong> … どの要素に当てるか（h1、.card など）</li><li><strong>プロパティ</strong> … 何を変えるか（color、font-size など）</li><li><strong>値</strong> … どうするか（#1e3a8a、2rem など）</li><li>行の終わりには必ず<strong>セミコロン <code>;</code></strong> を付ける</li><li><code>/* */</code> で囲むとコメント（メモ書き）になる</li></ul>
 <h3>CSSファイルを分けて読み込む</h3>
-<p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにするのが基本</strong>です。まず `style.css` を作り、HTMLの `&lt;head&gt;` の中で読み込みます。</p>
+<p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにするのが基本</strong>です。まず <code>style.css</code> を作り、HTMLの <code>&lt;head&gt;</code> の中で読み込みます。</p>
 <pre class="code-block">&lt;!-- profile.html の &lt;head&gt; の中に書く --&gt;
 &lt;link rel="stylesheet" href="style.css"&gt;</pre>
 <div class="kv-box"><strong>📌 なぜ分けるのか:</strong> 前章で「構造と見た目を分ける」と言いました。ファイルまで分けると恩恵がはっきりします。<strong>1つのCSSファイルを複数ページで使い回せる</strong>ので、サイト全体の見た目を1か所で変えられます。HTMLに直接書くと、ページが増えるたび同じ指定をコピーすることになります。</div>
@@ -377,12 +372,7 @@ h1, h2, h3 { font-family: sans-serif; }</pre>
 
 &lt;p class="intro" id="main"&gt;この文字は赤になる&lt;/p&gt;</pre>
 <ul><li><strong>id</strong>（#）… いちばん強い</li><li><strong>class</strong>（.）… 中くらい</li><li><strong>タグ名</strong>（p, h1）… いちばん弱い</li><li>同じ強さなら<strong>後に書いたほうが勝つ</strong></li></ul>
-<div class="warn-box"><strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）
-② 詳細度で別の指定に負けている
-③ そもそもCSSファイルが読み込まれていない
-
-<strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。
-</div>
+<div class="warn-box"><strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）<br>② 詳細度で別の指定に負けている<br>③ そもそもCSSファイルが読み込まれていない<p class="mt-2"><strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。</p></div>
 <h3>ボックスモデル — すべての要素は箱</h3>
 <p>レイアウトを理解する上で最重要の概念です。<strong>すべての要素は4層構造の箱</strong>として描画されます。</p>
 <pre class="code-block">┌─────────────────────────┐
@@ -407,10 +397,7 @@ h1, h2, h3 { font-family: sans-serif; }</pre>
 
   margin: 0 auto;             /* 上下0、左右autoで中央寄せ */
 }</pre>
-<div class="tip-box"><strong>💡 box-sizing は最初に書く:</strong> 既定では width に padding と border が<strong>含まれません</strong>。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。
-
-`* { box-sizing: border-box; }`
-</div>
+<div class="tip-box"><strong>💡 box-sizing は最初に書く:</strong> 既定では width に padding と border が<strong>含まれません</strong>。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。<p class="mt-2"><code>* { box-sizing: border-box; }</code></p></div>
 <h3>Flexbox — 一列に並べる</h3>
 <p>要素を横や縦に並べたいときはFlexboxを使います。<strong>並べたい要素の「親」に指定する</strong>のがポイントです。</p>
 <pre class="code-block">&lt;!-- HTML --&gt;
@@ -439,7 +426,7 @@ h1, h2, h3 { font-family: sans-serif; }</pre>
   background: #2d7a4f;     /* マスの緑 */
   aspect-ratio: 1;         /* 正方形にする */
 }</pre>
-<p>これだけで8×8の盤面ができます。`repeat(8, 50px)` は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
+<p>これだけで8×8の盤面ができます。<code>repeat(8, 50px)</code> は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
 <h3>色の指定方法</h3>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">書き方</th><th class="tbl-th">例</th><th class="tbl-th">補足</th></tr></thead><tbody><tr><td class="tbl-td">色名</td><td class="tbl-td">red, white</td><td class="tbl-td">手軽だが種類が限られる</td></tr><tr><td class="tbl-td">16進数</td><td class="tbl-td">#1e3a8a</td><td class="tbl-td"><strong>最もよく使う</strong>。RGB各2桁</td></tr><tr><td class="tbl-td">rgb</td><td class="tbl-td">rgb(30, 58, 138)</td><td class="tbl-td">数値で分かりやすい</td></tr><tr><td class="tbl-td">rgba</td><td class="tbl-td">rgba(0, 0, 0, 0.5)</td><td class="tbl-td">最後の値は透明度</td></tr></tbody></table></div>
 <div class="tip-box"><strong>💡 色は自分で考えなくていい:</strong> 配色は専門的な技術です。<strong>既存の配色パレットから選ぶ</strong>のが早くて確実です。「color palette」で検索すれば、組み合わせが決まった色見本がいくらでも見つかります。開発者ツールで好きなサイトの色を調べるのも有効です。</div>
@@ -475,7 +462,7 @@ h1, h2, h3 { font-family: sans-serif; }</pre>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: プロフィールカード（第2段階 — 見た目を整える）</p>
   <p class="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。<strong>HTMLファイルは1文字も変えずに</strong>、見た目だけを変えるのが狙いです（class名の追加は可）。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`style.css` を作り、profile.html から link で読み込む</li><li>`* { box-sizing: border-box; }` を最初に書いておく</li><li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li><li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li><li>Flexbox を使って「できること」のリストを横並びのタグ風にする</li><li>画面幅600px以下では縦並びになるようにする</li><li><strong>HTMLファイルには style 属性を1つも書かない</strong></li></ol>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li><code>style.css</code> を作り、profile.html から link で読み込む</li><li><code>* { box-sizing: border-box; }</code> を最初に書いておく</li><li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li><li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li><li>Flexbox を使って「できること」のリストを横並びのタグ風にする</li><li>画面幅600px以下では縦並びになるようにする</li><li><strong>HTMLファイルには style 属性を1つも書かない</strong></li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">style.css を削除すると、見た目だけが消えて内容は残る</div><div class="chk-item">HTMLに style="..." が1つも書かれていない</div><div class="chk-item">開発者ツールでボックスモデルを見て、余白がどこから来ているか説明できる</div><div class="chk-item">スマホ表示にしても崩れない</div><div class="chk-item">padding と margin を使い分けた理由を説明できる</div>
   <p class="assign-hint">💡 「HTMLを見て構造が、CSSを見て見た目が分かる」状態が理想です。迷ったら、その要素が「何であるか」はHTML、「どう見えるか」はCSSと考えます。</p>
 </div>
@@ -543,13 +530,13 @@ h1, h2, h3 { font-family: sans-serif; }</pre>
 <p>JavaScriptは、ページに<strong>動き（ロジック）</strong>を与えるプログラミング言語です。「ボタンを押したら表示を変える」「入力内容をチェックする」など、ユーザーの操作に反応する部分を担当します。</p>
 <p>HTMLとCSSは「こう表示せよ」と書くものでしたが、JavaScriptは<strong>手順を書く</strong>言語です。ここから本格的なプログラミングが始まります。</p>
 <h3>まず動かしてみる</h3>
-<p>`script.js` を作り、HTMLの `&lt;/body&gt;` の直前で読み込みます。<strong>head ではなく body の最後</strong>に置くのがポイントです（HTMLが読み込まれる前にJSが動くと、要素が見つからずエラーになるため）。</p>
+<p><code>script.js</code> を作り、HTMLの <code>&lt;/body&gt;</code> の直前で読み込みます。<strong>head ではなく body の最後</strong>に置くのがポイントです（HTMLが読み込まれる前にJSが動くと、要素が見つからずエラーになるため）。</p>
 <pre class="code-block">&lt;!-- profile.html の &lt;/body&gt; の直前 --&gt;
   &lt;script src="script.js"&gt;&lt;/script&gt;
 &lt;/body&gt;</pre>
 <pre class="code-block">// script.js
 console.log("動いた！");</pre>
-<p>ブラウザで開いて <strong>F12 → Console タブ</strong> を見てください。「動いた！」と出ていれば成功です。`console.log()` は画面ではなくコンソールに出力する命令で、<strong>この章を通じて最も使う道具</strong>になります。</p>
+<p>ブラウザで開いて <strong>F12 → Console タブ</strong> を見てください。「動いた！」と出ていれば成功です。<code>console.log()</code> は画面ではなくコンソールに出力する命令で、<strong>この章を通じて最も使う道具</strong>になります。</p>
 <h3>変数 — 値に名前を付ける</h3>
 <pre class="code-block">const name = "田中";     // 変えない値
 let count = 0;           // 後から変える値
@@ -563,10 +550,7 @@ const text = "こんにちは";    // 文字列（クォートで囲む）
 const flag = true;           // 真偽値（true / false）
 const list = [1, 2, 3];      // 配列
 const obj = { name: "田中", age: 25 };  // オブジェクト</pre>
-<div class="warn-box"><strong>⚠️ 数値と文字列は違うもの:</strong> `1 + 2` は 3 ですが、`"1" + "2"` は "12" になります。文字列の + は連結だからです。
-入力欄から取った値は<strong>必ず文字列</strong>なので、計算する前に `Number()` で数値に変換します。
-「なぜか計算がおかしい」ときはここを疑ってください。
-</div>
+<div class="warn-box"><strong>⚠️ 数値と文字列は違うもの:</strong> <code>1 + 2</code> は 3 ですが、<code>"1" + "2"</code> は "12" になります。文字列の + は連結だからです。<br>入力欄から取った値は<strong>必ず文字列</strong>なので、計算する前に <code>Number()</code> で数値に変換します。<br>「なぜか計算がおかしい」ときはここを疑ってください。</div>
 <h3>条件分岐 — 場合分けする</h3>
 <pre class="code-block">const score = 75;
 
@@ -578,7 +562,7 @@ if (score &gt;= 80) {
   console.log("再挑戦");
 }</pre>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">演算子</th><th class="tbl-th">意味</th><th class="tbl-th">例</th></tr></thead><tbody><tr><td class="tbl-td">===</td><td class="tbl-td">等しい</td><td class="tbl-td">a === b</td></tr><tr><td class="tbl-td">!==</td><td class="tbl-td">等しくない</td><td class="tbl-td">a !== b</td></tr><tr><td class="tbl-td">&gt; / &lt;</td><td class="tbl-td">より大きい / 小さい</td><td class="tbl-td">a &gt; b</td></tr><tr><td class="tbl-td">&gt;= / &lt;=</td><td class="tbl-td">以上 / 以下</td><td class="tbl-td">a &gt;= b</td></tr><tr><td class="tbl-td">&amp;&amp;</td><td class="tbl-td">かつ</td><td class="tbl-td">a &gt; 0 &amp;&amp; b &gt; 0</td></tr><tr><td class="tbl-td">||</td><td class="tbl-td">または</td><td class="tbl-td">a === 1 || a === 2</td></tr></tbody></table></div>
-<div class="tip-box"><strong>💡 = と === は別物:</strong> `=` は代入（値を入れる）、`===` は比較（等しいか調べる）です。`if (a = 1)` と書くと比較ではなく代入になってしまい、意図しない動きをします。<strong>比較は必ず `===` を3つ</strong>と覚えてください。</div>
+<div class="tip-box"><strong>💡 = と === は別物:</strong> <code>=</code> は代入（値を入れる）、<code>===</code> は比較（等しいか調べる）です。<code>if (a = 1)</code> と書くと比較ではなく代入になってしまい、意図しない動きをします。<strong>比較は必ず <code>===</code> を3つ</strong>と覚えてください。</div>
 <h3>繰り返し — 同じ処理を何度も</h3>
 <pre class="code-block">// 決まった回数だけ繰り返す
 for (let i = 0; i &lt; 8; i++) {
@@ -590,7 +574,7 @@ const fruits = ["りんご", "みかん", "バナナ"];
 for (const fruit of fruits) {
   console.log(fruit);
 }</pre>
-<div class="kv-box"><strong>📌 0から数える:</strong> プログラミングでは<strong>0から数える</strong>のが基本です。`for (let i = 0; i &lt; 8; i++)` は「0以上8未満」なので0〜7の<strong>8回</strong>回ります。8×8の盤面を扱うとき、この形をそのまま使います。</div>
+<div class="kv-box"><strong>📌 0から数える:</strong> プログラミングでは<strong>0から数える</strong>のが基本です。<code>for (let i = 0; i &lt; 8; i++)</code> は「0以上8未満」なので0〜7の<strong>8回</strong>回ります。8×8の盤面を扱うとき、この形をそのまま使います。</div>
 <h3>関数 — 処理に名前を付ける</h3>
 <pre class="code-block">// 定義する
 function greet(who) {
@@ -603,7 +587,7 @@ console.log(message);   // こんにちは、田中さん
 
 // 短い書き方（アロー関数）。同じ意味
 const greet2 = (who) =&gt; "こんにちは、" + who + "さん";</pre>
-<p>同じ処理を何度も書かずに済むのが関数の利点ですが、それ以上に<strong>名前を付けることでコードが読みやすくなる</strong>のが大きな価値です。`checkCanPlace()` という名前を見れば、中身を読まなくても何をするか分かります。</p>
+<p>同じ処理を何度も書かずに済むのが関数の利点ですが、それ以上に<strong>名前を付けることでコードが読みやすくなる</strong>のが大きな価値です。<code>checkCanPlace()</code> という名前を見れば、中身を読まなくても何をするか分かります。</p>
 <h3>配列 — オセロで最も使う</h3>
 <pre class="code-block">const scores = [10, 25, 8];
 
@@ -630,7 +614,7 @@ console.log(board[1][1]);   // "黒"  → board[行][列]
 console.log(board[2][2]);   // "白"
 
 board[0][0] = "黒";         // 左上に黒を置く</pre>
-<div class="warn-box"><strong>⚠️ [行][列] の順番:</strong> `board[1][2]` は「1行目の2列目」です。<strong>縦が先、横が後</strong>。ここを逆に覚えると盤面が転置してしまい、原因の分からないバグになります。紙に書いて確かめておくと確実です。</div>
+<div class="warn-box"><strong>⚠️ [行][列] の順番:</strong> <code>board[1][2]</code> は「1行目の2列目」です。<strong>縦が先、横が後</strong>。ここを逆に覚えると盤面が転置してしまい、原因の分からないバグになります。紙に書いて確かめておくと確実です。</div>
 <pre class="code-block">// 8×8の空の盤面を作る
 const board = [];
 for (let row = 0; row &lt; 8; row++) {
@@ -658,7 +642,7 @@ title.textContent = "新しいタイトル";
 title.classList.add("active");
 title.classList.remove("active");
 title.classList.toggle("active");   // 有れば消す、無ければ付ける</pre>
-<div class="kv-box"><strong>📌 見た目の変更はクラスで:</strong> JavaScriptから直接 `style.color = "red"` と書くこともできますが、<strong>CSSにクラスを定義しておいて付け外しするほうが良い</strong>です。見た目の定義がCSSに集まるので、後から変更しやすくなります。第2章で「構造と見た目を分ける」と言ったのと同じ理由です。</div>
+<div class="kv-box"><strong>📌 見た目の変更はクラスで:</strong> JavaScriptから直接 <code>style.color = "red"</code> と書くこともできますが、<strong>CSSにクラスを定義しておいて付け外しするほうが良い</strong>です。見た目の定義がCSSに集まるので、後から変更しやすくなります。第2章で「構造と見た目を分ける」と言ったのと同じ理由です。</div>
 <h3>要素を作って追加する</h3>
 <p>オセロの盤面のように、<strong>同じものを大量に並べる</strong>場合はHTMLに手で書かずJavaScriptで生成します。</p>
 <pre class="code-block">const boardEl = document.querySelector("#board");
@@ -672,14 +656,14 @@ for (let row = 0; row &lt; 8; row++) {
     boardEl.appendChild(cell);                   // 画面に追加
   }
 }</pre>
-<p>これで64個のマスが生成されます。`dataset` は要素に自作の情報を持たせる仕組みで、「このマスは何行何列か」を覚えさせておくとクリック時に使えます。</p>
+<p>これで64個のマスが生成されます。<code>dataset</code> は要素に自作の情報を持たせる仕組みで、「このマスは何行何列か」を覚えさせておくとクリック時に使えます。</p>
 <h3>イベント — 操作に反応する</h3>
 <pre class="code-block">const btn = document.querySelector("#myButton");
 
 btn.addEventListener("click", () =&gt; {
   console.log("押された！");
 });</pre>
-<p>`addEventListener` は「<strong>どの要素で</strong>」「<strong>何が起きたとき</strong>」「<strong>何をするか</strong>」を登録します。clickのほか、input（入力）、submit（送信）、keydown（キー押下）などがあります。</p>
+<p><code>addEventListener</code> は「<strong>どの要素で</strong>」「<strong>何が起きたとき</strong>」「<strong>何をするか</strong>」を登録します。clickのほか、input（入力）、submit（送信）、keydown（キー押下）などがあります。</p>
 <pre class="code-block">// マスをクリックしたら、何行何列か分かる
 cell.addEventListener("click", () =&gt; {
   const row = Number(cell.dataset.row);
@@ -691,18 +675,14 @@ cell.addEventListener("click", () =&gt; {
 <p>エラーが出たら、次の順番で対処します。この流れを体に入れてください。</p>
 <ol><li><strong>エラー文を読む</strong> — コンソール（F12）に赤い文字で出ている</li><li><strong>どこで起きたか見る</strong> — エラー文の右端にファイル名と行番号がある</li><li><strong>原因の仮説を立てる</strong> — 「この変数が空なのでは？」など</li><li><strong>console.log で確かめる</strong> — 仮説どおりか実際に見る</li><li><strong>修正する</strong> — 原因が分かれば直し方も分かる</li></ol>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">よく出るエラー</th><th class="tbl-th">意味</th><th class="tbl-th">主な原因</th></tr></thead><tbody><tr><td class="tbl-td">Cannot read properties of null</td><td class="tbl-td">nullに対して操作しようとした</td><td class="tbl-td">querySelectorが要素を見つけられていない</td></tr><tr><td class="tbl-td">xxx is not defined</td><td class="tbl-td">その名前のものが無い</td><td class="tbl-td">変数名のタイプミス、定義の書き忘れ</td></tr><tr><td class="tbl-td">xxx is not a function</td><td class="tbl-td">関数として呼べない</td><td class="tbl-td">メソッド名の間違い、対象が想定と違う</td></tr><tr><td class="tbl-td">Unexpected token</td><td class="tbl-td">文法が壊れている</td><td class="tbl-td">括弧やクォートの閉じ忘れ</td></tr></tbody></table></div>
-<div class="tip-box"><strong>💡 困ったら console.log:</strong> 「思っていた値と違う」がバグの正体であることがほとんどです。怪しい箇所の前後に
-`console.log(変数名)` を挟んで、<strong>実際に何が入っているか</strong>を見てください。
-
-想像で直そうとすると遠回りになります。事実を見るのが最短です。
-</div>
+<div class="tip-box"><strong>💡 困ったら console.log:</strong> 「思っていた値と違う」がバグの正体であることがほとんどです。怪しい箇所の前後に<br><code>console.log(変数名)</code> を挟んで、<strong>実際に何が入っているか</strong>を見てください。<p class="mt-2">想像で直そうとすると遠回りになります。事実を見るのが最短です。</p></div>
 <div class="kv-box"><strong>📌 30分ルール:</strong> 詰まったら30分は自分で調べてください。ただし<strong>30分たったら、分かったこと・試したこと・自分の仮説を持って聞く</strong>こと。「動きません」だけでは相手も答えられませんし、何より自分の力になりません。</div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: プロフィールカード（第3段階 — 動かす）</p>
   <p class="assign-goal">第2章までのカードに動きをつけます。3つのファイルがそれぞれ何を担当しているかを、自分の言葉で説明できるようになるのが本当のゴールです。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>`script.js` を作り、profile.html の &lt;/body&gt; 直前で読み込む</li><li>「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする</li><li>もう一度押すと隠れる（classList.toggle を使う）</li><li>「いいね」ボタンを作り、押すたびに数が増えるようにする</li><li>押した回数が10を超えたら、メッセージを変える</li><li>スキル一覧を配列で持ち、JavaScriptでリストを生成して表示する</li></ol>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li><code>script.js</code> を作り、profile.html の &lt;/body&gt; 直前で読み込む</li><li>「詳細を見る」ボタンを置き、押すと隠れていた自己紹介文が表示されるようにする</li><li>もう一度押すと隠れる（classList.toggle を使う）</li><li>「いいね」ボタンを作り、押すたびに数が増えるようにする</li><li>押した回数が10を超えたら、メッセージを変える</li><li>スキル一覧を配列で持ち、JavaScriptでリストを生成して表示する</li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">ボタンを押すと表示が変わる</div><div class="chk-item">script.js を読み込まなくしても、ページ自体は壊れずに表示される</div><div class="chk-item">表示の切り替えを style ではなく classList で行っている</div><div class="chk-item">HTML・CSS・JS がそれぞれ何をしているか説明できる</div><div class="chk-item">一度はエラーを出し、自力で直した</div>
-  <p class="assign-hint">💡 表示・非表示は CSS に `.hidden { display: none; }` を定義しておき、JSでそのクラスを付け外しする方法が定石です。JSから直接スタイルをいじるより、後から変更しやすくなります。</p>
+  <p class="assign-hint">💡 表示・非表示は CSS に <code>.hidden { display: none; }</code> を定義しておき、JSでそのクラスを付け外しする方法が定石です。JSから直接スタイルをいじるより、後から変更しやすくなります。</p>
 </div>
 <div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>オセロの盤面をJavaScriptで生成し、クリックしたマスに石が置けるところまで作ってみましょう。ルール（裏返し判定）はまだ不要で、「クリックしたら黒石が出る」だけで構いません。2次元配列とDOM生成、イベントの総合練習になります。第4章のオセロ開発がぐっと楽になります。</p></div>
 <div class="tip-box"><strong>💡 次章への橋渡し:</strong> ここまでで <strong>HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態</strong>になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。<strong>オセロはここまでの知識だけで作れます</strong>——新しい技術は必要ありません。</div>
@@ -778,7 +758,7 @@ othello_最終_田中さん修正版.html      ← どれが最新？</pre>
 <p>この方式には致命的な問題が3つあります。<strong>どれが最新か分からない</strong>、<strong>何をどう変えたか分からない</strong>、<strong>2人分の変更を1つにまとめられない</strong>。Gitはこの3つをすべて解決します。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">知りたいこと</th><th class="tbl-th">Gitがあると</th></tr></thead><tbody><tr><td class="tbl-td">いまの最新はどれか</td><td class="tbl-td">常に1つのファイルだけ。最新はいつもそれ</td></tr><tr><td class="tbl-td">昨日から何が変わったか</td><td class="tbl-td">変更点だけを色付きで表示できる</td></tr><tr><td class="tbl-td">なぜこう直したか</td><td class="tbl-td">commitメッセージに理由が残っている</td></tr><tr><td class="tbl-td">壊す前に戻したい</td><td class="tbl-td">過去のどの時点にも戻せる</td></tr><tr><td class="tbl-td">2人の変更をまとめたい</td><td class="tbl-td">自動で合成してくれる。無理な箇所だけ人間が判断する</td></tr></tbody></table></div>
 <h3>準備 — Gitを入れて名前を設定する</h3>
-<p>第1章と同じく、ここも一度やれば以降ずっと使う設定です。まず `Git for Windows`（Macなら公式サイトの案内）で検索してインストールしてください。選択肢はすべて既定のままで構いません。</p>
+<p>第1章と同じく、ここも一度やれば以降ずっと使う設定です。まず <code>Git for Windows</code>（Macなら公式サイトの案内）で検索してインストールしてください。選択肢はすべて既定のままで構いません。</p>
 <p>入ったら、VS Codeのターミナル（表示 → ターミナル）で次を実行します。<strong>これは履歴に残る「誰がやったか」の名前</strong>なので、最初に必ず設定します。</p>
 <pre class="code-block">git --version                                  # 入ったか確認
 git config --global user.name "Tanaka Taro"    # 履歴に残る名前
@@ -803,16 +783,16 @@ git pull            # GitHubの最新を手元に取り込む</pre>
 例: 3ファイル直したが、そのうち2つだけ記録したい
   git add index.html style.css   ← この2つだけステージに載せる
   git commit -m "盤面の見た目を整える"</pre>
-<p>つまりステージは「<strong>今回の記録に含めるものを選ぶ場所</strong>」です。慣れるまでは `git add .`（全部載せる）で構いません。ただ「この変更はまだ途中だから含めたくない」というときに、この2段階が効いてきます。</p>
+<p>つまりステージは「<strong>今回の記録に含めるものを選ぶ場所</strong>」です。慣れるまでは <code>git add .</code>（全部載せる）で構いません。ただ「この変更はまだ途中だから含めたくない」というときに、この2段階が効いてきます。</p>
 <h3>実は最初に覚えるべきは status と log</h3>
 <p>5コマンドより先に使うのがこの2つです。<strong>いま何が起きているかを確認するコマンド</strong>で、迷ったら必ずこれを打ちます。</p>
 <pre class="code-block">git status     # いま何が変更されている？何がステージに載っている？
 git log        # これまでの履歴（q キーで抜ける）
 git log --oneline   # 1行ずつ簡潔に
 git diff       # 前回のcommitから何が変わったか</pre>
-<div class="tip-box"><strong>💡 困ったら git status:</strong> Gitで詰まったときの9割は `git status` が答えを持っています。<strong>しかも親切に「次に打つべきコマンド」まで書いてくれます</strong>。エラーが出たら、まず status。これを習慣にしてください。</div>
+<div class="tip-box"><strong>💡 困ったら git status:</strong> Gitで詰まったときの9割は <code>git status</code> が答えを持っています。<strong>しかも親切に「次に打つべきコマンド」まで書いてくれます</strong>。エラーが出たら、まず status。これを習慣にしてください。</div>
 <h3>何を履歴に含めないか — .gitignore</h3>
-<p>リポジトリには<strong>入れてはいけないもの</strong>があります。パスワードなどの秘密情報、自動生成されるファイル、巨大なファイルです。これらは `.gitignore` というファイルに書いて除外します。</p>
+<p>リポジトリには<strong>入れてはいけないもの</strong>があります。パスワードなどの秘密情報、自動生成されるファイル、巨大なファイルです。これらは <code>.gitignore</code> というファイルに書いて除外します。</p>
 <pre class="code-block"># .gitignore  ← この名前でリポジトリの一番上に置く
 
 node_modules/     # 自動で作られる。巨大なので入れない
@@ -823,9 +803,9 @@ venv/             # Pythonの仮想環境（第5章）
 <div class="warn-box"><strong>⚠️ 一度pushした秘密情報は消せないと思うこと:</strong> パスワードやAPIキーをcommitしてpushすると、<strong>あとからファイルを消しても履歴には残り続けます</strong>。公開リポジトリなら世界中から見える状態です。この場合の正しい対応は「ファイルを消す」ではなく「<strong>そのキーを無効化して作り直す</strong>」です。だから最初から .gitignore に入れておくことが重要になります。</div>
 <h3>commitメッセージの書き方</h3>
 <p>メッセージは未来の自分と相方へのメモです。<strong>「何をしたか」を短く</strong>書きます。凝る必要はありませんが、次のような書き方は避けてください。</p>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">良くない例</th><th class="tbl-th">良い例</th><th class="tbl-th">なぜ</th></tr></thead><tbody><tr><td class="tbl-td">修正</td><td class="tbl-td">石が置けないバグを修正</td><td class="tbl-td">何を修正したか分からない</td></tr><tr><td class="tbl-td">あああ</td><td class="tbl-td">盤面の8×8表示を追加</td><td class="tbl-td">検索しても見つけられない</td></tr><tr><td class="tbl-td">いろいろ変えた</td><td class="tbl-td">手番の切り替えを実装</td><td class="tbl-td">1コミットに詰め込みすぎている合図</td></tr><tr><td class="tbl-td">`WIP`</td><td class="tbl-td">裏返し判定の途中（縦横のみ対応）</td><td class="tbl-td">途中なら何がどこまでか書く</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">良くない例</th><th class="tbl-th">良い例</th><th class="tbl-th">なぜ</th></tr></thead><tbody><tr><td class="tbl-td">修正</td><td class="tbl-td">石が置けないバグを修正</td><td class="tbl-td">何を修正したか分からない</td></tr><tr><td class="tbl-td">あああ</td><td class="tbl-td">盤面の8×8表示を追加</td><td class="tbl-td">検索しても見つけられない</td></tr><tr><td class="tbl-td">いろいろ変えた</td><td class="tbl-td">手番の切り替えを実装</td><td class="tbl-td">1コミットに詰め込みすぎている合図</td></tr><tr><td class="tbl-td"><code>WIP</code></td><td class="tbl-td">裏返し判定の途中（縦横のみ対応）</td><td class="tbl-td">途中なら何がどこまでか書く</td></tr></tbody></table></div>
 <div class="tip-box"><strong>💡 commitの粒度:</strong> 「1日の終わりにまとめて1回」ではなく、<strong>キリのいい単位でこまめに</strong>commitします。目安は「メッセージが1文で書ける範囲」。2つ以上のことを書きたくなったら、それは2回に分けるべきcommitです。</div>
-<div class="ex-box"><p class="ex-title">✏️ 練習</p><p>まず1人で慣れます。GitHubにリポジトリを作り、前章までのプロフィールカード（HTML・CSS・JSの3ファイル）をpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。そのあと `git log --oneline` で、自分が書いたメッセージが読めるものになっているか眺めてみてください。</p></div>
+<div class="ex-box"><p class="ex-title">✏️ 練習</p><p>まず1人で慣れます。GitHubにリポジトリを作り、前章までのプロフィールカード（HTML・CSS・JSの3ファイル）をpushしてみましょう。3回以上commitを分けて、GitHub上で履歴が見えることを確認します。そのあと <code>git log --oneline</code> で、自分が書いたメッセージが読めるものになっているか眺めてみてください。</p></div>
 <h3>ここからが本番 — 2人で1つのものを作る</h3>
 <p>ここまでは1人で作ってきました。ここからは<strong>2人で1つのリポジトリを共有して</strong>オセロを作ります。これがこのコース最大の山場であり、いちばん面白いところです。</p>
 <div class="kv-box"><strong>📌 なぜオセロなのか:</strong> オセロは<strong>HTML・CSS・JavaScriptだけで完成させられます</strong>。新しい技術を覚える必要がなく、ここまでの知識だけで「ちゃんと遊べるもの」が作れる。だから技術ではなく<strong>進め方</strong>に集中できます。</div>
@@ -839,7 +819,7 @@ venv/             # Pythonの仮想環境（第5章）
 <ol><li><strong>第1週</strong>: 盤面表示 + 石を置く（クリックしたら石が出る。ルールは無視）</li><li><strong>第2週</strong>: 手番の切り替え + 石数表示（交互に置けるようになる）</li><li><strong>第3週</strong>: 裏返し判定（ここが山。8方向のロジック）</li><li><strong>第4週</strong>: 置ける場所の制限 + パス + 勝敗判定（ゲームとして完成）</li></ol>
 <div class="kv-box"><strong>📌 「動くもの」を絶やさない:</strong> この順番には理由があります。毎週の終わりに<strong>必ず何かが動いている状態</strong>を保つためです。動くものがあると、次に何をすべきかが自然に見えます。逆に「全部作り終わるまで何も動かない」進め方は、詰まったときにどこが悪いのか切り分けられず、必ず行き詰まります。</div>
 <h3>2人で回すときの約束ごと</h3>
-<p>共同作業では、<strong>作業を始める前に必ず `git pull`</strong> します。相方が先に何かをpushしているかもしれないからです。これを飛ばすと衝突が増えます。</p>
+<p>共同作業では、<strong>作業を始める前に必ず <code>git pull</code></strong> します。相方が先に何かをpushしているかもしれないからです。これを飛ばすと衝突が増えます。</p>
 <pre class="code-block"># 作業を始めるとき
 git pull                       # まず最新を取り込む
 # …コードを書く…
@@ -864,21 +844,21 @@ const CELL_SIZE = 50;        ← 相方が書いた内容
 git add .
 git commit -m "コンフリクトを解決"
 git push</pre>
-<div class="warn-box"><strong>⚠️ 記号を消し忘れるとコードが壊れます:</strong> `&lt;&lt;&lt;&lt;&lt;&lt;&lt;` や `=======` はGitが入れた目印であって、コードではありません。<strong>消し忘れたままcommitすると確実に動かなくなります</strong>。解決したら必ずブラウザで動作を確認してからpushしてください。</div>
+<div class="warn-box"><strong>⚠️ 記号を消し忘れるとコードが壊れます:</strong> <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> や <code>=======</code> はGitが入れた目印であって、コードではありません。<strong>消し忘れたままcommitすると確実に動かなくなります</strong>。解決したら必ずブラウザで動作を確認してからpushしてください。</div>
 <h3>よくあるエラーと対処</h3>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">エラー</th><th class="tbl-th">意味</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">not a git repository</td><td class="tbl-td">そのフォルダはGit管理下にない</td><td class="tbl-td">場所が違う。`cd` で移動するか `git init`</td></tr><tr><td class="tbl-td">`rejected` / non-fast-forward</td><td class="tbl-td">相方が先にpushしている</td><td class="tbl-td">`git pull` してから push し直す</td></tr><tr><td class="tbl-td">Please tell me who you are</td><td class="tbl-td">名前とメールが未設定</td><td class="tbl-td">`git config --global user.name` を設定</td></tr><tr><td class="tbl-td">CONFLICT (content)</td><td class="tbl-td">コンフリクト発生</td><td class="tbl-td">上の手順で解決してcommit</td></tr><tr><td class="tbl-td">nothing to commit</td><td class="tbl-td">変更がない、またはaddし忘れ</td><td class="tbl-td">`git status` で確認、`git add` を実行</td></tr><tr><td class="tbl-td">Support for password authentication was removed</td><td class="tbl-td">パスワード認証が使えない</td><td class="tbl-td">アクセストークンを発行して使う</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">エラー</th><th class="tbl-th">意味</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">not a git repository</td><td class="tbl-td">そのフォルダはGit管理下にない</td><td class="tbl-td">場所が違う。<code>cd</code> で移動するか <code>git init</code></td></tr><tr><td class="tbl-td"><code>rejected</code> / non-fast-forward</td><td class="tbl-td">相方が先にpushしている</td><td class="tbl-td"><code>git pull</code> してから push し直す</td></tr><tr><td class="tbl-td">Please tell me who you are</td><td class="tbl-td">名前とメールが未設定</td><td class="tbl-td"><code>git config --global user.name</code> を設定</td></tr><tr><td class="tbl-td">CONFLICT (content)</td><td class="tbl-td">コンフリクト発生</td><td class="tbl-td">上の手順で解決してcommit</td></tr><tr><td class="tbl-td">nothing to commit</td><td class="tbl-td">変更がない、またはaddし忘れ</td><td class="tbl-td"><code>git status</code> で確認、<code>git add</code> を実行</td></tr><tr><td class="tbl-td">Support for password authentication was removed</td><td class="tbl-td">パスワード認証が使えない</td><td class="tbl-td">アクセストークンを発行して使う</td></tr></tbody></table></div>
 <h3>進捗を見える形にする</h3>
 <p>GitHubには <strong>Issues</strong>（課題の一覧）という機能があります。分解した機能を1つずつIssueとして登録すると、「今どれをやっているか」「どこまで終わったか」が2人で共有できます。終わったらIssueを閉じる。これだけで進捗管理になります。</p>
 <p>リモートで離れて作業していると、相手が何をしているか見えません。Issueは<strong>その見えなさを埋めるための道具</strong>です。凝った使い方は要りません。「立てる・担当を書く・終わったら閉じる」の3つだけで十分機能します。</p>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: オセロを2人で作る</p>
   <p class="assign-goal">共同リポジトリでオセロを完成させます。技術的な目的はGitの共同作業に慣れることですが、本当のゴールは<strong>「大きなものを小さく割って、順番に片付ける」進め方を体で覚える</strong>ことです。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>2人で1つのGitHubリポジトリを作り、両方がpushできるようにする（Collaborator に追加）</li><li>`.gitignore` を最初に置いておく</li><li>2人で話し合ってオセロの機能を洗い出し、Issueとして登録する</li><li>どれから作るか順番を決め、担当を分ける</li><li>週ごとに区切って進める。毎回こまめにcommit・pushする</li><li>作業を始める前に必ず pull する習慣をつける</li><li>相手のコードを読み、気付いたことを伝え合う</li><li>完成したら2人で対戦してみる</li></ol>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>2人で1つのGitHubリポジトリを作り、両方がpushできるようにする（Collaborator に追加）</li><li><code>.gitignore</code> を最初に置いておく</li><li>2人で話し合ってオセロの機能を洗い出し、Issueとして登録する</li><li>どれから作るか順番を決め、担当を分ける</li><li>週ごとに区切って進める。毎回こまめにcommit・pushする</li><li>作業を始める前に必ず pull する習慣をつける</li><li>相手のコードを読み、気付いたことを伝え合う</li><li>完成したら2人で対戦してみる</li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">2人とも遊べるオセロが動いている</div><div class="chk-item">リポジトリの履歴に、2人分のcommitが交互に並んでいる</div><div class="chk-item">Issueが立てられ、終わったものが閉じられている</div><div class="chk-item">「どの機能にどれくらいかかったか」を振り返って話せる</div><div class="chk-item">コンフリクトを最低1回は経験し、自力で解決した</div><div class="chk-item">commitメッセージを読むだけで、何をやってきたか追える</div>
   <p class="assign-hint">💡 完璧を目指さないこと。まず「石が置けるだけ」の状態でいいので動かす。動くものがあると、次に何をすべきかが自然に見えてきます。逆に、全部作り終わるまで動かないやり方は必ず行き詰まります。</p>
 </div>
 <div class="tip-box"><strong>💡 詰まったときの合図:</strong> 裏返し判定は多くの人が詰まります。8方向をどう表現するか、で悩んだら「方向を [x, y] の組で配列に持つ」と考えてみてください。それ以上は自分たちで調べてみましょう。</div>
-<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>`git branch` を試してみましょう。「作業用の枝を作って、そこで開発し、できたら本流に合流させる」やり方です。実務ではこちらが基本になります。2人とも余裕が出てきたら、Pull Request（変更をレビューしてもらってから合流させる仕組み）まで触ってみてください。第4章の時点では必須ではありません。</p></div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p><code>git branch</code> を試してみましょう。「作業用の枝を作って、そこで開発し、できたら本流に合流させる」やり方です。実務ではこちらが基本になります。2人とも余裕が出てきたら、Pull Request（変更をレビューしてもらってから合流させる仕組み）まで触ってみてください。第4章の時点では必須ではありません。</p></div>
 <div class="tip-box"><strong>💡 次章への橋渡し:</strong> オセロが完成しました。ただ、いまの対戦結果は<strong>ページを閉じれば消えます</strong>。次章からは「戦績を残す」ためにサーバ側の世界へ入っていきます。まずはその言語であるPythonからです。</div>
 <h3>チェックリスト</h3><div class="chk-item">Gitが解決している問題を説明できる</div><div class="chk-item">clone / add / commit / push / pull の役割を言える</div><div class="chk-item">add と commit が2段階になっている理由が分かる</div><div class="chk-item">困ったとき git status を見る習慣がついている</div><div class="chk-item">自分のコードをGitHubにpushできる</div><div class="chk-item">.gitignore で秘密情報を除外できる</div><div class="chk-item">こまめにcommitする習慣がついている</div><div class="chk-item">大きな課題を機能単位に分解できる</div><div class="chk-item">2人で1つのリポジトリを共有して開発できた</div><div class="chk-item">コンフリクトを解決したことがある</div>
   </div>
@@ -943,12 +923,12 @@ git push</pre>
 <p>サーバを書く言語はいくつもあり、JavaScriptでも書けます。ここでPythonを選ぶのは、<strong>文法が読みやすく、Web以外（データ処理・AI）でも使える</strong>からです。1つ目の言語を覚えた後に2つ目を学ぶと、「言語が違っても考え方は同じ」だと分かります。これは大きな収穫です。</p>
 <div class="kv-box"><strong>📌 ここが最初の大きな壁:</strong> ブラウザの中（フロントエンド）とサーバ（バックエンド）は<strong>別の場所で動く別のプログラム</strong>です。この2つがどう繋がるかが分かると、Webアプリの全体像が見えます。焦らず進めてください。</div>
 <h3>準備 — Pythonを入れて動かす</h3>
-<p>公式サイト（`python.org`）からインストーラを落として実行します。<strong>Windowsでは1点だけ必ず守ってください</strong>。</p>
-<div class="warn-box"><strong>⚠️ Add python.exe to PATH にチェックを入れる:</strong> インストーラの最初の画面の下に、小さくこのチェックボックスがあります。<strong>ここを入れ忘れると、ターミナルで `python` と打っても「見つかりません」になります</strong>。入れ忘れた場合はインストーラをもう一度実行して、Modify から直せます。初心者が最初に詰まる定番の箇所です。</div>
+<p>公式サイト（<code>python.org</code>）からインストーラを落として実行します。<strong>Windowsでは1点だけ必ず守ってください</strong>。</p>
+<div class="warn-box"><strong>⚠️ Add python.exe to PATH にチェックを入れる:</strong> インストーラの最初の画面の下に、小さくこのチェックボックスがあります。<strong>ここを入れ忘れると、ターミナルで <code>python</code> と打っても「見つかりません」になります</strong>。入れ忘れた場合はインストーラをもう一度実行して、Modify から直せます。初心者が最初に詰まる定番の箇所です。</div>
 <pre class="code-block">python --version        # 3.12.x のように出れば成功
 python hello.py         # ファイルを実行する
 python                  # 対話モード（1行ずつ試せる。exit() で抜ける）</pre>
-<p>動いたら、`hello.py` というファイルを作って1行だけ書いて実行してみてください。<strong>JavaScriptと違って、ブラウザを介さずターミナルで直接動く</strong>——これが「サーバ側の言語」の感触です。</p>
+<p>動いたら、<code>hello.py</code> というファイルを作って1行だけ書いて実行してみてください。<strong>JavaScriptと違って、ブラウザを介さずターミナルで直接動く</strong>——これが「サーバ側の言語」の感触です。</p>
 <pre class="code-block">print("こんにちは")</pre>
 <h3>JavaScriptと比べてみる</h3>
 <p>まずは同じ処理を並べます。似ている部分が多いことに気付くはずです。</p>
@@ -987,20 +967,20 @@ def greet(who):
     return "こんにちは、" + who</pre>
 <h3>対応表で覚える</h3>
 <p>いちいち文法書を読むより、<strong>JSで知っていることの対応を押さえる</strong>ほうが早く書けるようになります。</p>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">やりたいこと</th><th class="tbl-th">JavaScript</th><th class="tbl-th">Python</th></tr></thead><tbody><tr><td class="tbl-td">画面に出す</td><td class="tbl-td">`console.log(x)`</td><td class="tbl-td">`print(x)`</td></tr><tr><td class="tbl-td">変数</td><td class="tbl-td">`const` / `let`</td><td class="tbl-td">宣言不要。`x = 1` だけ</td></tr><tr><td class="tbl-td">真偽値</td><td class="tbl-td">`true` / `false`</td><td class="tbl-td">`True` / `False`（大文字始まり）</td></tr><tr><td class="tbl-td">値が無い</td><td class="tbl-td">`null` / `undefined`</td><td class="tbl-td">`None`</td></tr><tr><td class="tbl-td">かつ / または / 否定</td><td class="tbl-td">`&amp;&amp;` / `||` / `!`</td><td class="tbl-td">`and` / `or` / `not`</td></tr><tr><td class="tbl-td">等しい</td><td class="tbl-td">`===`</td><td class="tbl-td">`==`（Pythonは1種類だけ）</td></tr><tr><td class="tbl-td">配列</td><td class="tbl-td">`[1, 2, 3]`</td><td class="tbl-td">リスト。書き方は同じ</td></tr><tr><td class="tbl-td">個数</td><td class="tbl-td">`arr.length`</td><td class="tbl-td">`len(arr)`</td></tr><tr><td class="tbl-td">末尾に追加</td><td class="tbl-td">`arr.push(x)`</td><td class="tbl-td">`arr.append(x)`</td></tr><tr><td class="tbl-td">文字列に値を埋める</td><td class="tbl-td">`` `${name}さん` ``</td><td class="tbl-td">`f"{name}さん"`</td></tr><tr><td class="tbl-td">コメント</td><td class="tbl-td">`// コメント`</td><td class="tbl-td">`# コメント`</td></tr></tbody></table></div>
-<div class="tip-box"><strong>💡 Trueが大文字なのは地味に効く:</strong> JSの癖で `true` と書くと `NameError` になります。同じく `&amp;&amp;` を書くと構文エラーです。<strong>最初の1週間は必ずやります</strong>。エラーが出たらこの表に戻ってきてください。恥ずかしいことではありません。</div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">やりたいこと</th><th class="tbl-th">JavaScript</th><th class="tbl-th">Python</th></tr></thead><tbody><tr><td class="tbl-td">画面に出す</td><td class="tbl-td"><code>console.log(x)</code></td><td class="tbl-td"><code>print(x)</code></td></tr><tr><td class="tbl-td">変数</td><td class="tbl-td"><code>const</code> / <code>let</code></td><td class="tbl-td">宣言不要。<code>x = 1</code> だけ</td></tr><tr><td class="tbl-td">真偽値</td><td class="tbl-td"><code>true</code> / <code>false</code></td><td class="tbl-td"><code>True</code> / <code>False</code>（大文字始まり）</td></tr><tr><td class="tbl-td">値が無い</td><td class="tbl-td"><code>null</code> / <code>undefined</code></td><td class="tbl-td"><code>None</code></td></tr><tr><td class="tbl-td">かつ / または / 否定</td><td class="tbl-td"><code>&amp;&amp;</code> / <code>||</code> / <code>!</code></td><td class="tbl-td"><code>and</code> / <code>or</code> / <code>not</code></td></tr><tr><td class="tbl-td">等しい</td><td class="tbl-td"><code>===</code></td><td class="tbl-td"><code>==</code>（Pythonは1種類だけ）</td></tr><tr><td class="tbl-td">配列</td><td class="tbl-td"><code>[1, 2, 3]</code></td><td class="tbl-td">リスト。書き方は同じ</td></tr><tr><td class="tbl-td">個数</td><td class="tbl-td"><code>arr.length</code></td><td class="tbl-td"><code>len(arr)</code></td></tr><tr><td class="tbl-td">末尾に追加</td><td class="tbl-td"><code>arr.push(x)</code></td><td class="tbl-td"><code>arr.append(x)</code></td></tr><tr><td class="tbl-td">文字列に値を埋める</td><td class="tbl-td"><code>`${name}さん`</code></td><td class="tbl-td"><code>f"{name}さん"</code></td></tr><tr><td class="tbl-td">コメント</td><td class="tbl-td"><code>// コメント</code></td><td class="tbl-td"><code># コメント</code></td></tr></tbody></table></div>
+<div class="tip-box"><strong>💡 Trueが大文字なのは地味に効く:</strong> JSの癖で <code>true</code> と書くと <code>NameError</code> になります。同じく <code>&amp;&amp;</code> を書くと構文エラーです。<strong>最初の1週間は必ずやります</strong>。エラーが出たらこの表に戻ってきてください。恥ずかしいことではありません。</div>
 <h3>決定的な違い — インデントがブロックを決める</h3>
-<p>JavaScriptは波括弧 `{ }` で処理のまとまりを表しますが、<strong>Pythonは行頭の空白（インデント）でそれを表します</strong>。波括弧もセミコロンもありません。</p>
+<p>JavaScriptは波括弧 <code>{ }</code> で処理のまとまりを表しますが、<strong>Pythonは行頭の空白（インデント）でそれを表します</strong>。波括弧もセミコロンもありません。</p>
 <pre class="code-block">def check(n):
     if n &gt; 0:
         print("正の数")
         print("この2行はif の中")
     print("この行はif の外（関数の中）")
 print("この行は関数の外")</pre>
-<div class="warn-box"><strong>⚠️ 最初はここで必ず詰まる:</strong> インデントがずれると `IndentationError` というエラーになります。<strong>エラーが出たらまず行頭の空白を疑ってください</strong>。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。</div>
+<div class="warn-box"><strong>⚠️ 最初はここで必ず詰まる:</strong> インデントがずれると <code>IndentationError</code> というエラーになります。<strong>エラーが出たらまず行頭の空白を疑ってください</strong>。スペース4つで揃えるのが慣習です。エディタの設定でタブとスペースが混ざると厄介なので、VS Codeの設定を確認しておきましょう。</div>
 <div class="tip-box"><strong>💡 VS Code の設定を1つだけ:</strong> 画面右下に「スペース: 4」と出ているか確認してください。「タブのサイズ」表示になっていたらクリックして「スペースによるインデント」に変えます。<strong>タブとスペースが混ざったファイルは、見た目が同じでもPythonがエラーを出します</strong>。原因が目に見えないので、最初に設定しておくのが安全です。</div>
 <h3>繰り返しの書き方</h3>
-<p>オセロの盤面は8×8のマスなので、繰り返しを多用します。JSの `for (let i = 0; i &lt; 8; i++)` にあたるのが `range()` です。</p>
+<p>オセロの盤面は8×8のマスなので、繰り返しを多用します。JSの <code>for (let i = 0; i &lt; 8; i++)</code> にあたるのが <code>range()</code> です。</p>
 <pre class="code-block">for i in range(8):        # 0, 1, 2, ... 7（8は含まない）
     print(i)
 
@@ -1019,7 +999,7 @@ for i, f in enumerate(["りんご", "みかん"]):
 count = 0
 while count &lt; 3:
     count = count + 1</pre>
-<div class="kv-box"><strong>📌 range(8) が 0〜7 なのはJSと同じ考え方:</strong> 第3章で「0から数える」を学びました。Pythonも同じです。<strong>`range(8)` は「8個ぶん、0から数える」</strong> という意味なので、8は含まれません。8×8の盤面を全部まわすなら `for row in range(8): for col in range(8):` の二重ループになります。</div>
+<div class="kv-box"><strong>📌 range(8) が 0〜7 なのはJSと同じ考え方:</strong> 第3章で「0から数える」を学びました。Pythonも同じです。<strong><code>range(8)</code> は「8個ぶん、0から数える」</strong> という意味なので、8は含まれません。8×8の盤面を全部まわすなら <code>for row in range(8): for col in range(8):</code> の二重ループになります。</div>
 <h3>リストと辞書</h3>
 <p>JSの配列がPythonでは<strong>リスト</strong>、JSのオブジェクトが<strong>辞書</strong>にあたります。オセロの盤面や戦績を扱うときに使います。</p>
 <pre class="code-block"># リスト（JSの配列）
@@ -1042,7 +1022,7 @@ records = [
 for r in records:
     print(r["winner"], r["black"], "-", r["white"])</pre>
 <h3>2次元リスト — オセロの盤面</h3>
-<p>第3章でJavaScriptの2次元配列を扱いました。Pythonでもまったく同じ考え方で書けます。<strong>`board[行][列]`</strong> です。</p>
+<p>第3章でJavaScriptの2次元配列を扱いました。Pythonでもまったく同じ考え方で書けます。<strong><code>board[行][列]</code></strong> です。</p>
 <pre class="code-block"># 8×8を空（0）で初期化する
 board = [[0] * 8 for _ in range(8)]
 
@@ -1056,12 +1036,7 @@ board[4][4] = 2
 MARK = {0: ".", 1: "●", 2: "○"}
 for row in board:
     print(" ".join(MARK[cell] for cell in row))</pre>
-<div class="warn-box"><strong>⚠️ 盤面の作り方でよくある罠:</strong> `board = [[0] * 8] * 8` と書きたくなりますが、<strong>これは動きません</strong>。
-同じ行が8個並んでいるだけなので、1マス変えると8行すべてが変わります。
-
-正しくは `[[0] * 8 for _ in range(8)]` のように、行を8回作ります。
-これはPython特有の落とし穴で、多くの人が一度は踏みます。
-</div>
+<div class="warn-box"><strong>⚠️ 盤面の作り方でよくある罠:</strong> <code>board = [[0] * 8] * 8</code> と書きたくなりますが、<strong>これは動きません</strong>。<br>同じ行が8個並んでいるだけなので、1マス変えると8行すべてが変わります。<p class="mt-2">正しくは <code>[[0] * 8 for _ in range(8)]</code> のように、行を8回作ります。<br>これはPython特有の落とし穴で、多くの人が一度は踏みます。</p></div>
 <h3>関数と import</h3>
 <pre class="code-block">def count_stones(board, color):
     """盤面の中の指定色の石を数える"""
@@ -1078,7 +1053,7 @@ def greet(name, greeting="こんにちは"):
 
 print(greet("田中"))                  # こんにちは、田中さん
 print(greet("田中", "おはよう"))       # おはよう、田中さん</pre>
-<p>他のファイルやライブラリの機能を使うときは `import` します。次章以降で毎回書くことになります。</p>
+<p>他のファイルやライブラリの機能を使うときは <code>import</code> します。次章以降で毎回書くことになります。</p>
 <pre class="code-block">import sqlite3                  # 標準で入っているDB用の機能（第8章）
 from fastapi import FastAPI     # ライブラリから一部だけ持ち込む（第7章）
 from othello import count_stones  # 自分で書いた othello.py から持ち込む</pre>
@@ -1093,17 +1068,17 @@ source venv/bin/activate     # Mac / Linux
 pip install fastapi          # ライブラリを入れる（次章で使う）
 pip list                     # 入っているものを確認
 pip freeze &gt; requirements.txt  # 何を入れたかを記録（デプロイで使う）</pre>
-<div class="tip-box"><strong>💡 コツ:</strong> 仮想環境を有効にすると、プロンプトの先頭に `(venv)` と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。<strong>venvフォルダは .gitignore に入れて、commitしないこと。</strong></div>
+<div class="tip-box"><strong>💡 コツ:</strong> 仮想環境を有効にすると、プロンプトの先頭に <code>(venv)</code> と出ます。これが出ていないのにライブラリが見つからないエラーが起きたら、有効化を忘れているのが原因です。<strong>venvフォルダは .gitignore に入れて、commitしないこと。</strong></div>
 <h3>よく出るエラーと読み方</h3>
 <p>Pythonのエラーは<strong>下から読む</strong>のがコツです。一番下の行に「何が起きたか」、その上に「どのファイルの何行目か」が出ます。</p>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">エラー</th><th class="tbl-th">意味</th><th class="tbl-th">よくある原因</th></tr></thead><tbody><tr><td class="tbl-td">IndentationError</td><td class="tbl-td">インデントがおかしい</td><td class="tbl-td">行頭の空白がずれている / タブとスペースの混在</td></tr><tr><td class="tbl-td">NameError</td><td class="tbl-td">その名前が見つからない</td><td class="tbl-td">打ち間違い / JSの癖で `true` と書いた</td></tr><tr><td class="tbl-td">TypeError</td><td class="tbl-td">型が合わない</td><td class="tbl-td">数値と文字列を足そうとした</td></tr><tr><td class="tbl-td">KeyError</td><td class="tbl-td">辞書にそのキーが無い</td><td class="tbl-td">キー名の打ち間違い</td></tr><tr><td class="tbl-td">IndexError</td><td class="tbl-td">リストの範囲外</td><td class="tbl-td">`board[8]` のように0から数え忘れた</td></tr><tr><td class="tbl-td">ModuleNotFoundError</td><td class="tbl-td">ライブラリが見つからない</td><td class="tbl-td">`pip install` 忘れ / 仮想環境が無効</td></tr><tr><td class="tbl-td">SyntaxError</td><td class="tbl-td">文法が壊れている</td><td class="tbl-td">コロン忘れ / 括弧の閉じ忘れ</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">エラー</th><th class="tbl-th">意味</th><th class="tbl-th">よくある原因</th></tr></thead><tbody><tr><td class="tbl-td">IndentationError</td><td class="tbl-td">インデントがおかしい</td><td class="tbl-td">行頭の空白がずれている / タブとスペースの混在</td></tr><tr><td class="tbl-td">NameError</td><td class="tbl-td">その名前が見つからない</td><td class="tbl-td">打ち間違い / JSの癖で <code>true</code> と書いた</td></tr><tr><td class="tbl-td">TypeError</td><td class="tbl-td">型が合わない</td><td class="tbl-td">数値と文字列を足そうとした</td></tr><tr><td class="tbl-td">KeyError</td><td class="tbl-td">辞書にそのキーが無い</td><td class="tbl-td">キー名の打ち間違い</td></tr><tr><td class="tbl-td">IndexError</td><td class="tbl-td">リストの範囲外</td><td class="tbl-td"><code>board[8]</code> のように0から数え忘れた</td></tr><tr><td class="tbl-td">ModuleNotFoundError</td><td class="tbl-td">ライブラリが見つからない</td><td class="tbl-td"><code>pip install</code> 忘れ / 仮想環境が無効</td></tr><tr><td class="tbl-td">SyntaxError</td><td class="tbl-td">文法が壊れている</td><td class="tbl-td">コロン忘れ / 括弧の閉じ忘れ</td></tr></tbody></table></div>
 <div class="tip-box"><strong>💡 第3章の30分ルールはここでも同じ:</strong> エラー文をそのまま検索するのが最短です。<strong>Pythonのエラー文はJavaScriptより親切</strong>で、どの行で何が起きたかがはっきり出ます。30分調べて「分かったこと・試したこと・仮説」を持って聞く——このやり方をそのまま続けてください。</div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: オセロのロジックをPythonで書き直す</p>
   <p class="assign-goal">すでにJavaScriptで動いているオセロの判定ロジックを、Pythonで書き直します。動くものを別の言語に移すことで、「言語の違い」と「考え方の共通部分」がはっきり分かります。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>Pythonを入れ、仮想環境を作って有効化する</li><li>`othello.py` を作り、8×8の盤面をリストで表現する</li><li>盤面をコンソールに文字で表示する関数を書く</li><li>石を置いたとき裏返せるかを判定する関数を書く（JSから移植）</li><li>石の数を数えて勝敗を返す関数を書く</li><li>実際に何手か打たせて、正しく裏返るか確認する</li></ol>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>Pythonを入れ、仮想環境を作って有効化する</li><li><code>othello.py</code> を作り、8×8の盤面をリストで表現する</li><li>盤面をコンソールに文字で表示する関数を書く</li><li>石を置いたとき裏返せるかを判定する関数を書く（JSから移植）</li><li>石の数を数えて勝敗を返す関数を書く</li><li>実際に何手か打たせて、正しく裏返るか確認する</li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">Pythonだけでオセロの盤面が動く（画面は文字表示でよい）</div><div class="chk-item">JS版とPython版で、同じ手を打つと同じ結果になる</div><div class="chk-item">「JSとPythonで書き方が違った点」を3つ挙げられる</div><div class="chk-item">エラーが出たとき、メッセージを読んで自力で直せた</div>
-  <p class="assign-hint">💡 画面表示は凝らなくて構いません。`print` で `. ● ○` のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。JS版のコードを横に開いて、1関数ずつ移していくと進めやすくなります。</p>
+  <p class="assign-hint">💡 画面表示は凝らなくて構いません。<code>print</code> で <code>. ● ○</code> のような文字を並べるだけで十分です。狙いは見た目ではなく、ロジックを別言語で表現できることです。JS版のコードを横に開いて、1関数ずつ移していくと進めやすくなります。</p>
 </div>
 <div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>移植したPython版で、<strong>コンピュータに一手打たせて</strong>みましょう。「置ける場所を全部探して、その中からランダムに1つ選ぶ」だけで、とりあえず対戦相手になります。さらに「裏返せる石が一番多い場所を選ぶ」に変えると、少し強くなります。ここまで来るとアルゴリズムの入口です。</p></div>
 <div class="tip-box"><strong>💡 次章への橋渡し:</strong> Pythonが書けるようになりました。ただ、いまのままではデータは実行中しか残りません。次章では<strong>データを保存する場所（データベース）</strong>と、それを操作するSQLを学びます。</div>
@@ -1168,11 +1143,11 @@ pip freeze &gt; requirements.txt  # 何を入れたかを記録（デプロイ�
 <h3>なぜデータベースが要るのか</h3>
 <p>前章でPythonを覚えましたが、プログラムの中の変数は<strong>実行が終われば消えます</strong>。オセロの対戦結果を後から見返したいなら、どこかに書き残さないといけません。その置き場所がデータベース（DB）です。</p>
 <p>「ファイルに書けばいいのでは」と思うかもしれません。実際できます。ただ、<strong>探す・並べ替える・複数人が同時に書く</strong>といったことをファイルでやると大変です。DBはそれを得意とする専用の道具です。</p>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">やりたいこと</th><th class="tbl-th">ファイルでやると</th><th class="tbl-th">DBなら</th></tr></thead><tbody><tr><td class="tbl-td">直近5件だけ見たい</td><td class="tbl-td">全部読んで並べ替えて切り出す</td><td class="tbl-td">`ORDER BY ... LIMIT 5` の1行</td></tr><tr><td class="tbl-td">黒の勝ち数を数えたい</td><td class="tbl-td">全行を読んで自分で数える</td><td class="tbl-td">`COUNT` で一発</td></tr><tr><td class="tbl-td">2人が同時に書き込む</td><td class="tbl-td">片方の書き込みが消える事故が起きる</td><td class="tbl-td">DBが順番を管理してくれる</td></tr><tr><td class="tbl-td">数値の列に文字が入る</td><td class="tbl-td">気付かず壊れたまま進む</td><td class="tbl-td">型が合わないと拒否してくれる</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">やりたいこと</th><th class="tbl-th">ファイルでやると</th><th class="tbl-th">DBなら</th></tr></thead><tbody><tr><td class="tbl-td">直近5件だけ見たい</td><td class="tbl-td">全部読んで並べ替えて切り出す</td><td class="tbl-td"><code>ORDER BY ... LIMIT 5</code> の1行</td></tr><tr><td class="tbl-td">黒の勝ち数を数えたい</td><td class="tbl-td">全行を読んで自分で数える</td><td class="tbl-td"><code>COUNT</code> で一発</td></tr><tr><td class="tbl-td">2人が同時に書き込む</td><td class="tbl-td">片方の書き込みが消える事故が起きる</td><td class="tbl-td">DBが順番を管理してくれる</td></tr><tr><td class="tbl-td">数値の列に文字が入る</td><td class="tbl-td">気付かず壊れたまま進む</td><td class="tbl-td">型が合わないと拒否してくれる</td></tr></tbody></table></div>
 <h3>どのDBを使うか</h3>
 <p>DBにはいくつも製品があります。書き方（SQL）はほぼ共通なので、<strong>まずは一番手軽なSQLiteで始めて、必要になったら移ります</strong>。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">製品</th><th class="tbl-th">特徴</th><th class="tbl-th">このコースでは</th></tr></thead><tbody><tr><td class="tbl-td">SQLite</td><td class="tbl-td">ファイル1つで動く。インストール不要</td><td class="tbl-td"><strong>まずこれ</strong>。学習に最適</td></tr><tr><td class="tbl-td">PostgreSQL</td><td class="tbl-td">本格的。実務で広く使われる</td><td class="tbl-td">余裕があれば / デプロイ時に</td></tr><tr><td class="tbl-td">MySQL</td><td class="tbl-td">同じく定番。Webサービスで多い</td><td class="tbl-td">触れなくてよい</td></tr></tbody></table></div>
-<div class="tip-box"><strong>💡 SQLiteの見方:</strong> SQLiteは `othello.db` のような<strong>ただのファイル</strong>です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。<strong>表として目で見られる状態にしておくと、SQLの結果が腹落ちします</strong>。</div>
+<div class="tip-box"><strong>💡 SQLiteの見方:</strong> SQLiteは <code>othello.db</code> のような<strong>ただのファイル</strong>です。中身を見るには「DB Browser for SQLite」という無料ソフトを入れるのが手軽です。VS Codeの拡張機能（SQLite Viewer など）でも見られます。<strong>表として目で見られる状態にしておくと、SQLの結果が腹落ちします</strong>。</div>
 <h3>テーブル = 表</h3>
 <p>DBの中では、データを<strong>テーブル</strong>という表の形で持ちます。Excelのシートを思い浮かべてください。列（どんな項目か）と行（1件ずつのデータ）でできています。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">id</th><th class="tbl-th">winner</th><th class="tbl-th">black_count</th><th class="tbl-th">white_count</th><th class="tbl-th">played_at</th></tr></thead><tbody><tr><td class="tbl-td">1</td><td class="tbl-td">黒</td><td class="tbl-td">38</td><td class="tbl-td">26</td><td class="tbl-td">2026-08-01 14:30</td></tr><tr><td class="tbl-td">2</td><td class="tbl-td">白</td><td class="tbl-td">20</td><td class="tbl-td">44</td><td class="tbl-td">2026-08-01 15:10</td></tr><tr><td class="tbl-td">3</td><td class="tbl-td">引き分け</td><td class="tbl-td">32</td><td class="tbl-td">32</td><td class="tbl-td">2026-08-02 09:05</td></tr></tbody></table></div>
@@ -1191,7 +1166,7 @@ pip freeze &gt; requirements.txt  # 何を入れたかを記録（デプロイ�
   played_at    TIMESTAMP DEFAULT NOW() -- 日時。既定は今
 );</pre>
 <ul><li><strong>INTEGER</strong> … 整数</li><li><strong>TEXT</strong> … 文字列</li><li><strong>BOOLEAN</strong> … true / false</li><li><strong>TIMESTAMP</strong> … 日時</li><li><strong>PRIMARY KEY</strong> … その行を特定する列。重複できない</li><li><strong>NOT NULL</strong> … 空を許さない</li></ul>
-<p>主キーには<strong>その行だけを指せる値</strong>を入れます。ふつうは連番の `id` で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。</p>
+<p>主キーには<strong>その行だけを指せる値</strong>を入れます。ふつうは連番の <code>id</code> で構いません。「プレイヤー名を主キーにする」のは避けてください。同姓同名が来た瞬間に破綻しますし、改名もできなくなります。</p>
 <h3>4つの基本操作（CRUD）</h3>
 <pre class="code-block">-- Create: 追加する
 INSERT INTO games (winner, black_count, white_count)
@@ -1209,9 +1184,9 @@ UPDATE games SET winner = '白' WHERE id = 1;
 
 -- Delete: 消す
 DELETE FROM games WHERE id = 1;</pre>
-<div class="warn-box"><strong>⚠️ WHERE を忘れると全部消える:</strong> `DELETE FROM games;` と書くと<strong>全行が消えます</strong>。`UPDATE` も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。</div>
+<div class="warn-box"><strong>⚠️ WHERE を忘れると全部消える:</strong> <code>DELETE FROM games;</code> と書くと<strong>全行が消えます</strong>。<code>UPDATE</code> も同じで、WHERE無しだと全行が書き換わります。実務でもっとも怖い事故のひとつです。DELETE や UPDATE を書くときは、<strong>先に同じ条件で SELECT して対象を確認する</strong>癖をつけてください。</div>
 <h3>条件の書き方</h3>
-<p>WHERE には条件を組み合わせて書けます。JavaScriptの `if` に近い感覚です。</p>
+<p>WHERE には条件を組み合わせて書けます。JavaScriptの <code>if</code> に近い感覚です。</p>
 <pre class="code-block">WHERE winner = '黒' AND black_count &gt; 40      -- かつ
 WHERE winner = '黒' OR winner = '白'          -- または
 WHERE winner IN ('黒', '白')                  -- 上と同じ意味。こちらが簡潔
@@ -1219,7 +1194,7 @@ WHERE black_count BETWEEN 30 AND 40           -- 範囲
 WHERE winner LIKE '黒%'                       -- 「黒」で始まる
 WHERE played_at &gt;= '2026-08-01'               -- 日付で絞る
 WHERE memo IS NULL                            -- 値が入っていない行</pre>
-<div class="warn-box"><strong>⚠️ NULL は `= NULL` では取れません:</strong> 「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、`= NULL` は真にも偽にもなりません。<strong>`IS NULL` / `IS NOT NULL` を使ってください</strong>。ここは初心者が必ず一度は引っかかる箇所です。</div>
+<div class="warn-box"><strong>⚠️ NULL は <code>= NULL</code> では取れません:</strong> 「値が入っていない」状態を NULL と呼びます。NULL は「不明」を意味するので、<code>= NULL</code> は真にも偽にもなりません。<strong><code>IS NULL</code> / <code>IS NOT NULL</code> を使ってください</strong>。ここは初心者が必ず一度は引っかかる箇所です。</div>
 <h3>数える・集計する</h3>
 <p>ランキングを作るには集計が要ります。<strong>「全部取ってきてPythonで数える」より、SQLで数えたほうが圧倒的に速く、コードも短くなります</strong>。</p>
 <pre class="code-block">SELECT COUNT(*) FROM games;                     -- 全対戦数
@@ -1263,7 +1238,7 @@ FROM games g
 JOIN players b ON g.black_player = b.id
 JOIN players w ON g.white_player = w.id
 ORDER BY g.played_at DESC;</pre>
-<p>`FROM games g` の `g` は<strong>別名</strong>です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。`ON` の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。</p>
+<p><code>FROM games g</code> の <code>g</code> は<strong>別名</strong>です。長いテーブル名を毎回書かずに済み、同じ表を2回繋ぐとき（上の例では players を黒用・白用の2回）に区別できます。<code>ON</code> の部分が「どの列とどの列が同じ行を繋ぐか」の指定です。</p>
 <div class="tip-box"><strong>💡 まずは分けずに作ってもいい:</strong> 最初から完璧な設計を目指すと進みません。<strong>1つのテーブルで作ってみて、不便を感じてから分ける</strong>ほうが、なぜ分けるのかが腹落ちします。実際の開発でも設計は途中で変わります。</div>
 <h3>よくあるエラーと対処</h3>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">エラー</th><th class="tbl-th">意味</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">no such table</td><td class="tbl-td">そのテーブルが無い</td><td class="tbl-td">CREATE TABLE を実行したか / DBファイルの場所を確認</td></tr><tr><td class="tbl-td">no such column</td><td class="tbl-td">その列が無い</td><td class="tbl-td">列名の打ち間違い / 別名の付け忘れ</td></tr><tr><td class="tbl-td">NOT NULL constraint failed</td><td class="tbl-td">空を許さない列に空を入れた</td><td class="tbl-td">INSERT で値を渡しているか確認</td></tr><tr><td class="tbl-td">UNIQUE constraint failed</td><td class="tbl-td">重複できない値が重複した</td><td class="tbl-td">主キーに同じidを入れていないか</td></tr><tr><td class="tbl-td">syntax error near</td><td class="tbl-td">文法エラー</td><td class="tbl-td">カンマ・括弧・クォートの過不足。示された語の直前を見る</td></tr></tbody></table></div>
@@ -1344,7 +1319,7 @@ HTML/CSS/JS      ？      Python + DB
 <p>ブラウザのJavaScriptから、サーバのPythonの関数を直接呼ぶことはできません。<strong>間にHTTPという約束事を挟んで、JSONという形式でデータをやり取りします</strong>。その窓口がAPIです。</p>
 <h3>なぜブラウザから直接DBに繋がないのか</h3>
 <p>素朴な疑問として「JavaScriptから直接データベースを触れば早いのでは」と思うはずです。<strong>技術的にできなくはないが、絶対にやってはいけない</strong>——理由は3つあります。</p>
-<ul><li><strong>接続情報が丸見えになる</strong> … ブラウザに送ったコードは誰でも読めます。DBのパスワードを書けば、全世界に公開したのと同じです</li><li><strong>何でもできてしまう</strong> … DBに直接繋げるなら、`DELETE FROM games` を打たれても止められません</li><li><strong>ルールを置く場所が無くなる</strong> … 「石数は0〜64の範囲」のような検証を、信用できない場所（ブラウザ）でしか行えなくなります</li></ul>
+<ul><li><strong>接続情報が丸見えになる</strong> … ブラウザに送ったコードは誰でも読めます。DBのパスワードを書けば、全世界に公開したのと同じです</li><li><strong>何でもできてしまう</strong> … DBに直接繋げるなら、<code>DELETE FROM games</code> を打たれても止められません</li><li><strong>ルールを置く場所が無くなる</strong> … 「石数は0〜64の範囲」のような検証を、信用できない場所（ブラウザ）でしか行えなくなります</li></ul>
 <div class="kv-box"><strong>📌 APIは「受付」である:</strong> APIは、DBの前に立つ受付だと考えてください。<strong>ブラウザからのお願いを受け取り、内容を検査し、問題なければDBに取り次ぐ</strong>。この関所があるから、ブラウザ側が何をしようとサーバのルールを守らせられます。<strong>「ブラウザから来るデータは信用しない」</strong>——これはWeb開発の大原則です。</div>
 <h3>HTTP — やり取りの約束事</h3>
 <p>ブラウザとサーバの会話は、必ず「<strong>リクエスト</strong>を送って、<strong>レスポンス</strong>が返る」の1往復です。1回のやり取りで完結し、サーバは前回のことを覚えていません。</p>
@@ -1361,7 +1336,7 @@ HTML/CSS/JS      ？      Python + DB
 <p>APIは「どのURLに」「どの方法で」アクセスするかで機能が決まります。この組み合わせ1つ1つを<strong>エンドポイント</strong>と呼びます。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">メソッド</th><th class="tbl-th">URL</th><th class="tbl-th">やること</th></tr></thead><tbody><tr><td class="tbl-td">GET</td><td class="tbl-td">/api/games</td><td class="tbl-td">戦績の一覧を取得する</td></tr><tr><td class="tbl-td">POST</td><td class="tbl-td">/api/games</td><td class="tbl-td">対戦結果を1件追加する</td></tr><tr><td class="tbl-td">GET</td><td class="tbl-td">/api/games/3</td><td class="tbl-td">3番の対戦の詳細を取得する</td></tr><tr><td class="tbl-td">DELETE</td><td class="tbl-td">/api/games/3</td><td class="tbl-td">3番の対戦を削除する</td></tr></tbody></table></div>
 <div class="tip-box"><strong>💡 前章とのつながり:</strong> この4つは、SQLで学んだ <strong>CRUD</strong>（INSERT / SELECT / UPDATE / DELETE）ときれいに対応します。APIは「外から使えるようにしたCRUD」だと考えると分かりやすくなります。</div>
-<p>URLに<strong>同じ `/api/games` が2回出てくる</strong>ことに注目してください。URLは「何を扱うか（戦績というデータ）」を表し、メソッドが「それをどうするか」を表します。この分け方が身につくと、API設計で迷わなくなります。</p>
+<p>URLに<strong>同じ <code>/api/games</code> が2回出てくる</strong>ことに注目してください。URLは「何を扱うか（戦績というデータ）」を表し、メソッドが「それをどうするか」を表します。この分け方が身につくと、API設計で迷わなくなります。</p>
 <h3>ステータスコード — 結果は番号で返る</h3>
 <p>レスポンスには必ず3桁の番号が付きます。<strong>最初の1桁を見れば、誰のせいかが分かります</strong>。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">番号</th><th class="tbl-th">意味</th><th class="tbl-th">誰の問題か</th></tr></thead><tbody><tr><td class="tbl-td">200 OK</td><td class="tbl-td">成功</td><td class="tbl-td">—</td></tr><tr><td class="tbl-td">201 Created</td><td class="tbl-td">作成に成功</td><td class="tbl-td">—</td></tr><tr><td class="tbl-td">400 Bad Request</td><td class="tbl-td">送ったリクエストがおかしい</td><td class="tbl-td">ブラウザ側</td></tr><tr><td class="tbl-td">404 Not Found</td><td class="tbl-td">そのURLは無い</td><td class="tbl-td">ブラウザ側（URLの打ち間違い）</td></tr><tr><td class="tbl-td">422 Unprocessable</td><td class="tbl-td">データの形が期待と違う</td><td class="tbl-td">ブラウザ側（送る中身）</td></tr><tr><td class="tbl-td">500 Internal Server Error</td><td class="tbl-td">サーバの中でエラーが起きた</td><td class="tbl-td">サーバ側</td></tr></tbody></table></div>
@@ -1403,15 +1378,15 @@ def list_games():
 def add_game(game: Game):
     games.append(game)
     return {"ok": True, "count": len(games)}</pre>
-<p>`@app.get("/api/games")` の部分が「このURLにGETが来たら、下の関数を動かす」という指定です。関数が返した辞書やリストは、<strong>FastAPIが自動でJSONに変換して</strong>返してくれます。</p>
-<div class="kv-box"><strong>📌 class Game が検査をしている:</strong> `BaseModel` を継承したクラスは、<strong>受け取るデータの形の宣言</strong>です。`black_count: int` と書いておけば、文字列が送られてきた時点でFastAPIが自動で弾き、<strong>422</strong>を返します。さきほどの「ブラウザから来るデータは信用しない」を、書くだけで実現してくれる仕組みです。</div>
+<p><code>@app.get("/api/games")</code> の部分が「このURLにGETが来たら、下の関数を動かす」という指定です。関数が返した辞書やリストは、<strong>FastAPIが自動でJSONに変換して</strong>返してくれます。</p>
+<div class="kv-box"><strong>📌 class Game が検査をしている:</strong> <code>BaseModel</code> を継承したクラスは、<strong>受け取るデータの形の宣言</strong>です。<code>black_count: int</code> と書いておけば、文字列が送られてきた時点でFastAPIが自動で弾き、<strong>422</strong>を返します。さきほどの「ブラウザから来るデータは信用しない」を、書くだけで実現してくれる仕組みです。</div>
 <pre class="code-block">uvicorn main:app --reload      # サーバを起動する
 # → http://127.0.0.1:8000 で動く
 # 止めるときは Ctrl + C</pre>
-<p>`127.0.0.1` は「自分のPC」を指す特別なアドレスで、`localhost` と書いても同じです。`:8000` は<strong>ポート番号</strong>——1台のPCの中で複数のサーバを区別するための番号です。すでに使われていると `Address already in use` と出るので、その場合は別の番号にします。</p>
-<div class="kv-box"><strong>📌 まずは /docs を開くこと:</strong> サーバを起動したら `http://127.0.0.1:8000/docs` を開いてください。<strong>FastAPIが自動で作ったAPIの操作画面</strong>が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に<strong>サーバだけで動作確認できます</strong>。切り分けができるので、詰まったときの強い味方になります。</div>
+<p><code>127.0.0.1</code> は「自分のPC」を指す特別なアドレスで、<code>localhost</code> と書いても同じです。<code>:8000</code> は<strong>ポート番号</strong>——1台のPCの中で複数のサーバを区別するための番号です。すでに使われていると <code>Address already in use</code> と出るので、その場合は別の番号にします。</p>
+<div class="kv-box"><strong>📌 まずは /docs を開くこと:</strong> サーバを起動したら <code>http://127.0.0.1:8000/docs</code> を開いてください。<strong>FastAPIが自動で作ったAPIの操作画面</strong>が出ます。ここから実際にデータを送って試せるので、ブラウザ側を書く前に<strong>サーバだけで動作確認できます</strong>。切り分けができるので、詰まったときの強い味方になります。</div>
 <h3>ブラウザ側から呼ぶ</h3>
-<p>サーバが動いたら、オセロの画面から呼びます。JavaScriptの `fetch` を使います。</p>
+<p>サーバが動いたら、オセロの画面から呼びます。JavaScriptの <code>fetch</code> を使います。</p>
 <pre class="code-block">// 対戦が終わったら結果を送る
 async function saveResult(winner, black, white) {
   const res = await fetch("http://127.0.0.1:8000/api/games", {
@@ -1434,8 +1409,8 @@ async function loadHistory() {
   return games;
 }</pre>
 <h3>async と await — 返事を待つということ</h3>
-<p>見慣れない `async` と `await` が出てきました。<strong>通信は時間がかかる</strong>——ここまでの処理と決定的に違う点です。</p>
-<p>サーバへのリクエストは、返事が来るまで数十ミリ秒〜数秒かかります。その間ブラウザが固まっては困るので、JavaScriptは「<strong>返事は後で来るので、先に進んでおく</strong>」という動き方をします。`await` は「ここは返事を待ってから次に進む」という指示です。</p>
+<p>見慣れない <code>async</code> と <code>await</code> が出てきました。<strong>通信は時間がかかる</strong>——ここまでの処理と決定的に違う点です。</p>
+<p>サーバへのリクエストは、返事が来るまで数十ミリ秒〜数秒かかります。その間ブラウザが固まっては困るので、JavaScriptは「<strong>返事は後で来るので、先に進んでおく</strong>」という動き方をします。<code>await</code> は「ここは返事を待ってから次に進む」という指示です。</p>
 <pre class="code-block">// ❌ awaitを付け忘れると
 const res = fetch(url);
 console.log(res);        // → Promise { &lt;pending&gt; } と出る（まだ返事が来ていない）
@@ -1444,9 +1419,9 @@ console.log(res);        // → Promise { &lt;pending&gt; } と出る（まだ�
 const res = await fetch(url);
 const data = await res.json();   // json() も時間がかかるので await が要る
 console.log(data);       // → 中身が出る</pre>
-<div class="warn-box"><strong>⚠️ await は async の中でしか書けません:</strong> `await` を使う関数には必ず `async` を付けます。忘れると `await is only valid in async functions` というエラーになります。<strong>「Promise { pending } と表示された」ときは、ほぼ await の付け忘れ</strong>です。この2つはセットだと覚えてください。</div>
+<div class="warn-box"><strong>⚠️ await は async の中でしか書けません:</strong> <code>await</code> を使う関数には必ず <code>async</code> を付けます。忘れると <code>await is only valid in async functions</code> というエラーになります。<strong>「Promise { pending } と表示された」ときは、ほぼ await の付け忘れ</strong>です。この2つはセットだと覚えてください。</div>
 <h3>失敗したときの処理も書く</h3>
-<p>通信は失敗します。サーバが落ちている、URLが違う、ネットワークが切れている——どれも普通に起きます。<strong>`fetch` は404や500でもエラーにならない</strong>ので、自分で確認する必要があります。</p>
+<p>通信は失敗します。サーバが落ちている、URLが違う、ネットワークが切れている——どれも普通に起きます。<strong><code>fetch</code> は404や500でもエラーにならない</strong>ので、自分で確認する必要があります。</p>
 <pre class="code-block">async function loadHistory() {
   try {
     const res = await fetch("http://127.0.0.1:8000/api/games");
@@ -1477,16 +1452,16 @@ app.add_middleware(
 <ol><li>F12 で開発者ツールを開き、<strong>Network</strong> タブを選ぶ</li><li>画面を操作してリクエストを発生させる（一覧ボタンを押す等）</li><li>一覧に行が出るか確認する。<strong>出ないならリクエスト自体が飛んでいない</strong>（JSのエラーを疑う）</li><li>行をクリックし、<strong>Headers</strong> で送ったURL・メソッド、<strong>Payload</strong> で送った中身を見る</li><li><strong>Response</strong> タブで、サーバが返した中身を見る</li><li>ステータス列の番号を見て、4xx か 5xx かを判断する</li></ol>
 <h3>詰まったときの切り分け</h3>
 <p>うまく動かないとき、<strong>ブラウザ側とサーバ側のどちらで失敗しているか</strong>を先に切り分けます。想像で直そうとすると必ず遠回りになります。</p>
-<ol><li>`/docs` でサーバ単体を試す → ここで失敗するならサーバ側の問題</li><li>ブラウザの Network タブを開く → リクエストが飛んでいるか確認する</li><li>飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）</li><li>サーバを起動したターミナルを見る → Pythonのエラーが出ていないか</li></ol>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">疑うところ</th></tr></thead><tbody><tr><td class="tbl-td">Networkに何も出ない</td><td class="tbl-td">JSがそこまで到達していない。Consoleタブのエラーを見る</td></tr><tr><td class="tbl-td">CORS policy と出る</td><td class="tbl-td">サーバ側にCORS設定を追加する</td></tr><tr><td class="tbl-td">Failed to fetch</td><td class="tbl-td">サーバが起動していない / URLやポート番号の間違い</td></tr><tr><td class="tbl-td">404</td><td class="tbl-td">URLの綴り。`/api/games` の前後のスラッシュも確認</td></tr><tr><td class="tbl-td">422</td><td class="tbl-td">送ったJSONの形。`/docs` の例と見比べる</td></tr><tr><td class="tbl-td">500</td><td class="tbl-td">サーバのターミナルにPythonのエラーが出ている</td></tr></tbody></table></div>
+<ol><li><code>/docs</code> でサーバ単体を試す → ここで失敗するならサーバ側の問題</li><li>ブラウザの Network タブを開く → リクエストが飛んでいるか確認する</li><li>飛んでいるなら、返ってきたステータスを見る（404=URLが違う、422=送ったデータの形が違う、500=サーバ側でエラー）</li><li>サーバを起動したターミナルを見る → Pythonのエラーが出ていないか</li></ol>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">疑うところ</th></tr></thead><tbody><tr><td class="tbl-td">Networkに何も出ない</td><td class="tbl-td">JSがそこまで到達していない。Consoleタブのエラーを見る</td></tr><tr><td class="tbl-td">CORS policy と出る</td><td class="tbl-td">サーバ側にCORS設定を追加する</td></tr><tr><td class="tbl-td">Failed to fetch</td><td class="tbl-td">サーバが起動していない / URLやポート番号の間違い</td></tr><tr><td class="tbl-td">404</td><td class="tbl-td">URLの綴り。<code>/api/games</code> の前後のスラッシュも確認</td></tr><tr><td class="tbl-td">422</td><td class="tbl-td">送ったJSONの形。<code>/docs</code> の例と見比べる</td></tr><tr><td class="tbl-td">500</td><td class="tbl-td">サーバのターミナルにPythonのエラーが出ている</td></tr></tbody></table></div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: オセロの戦績をサーバに送る</p>
   <p class="assign-goal">FastAPIでAPIを作り、オセロの画面から実際に呼びます。ブラウザとサーバという<strong>2つのプログラムが通信している</strong>ことを、自分の目で確認するのが狙いです。</p>
-  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>FastAPIを入れ、main.py を作ってサーバを起動する</li><li>`/docs` を開き、画面から戦績を1件登録してみる</li><li>GET /api/games と POST /api/games を作る</li><li>オセロ側で、対戦が終わったら結果を自動でPOSTする</li><li>「戦績一覧」ボタンを作り、GETした結果を画面に表示する</li><li>CORSエラーを解決する</li><li>通信が失敗したときの処理（res.ok の確認）も書く</li></ol>
+  <p class="assign-h">作るもの</p><ol class="assign-steps"><li>FastAPIを入れ、main.py を作ってサーバを起動する</li><li><code>/docs</code> を開き、画面から戦績を1件登録してみる</li><li>GET /api/games と POST /api/games を作る</li><li>オセロ側で、対戦が終わったら結果を自動でPOSTする</li><li>「戦績一覧」ボタンを作り、GETした結果を画面に表示する</li><li>CORSエラーを解決する</li><li>通信が失敗したときの処理（res.ok の確認）も書く</li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">オセロで対戦を終えると、サーバにデータが届く</div><div class="chk-item">一覧ボタンで過去の戦績が表示される</div><div class="chk-item">Networkタブでリクエストとレスポンスの中身を説明できる</div><div class="chk-item">サーバを止めると画面側でどうなるか確認した</div><div class="chk-item">404 と 500 を意図的に起こして、違いを見た</div>
-  <p class="assign-hint">💡 いきなりオセロに組み込まず、まず `/docs` でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
+  <p class="assign-hint">💡 いきなりオセロに組み込まず、まず <code>/docs</code> でサーバだけ動かして確認してください。サーバが正しいと分かっていれば、あとはブラウザ側だけを疑えばよくなります。</p>
 </div>
-<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>`DELETE /api/games/{id}` を作って、一覧から1件消せるようにしてみましょう。URLの一部（`{id}`）を受け取る書き方を調べる必要があります。あわせて「存在しないidを指定されたら404を返す」処理も入れてみてください。<strong>正常系だけでなく異常系も設計する</strong>という、実務で最も差が出る部分の練習になります。</p></div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p><code>DELETE /api/games/{id}</code> を作って、一覧から1件消せるようにしてみましょう。URLの一部（<code>{id}</code>）を受け取る書き方を調べる必要があります。あわせて「存在しないidを指定されたら404を返す」処理も入れてみてください。<strong>正常系だけでなく異常系も設計する</strong>という、実務で最も差が出る部分の練習になります。</p></div>
 <div class="warn-box"><strong>⚠️ まだデータは消えます:</strong> いまの状態では、戦績はPythonの変数（メモリ）に入っているだけです。<strong>サーバを再起動すると全部消えます</strong>。次章でDBに繋いで、本当に保存されるようにします。</div>
 <h3>チェックリスト</h3><div class="chk-item">ブラウザから直接DBに繋がない理由を説明できる</div><div class="chk-item">リクエストとレスポンスの構造が分かる</div><div class="chk-item">GET / POST / PUT / DELETE の使い分けが分かる</div><div class="chk-item">4xx と 5xx の違いを説明できる</div><div class="chk-item">JSONが何のためにあるか説明できる</div><div class="chk-item">FastAPIでエンドポイントを作れる</div><div class="chk-item">/docs でサーバ単体の動作確認ができる</div><div class="chk-item">fetchでAPIを呼んで結果を画面に出せる</div><div class="chk-item">async / await が必要な理由を説明できる</div><div class="chk-item">CORSエラーの原因を説明できる</div><div class="chk-item">Networkタブでリクエストの中身を確認できる</div><div class="chk-item">ブラウザ側とサーバ側のどちらで失敗しているか切り分けられる</div>
   </div>
@@ -1579,11 +1554,11 @@ def init_db():
     conn.commit()
     conn.close()</pre>
 <p>3つ、意味を確認しておきます。</p>
-<ul><li><strong>`IF NOT EXISTS`</strong> … すでにテーブルがあれば何もしない。起動のたびに呼んでも安全</li><li><strong>`row_factory = sqlite3.Row`</strong> … 結果を `row["winner"]` のように名前で取り出せるようにする。これが無いと番号（`row[0]`）でしか取れず、列を足したとき壊れます</li><li><strong>`conn.close()`</strong> … 使い終わった接続を閉じる。閉じないと接続が溜まり、いずれ繋がらなくなります</li></ul>
+<ul><li><strong><code>IF NOT EXISTS</code></strong> … すでにテーブルがあれば何もしない。起動のたびに呼んでも安全</li><li><strong><code>row_factory = sqlite3.Row</code></strong> … 結果を <code>row["winner"]</code> のように名前で取り出せるようにする。これが無いと番号（<code>row[0]</code>）でしか取れず、列を足したとき壊れます</li><li><strong><code>conn.close()</code></strong> … 使い終わった接続を閉じる。閉じないと接続が溜まり、いずれ繋がらなくなります</li></ul>
 <h3>なぜファイルを db.py と main.py に分けるのか</h3>
-<p>全部 `main.py` に書いても動きます。それでも分けるのは、<strong>1つのファイルに1つの役割</strong>を持たせるためです。これを責務の分離と呼びます。</p>
+<p>全部 <code>main.py</code> に書いても動きます。それでも分けるのは、<strong>1つのファイルに1つの役割</strong>を持たせるためです。これを責務の分離と呼びます。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">ファイル</th><th class="tbl-th">役割</th><th class="tbl-th">ここに書かないもの</th></tr></thead><tbody><tr><td class="tbl-td">db.py</td><td class="tbl-td">DBへの接続とSQL</td><td class="tbl-td">URLの定義・HTTPの話</td></tr><tr><td class="tbl-td">main.py</td><td class="tbl-td">エンドポイントの定義</td><td class="tbl-td">SQLの文字列</td></tr></tbody></table></div>
-<p>分けておくと、あとで「SQLiteをPostgreSQLに変える」となったとき <strong>`db.py` だけ直せば済みます</strong>。混ざっていると、全ファイルからSQLを探し出すことになります。<strong>コードレビューで最初に見られるのもここ</strong>です。</p>
+<p>分けておくと、あとで「SQLiteをPostgreSQLに変える」となったとき <strong><code>db.py</code> だけ直せば済みます</strong>。混ざっていると、全ファイルからSQLを探し出すことになります。<strong>コードレビューで最初に見られるのもここ</strong>です。</p>
 <h3>APIをDBに繋ぎ替える</h3>
 <p>前章では戦績をリスト（メモリ）に入れていました。そこをDBの読み書きに置き換えます。</p>
 <pre class="code-block"># main.py
@@ -1610,10 +1585,10 @@ def add_game(game: Game):
     conn.commit()
     conn.close()
     return {"ok": True}</pre>
-<div class="warn-box"><strong>⚠️ commit を忘れると保存されません:</strong> `INSERT` や `UPDATE` を実行しただけでは、まだ確定していません。<strong>`conn.commit()` を呼んで初めてファイルに書き込まれます</strong>。「エラーは出ないのにデータが入らない」という症状の原因は、ほぼこれです。SELECTには要りません（読むだけなので）。</div>
+<div class="warn-box"><strong>⚠️ commit を忘れると保存されません:</strong> <code>INSERT</code> や <code>UPDATE</code> を実行しただけでは、まだ確定していません。<strong><code>conn.commit()</code> を呼んで初めてファイルに書き込まれます</strong>。「エラーは出ないのにデータが入らない」という症状の原因は、ほぼこれです。SELECTには要りません（読むだけなので）。</div>
 <div class="kv-box"><strong>📌 ここが本章のハイライト:</strong> この状態で<strong>サーバを再起動してから一覧を見てください</strong>。データが残っているはずです。前章までは消えていました。この違いが「保存する」ということです。</div>
 <h3>絶対にやってはいけない書き方</h3>
-<p>上のコードで、値を `?` で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、<strong>入力次第でSQLを乗っ取られます</strong>。</p>
+<p>上のコードで、値を <code>?</code> で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、<strong>入力次第でSQLを乗っ取られます</strong>。</p>
 <pre class="code-block"># ❌ 絶対にダメな書き方
 name = 受け取った値
 conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
@@ -1626,8 +1601,8 @@ conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
 <pre class="code-block"># ⭕ 正しい書き方（プレースホルダを使う）
 conn.execute("SELECT * FROM players WHERE name = ?", (name,))</pre>
 <p>なぜこれで防げるのか。<strong>プレースホルダを使うと、DBは「SQLの文」と「値」を別々に受け取ります</strong>。値の中に何が書かれていても、それはただの文字列として扱われ、命令としては解釈されません。文字列連結だと、DBには繋がった1本の文しか届かないので、区別のしようがないのです。</p>
-<div class="warn-box"><strong>⚠️ SQLインジェクション:</strong> これは<strong>実際に起き続けている代表的な攻撃</strong>です。「自分のアプリは小さいから大丈夫」ということはありません。<strong>ユーザーからの入力をSQLに文字列連結しない</strong>——これだけは例外なく守ってください。f文字列（`f\"... {name} ...\"`）で組み立てるのも同じく危険です。</div>
-<div class="tip-box"><strong>💡 一度実際に試してみる:</strong> 学習用の自分のDBで、わざと文字列連結版を書いて `' OR '1'='1` を入れてみてください。<strong>全件返ってくるのを自分の目で見ると、二度と忘れません</strong>。言葉で聞くだけでは身につかない部分です。必ず自分のPC上の練習用DBで行い、他人のシステムには絶対に試さないこと。</div>
+<div class="warn-box"><strong>⚠️ SQLインジェクション:</strong> これは<strong>実際に起き続けている代表的な攻撃</strong>です。「自分のアプリは小さいから大丈夫」ということはありません。<strong>ユーザーからの入力をSQLに文字列連結しない</strong>——これだけは例外なく守ってください。f文字列（<code>f\"... {name} ...\"</code>）で組み立てるのも同じく危険です。</div>
+<div class="tip-box"><strong>💡 一度実際に試してみる:</strong> 学習用の自分のDBで、わざと文字列連結版を書いて <code>' OR '1'='1</code> を入れてみてください。<strong>全件返ってくるのを自分の目で見ると、二度と忘れません</strong>。言葉で聞くだけでは身につかない部分です。必ず自分のPC上の練習用DBで行い、他人のシステムには絶対に試さないこと。</div>
 <h3>接続情報をコードに書かない</h3>
 <p>SQLiteはファイル名だけですが、PostgreSQLなどに移るとホスト名・ユーザー名・パスワードが必要になります。<strong>これらをコードに直接書いてはいけません</strong>。第4章で学んだとおり、pushした瞬間に公開されます。</p>
 <pre class="code-block"># .env  ← .gitignore に入れる。commitしない
@@ -1645,7 +1620,7 @@ session.add(Game(winner="黒", black_count=38, white_count=26))
 session.commit()</pre>
 <div class="tip-box"><strong>💡 なぜ生SQLを先にやったか:</strong> ORMは便利ですが、<strong>中で何が起きているか分からないまま使うと詰まったとき何もできません</strong>。生SQLを知っていれば「ORMがどんなSQLを出しているか」を確認して原因を追えます。順番が大事です。</div>
 <h3>「もし1万件あったら？」</h3>
-<p>いま戦績は数十件でしょう。だから `SELECT * FROM games` で全部取ってきても一瞬です。<strong>でも1万件になったら？</strong> 一覧画面を開くたびに1万行を読み、JSONに変換し、ブラウザに送ることになります。</p>
+<p>いま戦績は数十件でしょう。だから <code>SELECT * FROM games</code> で全部取ってきても一瞬です。<strong>でも1万件になったら？</strong> 一覧画面を開くたびに1万行を読み、JSONに変換し、ブラウザに送ることになります。</p>
 <pre class="code-block">-- ❌ 全部取ってきてから、Python側で最初の20件だけ使う
 SELECT * FROM games;
 
@@ -1653,15 +1628,15 @@ SELECT * FROM games;
 SELECT * FROM games ORDER BY played_at DESC LIMIT 20;</pre>
 <div class="kv-box"><strong>📌 データが増えたときを想像する癖:</strong> いま動いているコードに対して<strong>「もし100倍のデータがあったら、これは動くか」</strong>と自問してみてください。この問いを習慣にできるかどうかが、動くコードを書ける人と、使われるコードを書ける人の分かれ目です。</div>
 <h3>よくあるエラーと対処</h3>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">原因</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">エラーは無いがデータが入らない</td><td class="tbl-td">commit 忘れ</td><td class="tbl-td">`conn.commit()` を追加</td></tr><tr><td class="tbl-td">no such table</td><td class="tbl-td">テーブルが作られていない</td><td class="tbl-td">`init_db()` を起動時に呼ぶ</td></tr><tr><td class="tbl-td">no such column</td><td class="tbl-td">列名の食い違い</td><td class="tbl-td">CREATE TABLE の定義と見比べる</td></tr><tr><td class="tbl-td">database is locked</td><td class="tbl-td">別のプロセスが掴んでいる</td><td class="tbl-td">DBブラウザを閉じる / close 忘れを直す</td></tr><tr><td class="tbl-td">unable to open database file</td><td class="tbl-td">パスが違う</td><td class="tbl-td">サーバを起動した場所からの相対パスを確認</td></tr><tr><td class="tbl-td">500 が返る</td><td class="tbl-td">サーバ内でPythonのエラー</td><td class="tbl-td">起動したターミナルのログを読む</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">原因</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">エラーは無いがデータが入らない</td><td class="tbl-td">commit 忘れ</td><td class="tbl-td"><code>conn.commit()</code> を追加</td></tr><tr><td class="tbl-td">no such table</td><td class="tbl-td">テーブルが作られていない</td><td class="tbl-td"><code>init_db()</code> を起動時に呼ぶ</td></tr><tr><td class="tbl-td">no such column</td><td class="tbl-td">列名の食い違い</td><td class="tbl-td">CREATE TABLE の定義と見比べる</td></tr><tr><td class="tbl-td">database is locked</td><td class="tbl-td">別のプロセスが掴んでいる</td><td class="tbl-td">DBブラウザを閉じる / close 忘れを直す</td></tr><tr><td class="tbl-td">unable to open database file</td><td class="tbl-td">パスが違う</td><td class="tbl-td">サーバを起動した場所からの相対パスを確認</td></tr><tr><td class="tbl-td">500 が返る</td><td class="tbl-td">サーバ内でPythonのエラー</td><td class="tbl-td">起動したターミナルのログを読む</td></tr></tbody></table></div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: 戦績が消えないようにする</p>
   <p class="assign-goal">前章のAPIをDBに繋ぎます。<strong>サーバを再起動してもデータが残る</strong>ことを確認するのが、この章のいちばんの成果です。</p>
   <p class="assign-h">作るもの</p><ol class="assign-steps"><li>第6章で設計したテーブルを、実際にDBに作る</li><li>db.py と main.py にファイルを分ける</li><li>GET /api/games を DBのSELECTに置き換える</li><li>POST /api/games を DBのINSERTに置き換える</li><li>オセロで何回か対戦し、戦績を貯める</li><li><strong>サーバを再起動して、データが残っていることを確認する</strong></li><li>DBファイルを直接開いて、中のデータを目で見る</li><li>余裕があれば、プレイヤー名も保存してJOINで一覧を出す</li></ol>
   <p class="assign-h">できたと言える条件</p><div class="chk-item">サーバを再起動しても戦績が消えない</div><div class="chk-item">ブラウザ → API → DB の3層を自分で図に描いて説明できる</div><div class="chk-item">なぜプレースホルダを使うのか説明できる</div><div class="chk-item">実際にDBファイルを開いて、中のデータを確認した</div><div class="chk-item">db.py と main.py の役割の違いを説明できる</div>
-  <p class="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。第7章で学んだ切り分けが、そのまま使えます。</p>
+  <p class="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。<code>/docs</code> からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。第7章で学んだ切り分けが、そのまま使えます。</p>
 </div>
-<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>一覧APIに<strong>並び順と件数を指定できる</strong>ようにしてみましょう（例: `/api/games?limit=20&amp;order=desc`）。URLの後ろに付ける値をFastAPIでどう受け取るか調べる必要があります。あわせて「limitに100000が渡されたらどうするか」も考えてみてください。<strong>外から来る値には上限を設ける</strong>——これも「ブラウザから来るデータは信用しない」の一例です。</p></div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>一覧APIに<strong>並び順と件数を指定できる</strong>ようにしてみましょう（例: <code>/api/games?limit=20&amp;order=desc</code>）。URLの後ろに付ける値をFastAPIでどう受け取るか調べる必要があります。あわせて「limitに100000が渡されたらどうするか」も考えてみてください。<strong>外から来る値には上限を設ける</strong>——これも「ブラウザから来るデータは信用しない」の一例です。</p></div>
 <div class="tip-box"><strong>💡 次章への橋渡し:</strong> これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを<strong>誰でもアクセスできる場所に置きます</strong>。</div>
 <h3>チェックリスト</h3><div class="chk-item">ブラウザ → API → DB の3層を説明できる</div><div class="chk-item">それぞれの層が何を担当するか言える</div><div class="chk-item">PythonからDBに接続してSQLを実行できる</div><div class="chk-item">commit が必要な理由を説明できる</div><div class="chk-item">サーバを再起動してもデータが残ることを確認した</div><div class="chk-item">db.py と main.py を分ける理由を説明できる</div><div class="chk-item">プレースホルダを使う理由を説明できる</div><div class="chk-item">SQLインジェクションがどう起きるか説明できる</div><div class="chk-item">接続情報をコードに直接書かない理由が分かる</div>
   </div>
@@ -1731,7 +1706,7 @@ GitHubへ push
    ↓
 https://あなたのアプリ.vercel.app  ← 世界中からアクセスできる</pre>
 <h3>なぜ localhost では駄目なのか</h3>
-<p>前章までのオセロは `http://127.0.0.1:8000` で動いていました。この住所は「<strong>自分のPC</strong>」を指しています。同じURLを友達に送っても、相手のPCの中を見に行くだけで、あなたのアプリには繋がりません。</p>
+<p>前章までのオセロは <code>http://127.0.0.1:8000</code> で動いていました。この住所は「<strong>自分のPC</strong>」を指しています。同じURLを友達に送っても、相手のPCの中を見に行くだけで、あなたのアプリには繋がりません。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th"></th><th class="tbl-th">localhost</th><th class="tbl-th">デプロイ後</th></tr></thead><tbody><tr><td class="tbl-td">見られる人</td><td class="tbl-td">自分だけ</td><td class="tbl-td">世界中の誰でも</td></tr><tr><td class="tbl-td">動いている時間</td><td class="tbl-td">自分がPCを起動している間だけ</td><td class="tbl-td">24時間ずっと</td></tr><tr><td class="tbl-td">URL</td><td class="tbl-td">127.0.0.1:8000</td><td class="tbl-td">https://…（本物のドメイン）</td></tr><tr><td class="tbl-td">止まるとき</td><td class="tbl-td">ターミナルを閉じたら</td><td class="tbl-td">自分で止めるまで</td></tr></tbody></table></div>
 <div class="kv-box"><strong>📌 「誰かのPCで動き続けている」だけ:</strong> デプロイと聞くと特別なことに思えますが、やっていることは<strong>「自分のPCの代わりに、24時間動いているどこかのコンピュータでプログラムを動かす」</strong>だけです。ホスティングサービスは、そのコンピュータを貸してくれる会社です。仕組みが分かれば怖くありません。</div>
 <h3>2種類のデプロイがある</h3>
@@ -1743,9 +1718,9 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
 <ul><li>フロントエンド（HTML/CSS/JS）… Vercel / Netlify / GitHub Pages などが定番</li><li>API + DB … Render / Railway など、DBも一緒に提供するサービスが手軽</li></ul>
 <p>基本の流れは、どのサービスでもほぼ同じです。</p>
 <ol><li>サービスにGitHubアカウントでログインする</li><li>「New Project」などから、公開したいリポジトリを選ぶ</li><li>ビルド設定と公開するフォルダを指定する（静的サイトなら大抵そのままでよい）</li><li>環境変数を設定する（次の節）</li><li>Deploy を押す。数分待つとURLが発行される</li></ol>
-<div class="tip-box"><strong>💡 pushしたら自動で反映される:</strong> 一度つなげば、あとは `git push` するだけで公開版が更新されます。<strong>手作業でファイルをアップロードする必要はありません</strong>。「pushしたら数分後に本番が変わる」という感覚を、ここで一度味わっておいてください。</div>
+<div class="tip-box"><strong>💡 pushしたら自動で反映される:</strong> 一度つなげば、あとは <code>git push</code> するだけで公開版が更新されます。<strong>手作業でファイルをアップロードする必要はありません</strong>。「pushしたら数分後に本番が変わる」という感覚を、ここで一度味わっておいてください。</div>
 <h3>環境変数 — 秘密をコードの外に置く</h3>
-<p>第8章で `.env` に接続情報を書きました。このファイルは `.gitignore` に入れているので、<strong>GitHubには上がっていません</strong>。ということは、公開先のサーバにも届いていません。</p>
+<p>第8章で <code>.env</code> に接続情報を書きました。このファイルは <code>.gitignore</code> に入れているので、<strong>GitHubには上がっていません</strong>。ということは、公開先のサーバにも届いていません。</p>
 <p>そこで、<strong>ホスティングサービスの管理画面から環境変数を設定します</strong>。多くのサービスに「Environment Variables」という項目があります。</p>
 <pre class="code-block">手元（.env ファイル）        公開先（サービスの管理画面）
   DB_PATH=othello.db    →    DB_PATH=/data/othello.db
@@ -1761,7 +1736,7 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状</th><th class="tbl-th">原因</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">画面は出るがデータが来ない</td><td class="tbl-td">APIのURLが127.0.0.1のまま</td><td class="tbl-td">公開したAPIのURLに書き換える</td></tr><tr><td class="tbl-td">CORSエラー</td><td class="tbl-td">許可するオリジンが手元のまま</td><td class="tbl-td">公開したフロントのURLを許可に追加</td></tr><tr><td class="tbl-td">起動に失敗する</td><td class="tbl-td">ライブラリが入っていない</td><td class="tbl-td">requirements.txt を用意したか確認</td></tr><tr><td class="tbl-td">500 が返る</td><td class="tbl-td">環境変数が未設定</td><td class="tbl-td">管理画面で設定して再デプロイ</td></tr><tr><td class="tbl-td">しばらくするとデータが消える</td><td class="tbl-td">保存先が一時的な場所</td><td class="tbl-td">永続化されるDBを使う（下記）</td></tr></tbody></table></div>
 <div class="warn-box"><strong>⚠️ SQLiteファイルが消えることがある:</strong> サービスによっては、<strong>再起動のたびにファイルが初期状態に戻ります</strong>（アプリを動かす場所と、データを残す場所が別になっているため）。手元では消えないのに本番だけ消える、という現象の正体はこれです。対処は、そのサービスが提供する永続ディスクを使うか、<strong>PostgreSQLなどの独立したDBサービスに移す</strong>ことです。第6章で「SQLは製品が変わってもほぼ同じ」と書いたのは、ここで効いてきます。</div>
 <h3>ログを読む</h3>
-<p>本番では `print` の出力が画面に見えません。代わりに、<strong>サービスの管理画面に「Logs」という項目</strong>があります。第7章でターミナルのエラーを読んだのと同じことを、ここで行います。</p>
+<p>本番では <code>print</code> の出力が画面に見えません。代わりに、<strong>サービスの管理画面に「Logs」という項目</strong>があります。第7章でターミナルのエラーを読んだのと同じことを、ここで行います。</p>
 <ol><li>管理画面の Logs（またはDeploy Logs）を開く</li><li>デプロイ時のエラーか、実行時のエラーかを見分ける</li><li>Pythonのエラーが出ていれば、手元と同じように読む</li><li>直したら push する。自動で再デプロイされる</li></ol>
 <div class="tip-box"><strong>💡 切り分けは今までと同じ:</strong> 本番だからといって特別なことはありません。<strong>Networkタブでリクエストを見て、ログでサーバ側を見る</strong>。第7章で身につけた切り分けが、そのまま通用します。「本番だから分からない」と思った瞬間に手が止まるので、いつもの手順に落として考えてください。</div>
 <h3>公開したら、人に使ってもらう</h3>
@@ -1774,7 +1749,7 @@ https://あなたのアプリ.vercel.app  ← 世界中からアクセスでき�
   <p class="assign-h">できたと言える条件</p><div class="chk-item">公開URLにアクセスして対戦できる</div><div class="chk-item">対戦結果が保存され、再訪しても残っている</div><div class="chk-item">スマホからも開いて動作を確認した</div><div class="chk-item">自分以外の誰かに遊んでもらった</div><div class="chk-item">APIキーやパスワードがコードに残っていないか確認した</div><div class="chk-item">本番のログを開いて、中身を読んだことがある</div>
   <p class="assign-hint">💡 フロントとAPIは別々のサービスにデプロイすることになります。「フロントは動くがAPIに繋がらない」ときは、接続先URLとCORS設定の2つを疑ってください。第7章で学んだ切り分けがそのまま使えます。一度にすべてを繋ごうとせず、まずフロントだけ公開して表示を確認する、と段階を分けると原因が絞れます。</p>
 </div>
-<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>独自ドメイン（`othello-tanaka.com` のような自分専用のURL）を取って割り当ててみましょう。年間千円台から取得できます。あわせて、<strong>pushしたら自動でテストを走らせてから公開する</strong>仕組み（GitHub Actions など）も調べてみてください。「壊れたコードが本番に出ない」ようにする、実務では当たり前の仕組みです。</p></div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>独自ドメイン（<code>othello-tanaka.com</code> のような自分専用のURL）を取って割り当ててみましょう。年間千円台から取得できます。あわせて、<strong>pushしたら自動でテストを走らせてから公開する</strong>仕組み（GitHub Actions など）も調べてみてください。「壊れたコードが本番に出ない」ようにする、実務では当たり前の仕組みです。</p></div>
 <h3>ここまで来たら</h3>
 <p>必修範囲はここで終わりです。振り返ると、<strong>HTMLでページを書き、CSSで整え、JavaScriptで動かし、Gitで2人で共同開発し、Pythonでサーバを書き、SQLでデータを設計し、APIで繋ぎ、DBに保存し、世界に公開した</strong>——Webアプリを一通り自分の手で作ったことになります。</p>
 <div class="kv-box"><strong>📌 覚えたのは文法ではない:</strong> この過程で本当に身についたのは、タグやコマンドではなく、<strong>エラーを読む・原因を仮説立てる・調べる・直す</strong>というサイクルです。これは言語やフレームワークが変わっても使えます。次に何を学ぶときも、同じやり方で進められます。</div>
@@ -1869,7 +1844,7 @@ function add(a: number, b: number): number {
 
 add(1, 2);      // OK
 add('1', '2');  // ← 実行する前にエラーで教えてくれる！</pre>
-<p>関数の `): number` の部分は<strong>戻り値の型</strong>です。「この関数は必ず数値を返す」と宣言しています。書いておくと、うっかり `return` を忘れた場合もエラーで気付けます。</p>
+<p>関数の <code>): number</code> の部分は<strong>戻り値の型</strong>です。「この関数は必ず数値を返す」と宣言しています。書いておくと、うっかり <code>return</code> を忘れた場合もエラーで気付けます。</p>
 <h3>全部に型を書く必要はない</h3>
 <p>最初は「毎回書くのは面倒」と感じるはずです。実は<strong>書かなくてよい場面が多い</strong>——TypeScriptが自動で推測してくれるからです。これを型推論と呼びます。</p>
 <pre class="code-block">let count = 0;          // number だと自動で分かる（書かなくてよい）
@@ -1921,19 +1896,19 @@ function putStone(row: number, col: number, color: StoneColor) {
 putStone(3, 4, "black");   // OK
 putStone(3, 4, "黒");      // ← エラー。ここで止まる
 putStone(3, 4, "Black");   // ← エラー。大文字違いも止まる</pre>
-<div class="kv-box"><strong>📌 これがTypeScriptのいちばん強い使い方:</strong> `string` にしておくと、あらゆる文字列が通ってしまいます。<strong>取りうる値が決まっているものは、その値だけを型にする</strong>。こうすると、間違った値が入る余地そのものが消えます。手番（`"black" | "white"`）、マスの状態（`0 | 1 | 2`）など、オセロには使える場所がたくさんあります。</div>
+<div class="kv-box"><strong>📌 これがTypeScriptのいちばん強い使い方:</strong> <code>string</code> にしておくと、あらゆる文字列が通ってしまいます。<strong>取りうる値が決まっているものは、その値だけを型にする</strong>。こうすると、間違った値が入る余地そのものが消えます。手番（<code>"black" | "white"</code>）、マスの状態（<code>0 | 1 | 2</code>）など、オセロには使える場所がたくさんあります。</div>
 <h3>any — 使うと全部台無しになる型</h3>
-<p>型エラーに困ったとき、`any` を書くと黙ります。<strong>が、これは型チェックを放棄する宣言です</strong>。</p>
+<p>型エラーに困ったとき、<code>any</code> を書くと黙ります。<strong>が、これは型チェックを放棄する宣言です</strong>。</p>
 <pre class="code-block">let data: any = await res.json();
 data.whatever.anything;      // 何を書いてもエラーにならない（実行時に落ちる）</pre>
-<div class="warn-box"><strong>⚠️ anyで黙らせるのは最後の手段:</strong> エラーが出ると `any` を書きたくなりますが、<strong>それをやると型を入れた意味が消えます</strong>。TypeScriptを入れたのに全部 any、というコードは実務でもよく見かけますが、手間だけ増えて利点がゼロの状態です。まずはエラーメッセージを読んで、正しい型を考えてください。</div>
+<div class="warn-box"><strong>⚠️ anyで黙らせるのは最後の手段:</strong> エラーが出ると <code>any</code> を書きたくなりますが、<strong>それをやると型を入れた意味が消えます</strong>。TypeScriptを入れたのに全部 any、というコードは実務でもよく見かけますが、手間だけ増えて利点がゼロの状態です。まずはエラーメッセージを読んで、正しい型を考えてください。</div>
 <h3>導入と実行</h3>
-<p>すでにあるJSファイルを `.ts` に変えるところから始められます。段階的に移せるのがTypeScriptの良いところです。</p>
+<p>すでにあるJSファイルを <code>.ts</code> に変えるところから始められます。段階的に移せるのがTypeScriptの良いところです。</p>
 <pre class="code-block">npm install -D typescript      # 導入
 npx tsc --init                 # 設定ファイル tsconfig.json を作る
 npx tsc                        # .ts → .js に変換（コンパイル）
 npx tsc --watch                # 保存のたびに自動変換</pre>
-<p>変換して出てきた `.js` をHTMLから読み込みます。<strong>ブラウザはTypeScriptをそのままでは実行できない</strong>ので、この変換が必ず要ります。次章で使うViteのようなツールを入れると、この手順は自動になります。</p>
+<p>変換して出てきた <code>.js</code> をHTMLから読み込みます。<strong>ブラウザはTypeScriptをそのままでは実行できない</strong>ので、この変換が必ず要ります。次章で使うViteのようなツールを入れると、この手順は自動になります。</p>
 <h3>型エラーの読み方</h3>
 <p>TypeScriptのエラー文は長く見えますが、読むところは<strong>「何が」「どの型と」合わないか</strong>の2点だけです。</p>
 <pre class="code-block">Argument of type 'string' is not assignable to parameter of type 'number'.
@@ -1950,7 +1925,7 @@ Property 'mail' does not exist on type 'User'. Did you mean 'email'?
   <p class="assign-h">できたと言える条件</p><div class="chk-item">型エラーが出ない状態でオセロが動く</div><div class="chk-item">any を使っていない（使ったなら理由を説明できる）</div><div class="chk-item">「型を入れたことで見つかったバグ・書き間違い」を1つ以上挙げられる</div><div class="chk-item">型があると何が楽になるか、自分の言葉で説明できる</div>
   <p class="assign-hint">💡 石の色を string にすると "黒" でも "くろ" でも通ってしまいます。取りうる値が決まっているものは、それ専用の型を作れないか考えてみてください。エラーが大量に出ても、1つ直すと連鎖して消えることが多いので、上から順に片付けていけば大丈夫です。</p>
 </div>
-<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>サーバ側（Python）にも型を書いてみましょう。第7章の `class Game(BaseModel)` は、実はPythonの型注釈そのものです。<strong>フロントの interface とサーバの BaseModel が同じ形になっている</strong>ことを確認してみてください。ここが食い違うと422エラーになります。両側の型を合わせておくのが、API開発の基本です。</p></div>
+<div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>サーバ側（Python）にも型を書いてみましょう。第7章の <code>class Game(BaseModel)</code> は、実はPythonの型注釈そのものです。<strong>フロントの interface とサーバの BaseModel が同じ形になっている</strong>ことを確認してみてください。ここが食い違うと422エラーになります。両側の型を合わせておくのが、API開発の基本です。</p></div>
 <div class="tip-box"><strong>💡 次章への橋渡し:</strong> 型でコードが安全になりました。次章のReactでは<strong>画面の作り方そのもの</strong>を変えます。TypeScriptとReactは実務でセットで使われることが多いので、この章をやっておくと次が理解しやすくなります。</div>
 <h3>チェックリスト</h3><div class="chk-item">型が無いと何が起きるか、具体例で説明できる</div><div class="chk-item">number / string / boolean / 配列の型注釈が書ける</div><div class="chk-item">型推論があるので全部書かなくてよいと分かる</div><div class="chk-item">interfaceでデータの形を定義できる</div><div class="chk-item">ユニオン型で取りうる値を絞れる</div><div class="chk-item">any を安易に使わない理由が分かる</div><div class="chk-item">コンパイルして .js を作れる</div><div class="chk-item">エディタの型エラーを読んで直せる</div>
   </div>
@@ -2030,7 +2005,7 @@ function updateView() {
   document.querySelector("#turn").textContent = turn === 1 ? "黒番" : "白番";
 }</pre>
 <p>この方式の問題は、<strong>「データを変えたら、画面を変える処理も自分で書かないといけない」</strong>ことです。石数の更新を書き忘れれば、盤面だけ変わって数字が古いまま残ります。機能が増えるほど、この「更新し忘れ」が増えていきます。</p>
-<div class="kv-box"><strong>📌 Reactが解決するのはここ:</strong> Reactでは、<strong>データ（state）を変えるだけで画面が自動で作り直されます</strong>。「画面を更新する処理」を人間が書く必要がなくなる——これがReactを使う最大の理由です。上のような `updateView()` は、Reactでは1行も書きません。</div>
+<div class="kv-box"><strong>📌 Reactが解決するのはここ:</strong> Reactでは、<strong>データ（state）を変えるだけで画面が自動で作り直されます</strong>。「画面を更新する処理」を人間が書く必要がなくなる——これがReactを使う最大の理由です。上のような <code>updateView()</code> は、Reactでは1行も書きません。</div>
 <h3>「どう変えるか」から「どう見えるか」へ</h3>
 <p>考え方が根本的に変わります。素のJSは「<strong>この操作が来たら、画面のここをこう書き換える</strong>」という手順の記述でした。Reactは「<strong>この状態のとき、画面はこう見える</strong>」という結果の記述です。</p>
 <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th"></th><th class="tbl-th">素のJavaScript</th><th class="tbl-th">React</th></tr></thead><tbody><tr><td class="tbl-td">書くもの</td><td class="tbl-td">画面をどう書き換えるかの手順</td><td class="tbl-td">状態と、その見た目</td></tr><tr><td class="tbl-td">石を置いたら</td><td class="tbl-td">盤面・石数・手番を自分で更新</td><td class="tbl-td">stateを変えるだけ</td></tr><tr><td class="tbl-td">更新し忘れ</td><td class="tbl-td">起きる</td><td class="tbl-td">起きない（全部stateから作られる）</td></tr><tr><td class="tbl-td">コードの置き場所</td><td class="tbl-td">HTML・CSS・JSに分かれる</td><td class="tbl-td">部品ごとにまとまる</td></tr></tbody></table></div>
@@ -2041,7 +2016,7 @@ function updateView() {
 cd othello-react
 npm install
 npm run dev        # → http://localhost:5173 が開く</pre>
-<div class="tip-box"><strong>💡 保存すると即座に画面が変わる:</strong> `npm run dev` を動かしたままコードを保存すると、<strong>ブラウザが自動で更新されます</strong>。第1章のLive Serverと同じ体験ですが、こちらは画面の状態を保ったまま更新されるので、さらに快適です。開発中はこれを起動しっぱなしにします。</div>
+<div class="tip-box"><strong>💡 保存すると即座に画面が変わる:</strong> <code>npm run dev</code> を動かしたままコードを保存すると、<strong>ブラウザが自動で更新されます</strong>。第1章のLive Serverと同じ体験ですが、こちらは画面の状態を保ったまま更新されるので、さらに快適です。開発中はこれを起動しっぱなしにします。</div>
 <h3>コンポーネントとJSX</h3>
 <pre class="code-block">function Hello(props) {
   return &lt;h1&gt;こんにちは、{props.name}さん&lt;/h1&gt;;
@@ -2056,14 +2031,7 @@ function App() {
   );
 }</pre>
 <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。関数名は<strong>必ず大文字で始めます</strong>（小文字だと通常のHTMLタグとして扱われます）。</p>
-<div class="warn-box"><strong>⚠️ JSXはHTMLではありません:</strong> 見た目は似ていますが、いくつか違いがあります。最初に必ず引っかかる箇所です。
-
-class → className     （classはJSの予約語のため）
-for   → htmlFor
-style="color: red"  →  style={{ color: 'red' }}
-returnするタグは必ず1つ（複数並べるなら &lt;&gt; &lt;/&gt; で包む）
-閉じタグの無いタグも &lt;br /&gt; のように閉じる
-</div>
+<div class="warn-box"><strong>⚠️ JSXはHTMLではありません:</strong> 見た目は似ていますが、いくつか違いがあります。最初に必ず引っかかる箇所です。<p class="mt-2">class → className     （classはJSの予約語のため）<br>for   → htmlFor<br>style="color: red"  →  style={{ color: 'red' }}<br>returnするタグは必ず1つ（複数並べるなら &lt;&gt; &lt;/&gt; で包む）<br>閉じタグの無いタグも &lt;br /&gt; のように閉じる</p></div>
 <h3>state — 画面が変わる仕組み</h3>
 <pre class="code-block">import { useState } from 'react';
 
@@ -2075,8 +2043,8 @@ function Counter() {
     &lt;/button&gt;
   );
 }</pre>
-<p>`useState(0)` は「初期値0の状態を作る」という意味で、<strong>現在の値</strong>と<strong>それを変える関数</strong>の2つを返します。`setCount` を呼ぶと、Reactがこの部品を作り直し、新しい `count` で画面を描き直します。</p>
-<div class="kv-box"><strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。`document.querySelector` を書きたくなったら、それはたいてい設計を見直す合図です。</div>
+<p><code>useState(0)</code> は「初期値0の状態を作る」という意味で、<strong>現在の値</strong>と<strong>それを変える関数</strong>の2つを返します。<code>setCount</code> を呼ぶと、Reactがこの部品を作り直し、新しい <code>count</code> で画面を描き直します。</p>
+<div class="kv-box"><strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。<code>document.querySelector</code> を書きたくなったら、それはたいてい設計を見直す合図です。</div>
 <h3>全員がここで詰まる — stateは直接書き換えない</h3>
 <p>オセロの盤面をstateにすると、必ずこれを踏みます。<strong>「値を変えたのに画面が変わらない」</strong>という現象です。</p>
 <pre class="code-block">const [board, setBoard] = useState(initialBoard);
@@ -2090,9 +2058,9 @@ const next = board.map(row =&gt; [...row]);   // 中身ごとコピー
 next[3][4] = 1;
 setBoard(next);</pre>
 <p>なぜかというと、Reactは「<strong>前の値と違うか</strong>」を見て再描画を判断するからです。同じ配列の中身だけ変えても、Reactから見れば「同じもの」なので何も起きません。<strong>新しい配列・新しいオブジェクトを作って渡す</strong>——これがReactの鉄則です。</p>
-<div class="warn-box"><strong>⚠️ 2次元配列のコピーは1段では足りない:</strong> `[...board]` だと外側だけの浅いコピーになり、中の各行は元と同じものを指したままです。8×8の盤面では `board.map(row =&gt; [...row])` のように、<strong>行ごとにコピー</strong>してください。ここは第5章のPythonで踏んだ `[[0] * 8] * 8` の罠と、実は同じ話です。</div>
+<div class="warn-box"><strong>⚠️ 2次元配列のコピーは1段では足りない:</strong> <code>[...board]</code> だと外側だけの浅いコピーになり、中の各行は元と同じものを指したままです。8×8の盤面では <code>board.map(row =&gt; [...row])</code> のように、<strong>行ごとにコピー</strong>してください。ここは第5章のPythonで踏んだ <code>[[0] * 8] * 8</code> の罠と、実は同じ話です。</div>
 <h3>リストを描く</h3>
-<p>盤面の64マスや戦績一覧は、配列から作ります。`map` で並べるのがReactの定型です。</p>
+<p>盤面の64マスや戦績一覧は、配列から作ります。<code>map</code> で並べるのがReactの定型です。</p>
 <pre class="code-block">function Board({ board, onCellClick }) {
   return (
     &lt;div className="board"&gt;
@@ -2108,7 +2076,7 @@ setBoard(next);</pre>
     &lt;/div&gt;
   );
 }</pre>
-<p>`key` は、Reactが「どの要素がどれか」を見分けるための目印です。<strong>付け忘れると警告が出て、並び替えたときに表示がおかしくなります</strong>。配列の添字ではなく、その要素固有の値（戦績なら `id`）を使うのが望ましい書き方です。</p>
+<p><code>key</code> は、Reactが「どの要素がどれか」を見分けるための目印です。<strong>付け忘れると警告が出て、並び替えたときに表示がおかしくなります</strong>。配列の添字ではなく、その要素固有の値（戦績なら <code>id</code>）を使うのが望ましい書き方です。</p>
 <h3>状態をどこに持つか</h3>
 <p>Reactでいちばん設計が要るのがここです。<strong>盤面のstateは、マスの部品ではなく親（盤面全体）が持ちます</strong>。</p>
 <pre class="code-block">function Game() {
@@ -2132,7 +2100,7 @@ setBoard(next);</pre>
 }</pre>
 <div class="kv-box"><strong>📌 これが「状態の持ち上げ」:</strong> 石数（Score）も手番（Turn）も、盤面と同じデータを見ています。<strong>複数の部品が同じ情報を必要とするなら、共通の親が持って、propsで配る</strong>。これがReactの基本的な設計です。「石数表示の更新を忘れる」ことが起きなくなるのは、石数を別で持たず<strong>盤面から毎回計算している</strong>からです。</div>
 <h3>APIからデータを取る — useEffect</h3>
-<p>第7章で作った戦績一覧を表示します。「画面が表示されたときに1回だけ取ってくる」という処理には `useEffect` を使います。</p>
+<p>第7章で作った戦績一覧を表示します。「画面が表示されたときに1回だけ取ってくる」という処理には <code>useEffect</code> を使います。</p>
 <pre class="code-block">import { useState, useEffect } from 'react';
 
 function History() {
@@ -2154,14 +2122,14 @@ function History() {
     &lt;/ul&gt;
   );
 }</pre>
-<div class="warn-box"><strong>⚠️ 末尾の `[]` を忘れると無限ループします:</strong> 第2引数の配列は「<strong>いつ実行するか</strong>」の指定です。`[]` なら最初の1回だけ。<strong>書き忘れると毎回の再描画で実行され、その中でstateを変えるのでまた再描画され…</strong>と無限に繰り返します。ブラウザが固まり、サーバに大量のリクエストが飛びます。Networkタブが同じリクエストで埋まっていたら、これを疑ってください。</div>
+<div class="warn-box"><strong>⚠️ 末尾の <code>[]</code> を忘れると無限ループします:</strong> 第2引数の配列は「<strong>いつ実行するか</strong>」の指定です。<code>[]</code> なら最初の1回だけ。<strong>書き忘れると毎回の再描画で実行され、その中でstateを変えるのでまた再描画され…</strong>と無限に繰り返します。ブラウザが固まり、サーバに大量のリクエストが飛びます。Networkタブが同じリクエストで埋まっていたら、これを疑ってください。</div>
 <h3>よくあるエラーと対処</h3>
-<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状・エラー</th><th class="tbl-th">原因</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">stateを変えたのに画面が変わらない</td><td class="tbl-td">配列・オブジェクトを直接書き換えた</td><td class="tbl-td">新しいものを作って set する</td></tr><tr><td class="tbl-td">Each child should have a unique key</td><td class="tbl-td">keyの付け忘れ</td><td class="tbl-td">map の中の要素に key を付ける</td></tr><tr><td class="tbl-td">Objects are not valid as a React child</td><td class="tbl-td">オブジェクトをそのまま表示しようとした</td><td class="tbl-td">`{obj.name}` のように中の値を指定する</td></tr><tr><td class="tbl-td">リクエストが無限に飛ぶ</td><td class="tbl-td">useEffect の第2引数忘れ</td><td class="tbl-td">`, [])` を付ける</td></tr><tr><td class="tbl-td">Too many re-renders</td><td class="tbl-td">描画中に set を呼んでいる</td><td class="tbl-td">`onClick={fn()}` ではなく `onClick={() =&gt; fn()}`</td></tr><tr><td class="tbl-td">class が効かない</td><td class="tbl-td">class と書いている</td><td class="tbl-td">className に直す</td></tr><tr><td class="tbl-td">Cannot read properties of undefined</td><td class="tbl-td">データ取得前に中身を触っている</td><td class="tbl-td">読み込み中の表示を先に返す</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="tbl-th">症状・エラー</th><th class="tbl-th">原因</th><th class="tbl-th">対処</th></tr></thead><tbody><tr><td class="tbl-td">stateを変えたのに画面が変わらない</td><td class="tbl-td">配列・オブジェクトを直接書き換えた</td><td class="tbl-td">新しいものを作って set する</td></tr><tr><td class="tbl-td">Each child should have a unique key</td><td class="tbl-td">keyの付け忘れ</td><td class="tbl-td">map の中の要素に key を付ける</td></tr><tr><td class="tbl-td">Objects are not valid as a React child</td><td class="tbl-td">オブジェクトをそのまま表示しようとした</td><td class="tbl-td"><code>{obj.name}</code> のように中の値を指定する</td></tr><tr><td class="tbl-td">リクエストが無限に飛ぶ</td><td class="tbl-td">useEffect の第2引数忘れ</td><td class="tbl-td"><code>, [])</code> を付ける</td></tr><tr><td class="tbl-td">Too many re-renders</td><td class="tbl-td">描画中に set を呼んでいる</td><td class="tbl-td"><code>onClick={fn()}</code> ではなく <code>onClick={() =&gt; fn()}</code></td></tr><tr><td class="tbl-td">class が効かない</td><td class="tbl-td">class と書いている</td><td class="tbl-td">className に直す</td></tr><tr><td class="tbl-td">Cannot read properties of undefined</td><td class="tbl-td">データ取得前に中身を触っている</td><td class="tbl-td">読み込み中の表示を先に返す</td></tr></tbody></table></div>
 <div class="assign-box">
   <p class="assign-title">🛠 課題: オセロをReactで作り直す</p>
   <p class="assign-goal">素のJavaScriptで作ったオセロを、Reactのコンポーネントで組み直します。<strong>同じものを2通りの方法で作る</strong>ことで、Reactが何を楽にしてくれるのかがはっきり分かります。</p>
   <p class="assign-h">作るもの</p><ol class="assign-steps"><li>Viteでプロジェクトを作る</li><li>画面を部品に分解する（盤面・マス・石数表示・手番表示・戦績一覧など）</li><li>まず盤面だけを表示する（クリックはまだ無くてよい）</li><li>盤面の状態を state で持つ</li><li>マスをクリックしたら state を更新し、画面が自動で変わることを確認する</li><li>裏返し判定など、既存のロジックをそのまま移植する</li><li>石数と手番を、盤面のstateから計算して表示する</li><li>戦績一覧をAPIから取得して表示する</li></ol>
-  <p class="assign-h">できたと言える条件</p><div class="chk-item">React版のオセロが動く</div><div class="chk-item">`document.querySelector` を1度も使っていない</div><div class="chk-item">「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる</div><div class="chk-item">画面を部品に分けた理由を説明できる</div><div class="chk-item">stateを直接書き換えると何が起きるか説明できる</div>
+  <p class="assign-h">できたと言える条件</p><div class="chk-item">React版のオセロが動く</div><div class="chk-item"><code>document.querySelector</code> を1度も使っていない</div><div class="chk-item">「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる</div><div class="chk-item">画面を部品に分けた理由を説明できる</div><div class="chk-item">stateを直接書き換えると何が起きるか説明できる</div>
   <p class="assign-hint">💡 最初に盤面を1つのstateとして持つか、マスごとに持つかで悩むはずです。「画面 = stateの反映結果」という原則に立ち返って考えてみてください。判定ロジック（裏返し・置ける場所）は素のJSから<strong>そのまま持ってこられます</strong>。Reactが変えるのは画面の作り方だけで、ロジックは変わりません。</p>
 </div>
 <div class="ex-box"><p class="ex-title">✏️ 発展課題（余裕があれば）</p><p>「待った（1手戻す）」機能を付けてみましょう。<strong>盤面の履歴を配列で持つ</strong>——つまり「これまでの全盤面のリスト」をstateにして、表示するのはその末尾、戻るときは1つ手前を見る、という設計です。素のJavaScriptでこれを作るのがどれだけ大変か想像すると、Reactの考え方の利点がはっきり分かります。</p></div>

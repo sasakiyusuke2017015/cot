@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -292,12 +294,12 @@ def init_db():
     conn.close()`}</div>
                   <p>3つ、意味を確認しておきます。</p>
                   <ul>
-                    <li><strong>`IF NOT EXISTS`</strong> … すでにテーブルがあれば何もしない。起動のたびに呼んでも安全</li>
-                    <li><strong>`row_factory = sqlite3.Row`</strong> … 結果を `row["winner"]` のように名前で取り出せるようにする。これが無いと番号（`row[0]`）でしか取れず、列を足したとき壊れます</li>
-                    <li><strong>`conn.close()`</strong> … 使い終わった接続を閉じる。閉じないと接続が溜まり、いずれ繋がらなくなります</li>
+                    <li><strong><code>IF NOT EXISTS</code></strong> … すでにテーブルがあれば何もしない。起動のたびに呼んでも安全</li>
+                    <li><strong><code>row_factory = sqlite3.Row</code></strong> … 結果を <code>row["winner"]</code> のように名前で取り出せるようにする。これが無いと番号（<code>row[0]</code>）でしか取れず、列を足したとき壊れます</li>
+                    <li><strong><code>conn.close()</code></strong> … 使い終わった接続を閉じる。閉じないと接続が溜まり、いずれ繋がらなくなります</li>
                   </ul>
                   <h3>なぜファイルを db.py と main.py に分けるのか</h3>
-                  <p>全部 `main.py` に書いても動きます。それでも分けるのは、<strong>1つのファイルに1つの役割</strong>を持たせるためです。これを責務の分離と呼びます。</p>
+                  <p>全部 <code>main.py</code> に書いても動きます。それでも分けるのは、<strong>1つのファイルに1つの役割</strong>を持たせるためです。これを責務の分離と呼びます。</p>
                   <div className="tbl-wrap">
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">ファイル</th><th className="tbl-th">役割</th><th className="tbl-th">ここに書かないもの</th></tr></thead>
@@ -307,7 +309,7 @@ def init_db():
                       </tbody>
                     </table>
                   </div>
-                  <p>分けておくと、あとで「SQLiteをPostgreSQLに変える」となったとき <strong>`db.py` だけ直せば済みます</strong>。混ざっていると、全ファイルからSQLを探し出すことになります。<strong>コードレビューで最初に見られるのもここ</strong>です。</p>
+                  <p>分けておくと、あとで「SQLiteをPostgreSQLに変える」となったとき <strong><code>db.py</code> だけ直せば済みます</strong>。混ざっていると、全ファイルからSQLを探し出すことになります。<strong>コードレビューで最初に見られるのもここ</strong>です。</p>
                   <h3>APIをDBに繋ぎ替える</h3>
                   <p>前章では戦績をリスト（メモリ）に入れていました。そこをDBの読み書きに置き換えます。</p>
                   <div className="code-block">{`# main.py
@@ -335,13 +337,13 @@ def add_game(game: Game):
     conn.close()
     return {"ok": True}`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ commit を忘れると保存されません:</strong> `INSERT` や `UPDATE` を実行しただけでは、まだ確定していません。<strong>`conn.commit()` を呼んで初めてファイルに書き込まれます</strong>。「エラーは出ないのにデータが入らない」という症状の原因は、ほぼこれです。SELECTには要りません（読むだけなので）。
+                    <strong>⚠️ commit を忘れると保存されません:</strong> <code>INSERT</code> や <code>UPDATE</code> を実行しただけでは、まだ確定していません。<strong><code>conn.commit()</code> を呼んで初めてファイルに書き込まれます</strong>。「エラーは出ないのにデータが入らない」という症状の原因は、ほぼこれです。SELECTには要りません（読むだけなので）。
                   </div>
                   <div className="kv-box">
                     <strong>📌 ここが本章のハイライト:</strong> この状態で<strong>サーバを再起動してから一覧を見てください</strong>。データが残っているはずです。前章までは消えていました。この違いが「保存する」ということです。
                   </div>
                   <h3>絶対にやってはいけない書き方</h3>
-                  <p>上のコードで、値を `?` で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、<strong>入力次第でSQLを乗っ取られます</strong>。</p>
+                  <p>上のコードで、値を <code>?</code> で書いて別に渡しているのには理由があります。もし文字列を繋げて書くと、<strong>入力次第でSQLを乗っ取られます</strong>。</p>
                   <div className="code-block">{`# ❌ 絶対にダメな書き方
 name = 受け取った値
 conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
@@ -355,10 +357,10 @@ conn.execute("SELECT * FROM players WHERE name = '" + name + "'")
 conn.execute("SELECT * FROM players WHERE name = ?", (name,))`}</div>
                   <p>なぜこれで防げるのか。<strong>プレースホルダを使うと、DBは「SQLの文」と「値」を別々に受け取ります</strong>。値の中に何が書かれていても、それはただの文字列として扱われ、命令としては解釈されません。文字列連結だと、DBには繋がった1本の文しか届かないので、区別のしようがないのです。</p>
                   <div className="warn-box">
-                    <strong>⚠️ SQLインジェクション:</strong> これは<strong>実際に起き続けている代表的な攻撃</strong>です。「自分のアプリは小さいから大丈夫」ということはありません。<strong>ユーザーからの入力をSQLに文字列連結しない</strong>——これだけは例外なく守ってください。f文字列（`f\"... &#123;name&#125; ...\"`）で組み立てるのも同じく危険です。
+                    <strong>⚠️ SQLインジェクション:</strong> これは<strong>実際に起き続けている代表的な攻撃</strong>です。「自分のアプリは小さいから大丈夫」ということはありません。<strong>ユーザーからの入力をSQLに文字列連結しない</strong>——これだけは例外なく守ってください。f文字列（<code>f\"... &#123;name&#125; ...\"</code>）で組み立てるのも同じく危険です。
                   </div>
                   <div className="tip-box">
-                    <strong>💡 一度実際に試してみる:</strong> 学習用の自分のDBで、わざと文字列連結版を書いて `' OR '1'='1` を入れてみてください。<strong>全件返ってくるのを自分の目で見ると、二度と忘れません</strong>。言葉で聞くだけでは身につかない部分です。必ず自分のPC上の練習用DBで行い、他人のシステムには絶対に試さないこと。
+                    <strong>💡 一度実際に試してみる:</strong> 学習用の自分のDBで、わざと文字列連結版を書いて <code>' OR '1'='1</code> を入れてみてください。<strong>全件返ってくるのを自分の目で見ると、二度と忘れません</strong>。言葉で聞くだけでは身につかない部分です。必ず自分のPC上の練習用DBで行い、他人のシステムには絶対に試さないこと。
                   </div>
                   <h3>接続情報をコードに書かない</h3>
                   <p>SQLiteはファイル名だけですが、PostgreSQLなどに移るとホスト名・ユーザー名・パスワードが必要になります。<strong>これらをコードに直接書いてはいけません</strong>。第4章で学んだとおり、pushした瞬間に公開されます。</p>
@@ -379,7 +381,7 @@ session.commit()`}</div>
                     <strong>💡 なぜ生SQLを先にやったか:</strong> ORMは便利ですが、<strong>中で何が起きているか分からないまま使うと詰まったとき何もできません</strong>。生SQLを知っていれば「ORMがどんなSQLを出しているか」を確認して原因を追えます。順番が大事です。
                   </div>
                   <h3>「もし1万件あったら？」</h3>
-                  <p>いま戦績は数十件でしょう。だから `SELECT * FROM games` で全部取ってきても一瞬です。<strong>でも1万件になったら？</strong> 一覧画面を開くたびに1万行を読み、JSONに変換し、ブラウザに送ることになります。</p>
+                  <p>いま戦績は数十件でしょう。だから <code>SELECT * FROM games</code> で全部取ってきても一瞬です。<strong>でも1万件になったら？</strong> 一覧画面を開くたびに1万行を読み、JSONに変換し、ブラウザに送ることになります。</p>
                   <div className="code-block">{`-- ❌ 全部取ってきてから、Python側で最初の20件だけ使う
 SELECT * FROM games;
 
@@ -393,8 +395,8 @@ SELECT * FROM games ORDER BY played_at DESC LIMIT 20;`}</div>
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">症状</th><th className="tbl-th">原因</th><th className="tbl-th">対処</th></tr></thead>
                       <tbody>
-                        <tr><td className="tbl-td">エラーは無いがデータが入らない</td><td className="tbl-td">commit 忘れ</td><td className="tbl-td">`conn.commit()` を追加</td></tr>
-                        <tr><td className="tbl-td">no such table</td><td className="tbl-td">テーブルが作られていない</td><td className="tbl-td">`init_db()` を起動時に呼ぶ</td></tr>
+                        <tr><td className="tbl-td">エラーは無いがデータが入らない</td><td className="tbl-td">commit 忘れ</td><td className="tbl-td"><code>conn.commit()</code> を追加</td></tr>
+                        <tr><td className="tbl-td">no such table</td><td className="tbl-td">テーブルが作られていない</td><td className="tbl-td"><code>init_db()</code> を起動時に呼ぶ</td></tr>
                         <tr><td className="tbl-td">no such column</td><td className="tbl-td">列名の食い違い</td><td className="tbl-td">CREATE TABLE の定義と見比べる</td></tr>
                         <tr><td className="tbl-td">database is locked</td><td className="tbl-td">別のプロセスが掴んでいる</td><td className="tbl-td">DBブラウザを閉じる / close 忘れを直す</td></tr>
                         <tr><td className="tbl-td">unable to open database file</td><td className="tbl-td">パスが違う</td><td className="tbl-td">サーバを起動した場所からの相対パスを確認</td></tr>
@@ -418,11 +420,11 @@ SELECT * FROM games ORDER BY played_at DESC LIMIT 20;`}</div>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
                     <CheckList items={["サーバを再起動しても戦績が消えない","ブラウザ → API → DB の3層を自分で図に描いて説明できる","なぜプレースホルダを使うのか説明できる","実際にDBファイルを開いて、中のデータを確認した","db.py と main.py の役割の違いを説明できる"]} />
-                    <p className="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。`/docs` からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。第7章で学んだ切り分けが、そのまま使えます。</p>
+                    <p className="assign-hint">💡 うまく保存されないときは、まずサーバ側だけで確認します。<code>/docs</code> からPOSTしてみて、DBファイルを直接覗いて入っているか見る。ここが動いていればブラウザ側の問題だと切り分けられます。第7章で学んだ切り分けが、そのまま使えます。</p>
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>
-                    <p>一覧APIに<strong>並び順と件数を指定できる</strong>ようにしてみましょう（例: `/api/games?limit=20&amp;order=desc`）。URLの後ろに付ける値をFastAPIでどう受け取るか調べる必要があります。あわせて「limitに100000が渡されたらどうするか」も考えてみてください。<strong>外から来る値には上限を設ける</strong>——これも「ブラウザから来るデータは信用しない」の一例です。</p>
+                    <p>一覧APIに<strong>並び順と件数を指定できる</strong>ようにしてみましょう（例: <code>/api/games?limit=20&amp;order=desc</code>）。URLの後ろに付ける値をFastAPIでどう受け取るか調べる必要があります。あわせて「limitに100000が渡されたらどうするか」も考えてみてください。<strong>外から来る値には上限を設ける</strong>——これも「ブラウザから来るデータは信用しない」の一例です。</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 次章への橋渡し:</strong> これで「動いて、保存される」アプリができました。ただし動くのは自分のPCの中だけです。次章では、これを<strong>誰でもアクセスできる場所に置きます</strong>。

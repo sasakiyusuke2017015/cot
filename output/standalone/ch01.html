@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -256,7 +258,7 @@ function Page() {
                   <h3>① VS Code を入れる</h3>
                   <p>コードを書くための専用エディタです。メモ帳でも書けますが、色分け・入力補完・エラー表示があるかどうかで学習効率がまるで変わります。<strong>現場で最も使われているエディタ</strong>でもあります。</p>
                   <ol>
-                    <li>`Visual Studio Code` で検索し、公式サイトからダウンロードする（無料）</li>
+                    <li><code>Visual Studio Code</code> で検索し、公式サイトからダウンロードする（無料）</li>
                     <li>インストーラを実行する。選択肢はすべて既定のままでよい</li>
                     <li>起動して、真っ黒な画面が出れば成功</li>
                   </ol>
@@ -282,11 +284,8 @@ function Page() {
   └─ script.js             ← 第3章で追加`}</div>
                   <p>フォルダを作ったら、VS Code の「ファイル → フォルダーを開く」でそのフォルダを開いてください。左側にファイル一覧が出れば準備完了です。</p>
                   <div className="warn-box">
-                    <strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると
-<strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。
-
-エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。
-
+                    <strong>⚠️ 拡張子を表示させておく:</strong> Windowsは初期設定で拡張子（.html などの末尾）を隠します。この状態で作業すると<br /><strong>「profile.html」のつもりが「profile.html.txt」になっていて開けない</strong>という事故が起きます。
+                    <p className="mt-2">エクスプローラーの「表示」タブ →「ファイル名拡張子」にチェックを入れて、必ず表示させてください。</p>
                   </div>
                   <h3>③ ブラウザと開発者ツール</h3>
                   <p>ブラウザは <strong>Chrome か Edge</strong> を使ってください。どちらも同じ仕組みで動いており、開発者向けの機能が充実しています。</p>
@@ -309,7 +308,7 @@ function Page() {
                   </div>
                   <p>この章で扱うのはHTMLだけです。<strong>見た目が地味でも気にしないでください</strong>。骨組みが正しくできていれば、あとから内装はいくらでも変えられます。</p>
                   <h3>最小のHTMLファイル</h3>
-                  <p>まずは動くものを見ます。テキストエディタで次を書いて `index.html` という名前で保存し、ダブルクリックしてブラウザで開いてください。</p>
+                  <p>まずは動くものを見ます。テキストエディタで次を書いて <code>index.html</code> という名前で保存し、ダブルクリックしてブラウザで開いてください。</p>
                   <div className="code-block">{`<!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -323,15 +322,15 @@ function Page() {
 </html>`}</div>
                   <p>表示されましたか。これで<strong>もうWebページを作ったことになります</strong>。順に何を書いたか見ていきます。</p>
                   <ul>
-                    <li><strong>`&lt;!DOCTYPE html&gt;`</strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li>
-                    <li><strong>`&lt;html lang="ja"&gt;`</strong> … 全体を包む要素。lang="ja" は日本語のページだという情報</li>
-                    <li><strong>`&lt;head&gt;`</strong> … ページの設定を書く場所。<strong>画面には表示されない</strong></li>
-                    <li><strong>`&lt;meta charset="UTF-8"&gt;`</strong> … 文字コードの指定。これが無いと日本語が文字化けする</li>
-                    <li><strong>`&lt;title&gt;`</strong> … ブラウザのタブに出る名前</li>
-                    <li><strong>`&lt;body&gt;`</strong> … 実際に画面に表示される中身。ここが本体</li>
+                    <li><strong><code>&lt;!DOCTYPE html&gt;</code></strong> … 「これはHTMLです」という宣言。おまじないと思ってよい。必ず1行目に書く</li>
+                    <li><strong><code>&lt;html lang="ja"&gt;</code></strong> … 全体を包む要素。lang="ja" は日本語のページだという情報</li>
+                    <li><strong><code>&lt;head&gt;</code></strong> … ページの設定を書く場所。<strong>画面には表示されない</strong></li>
+                    <li><strong><code>&lt;meta charset="UTF-8"&gt;</code></strong> … 文字コードの指定。これが無いと日本語が文字化けする</li>
+                    <li><strong><code>&lt;title&gt;</code></strong> … ブラウザのタブに出る名前</li>
+                    <li><strong><code>&lt;body&gt;</code></strong> … 実際に画面に表示される中身。ここが本体</li>
                   </ul>
                   <div className="warn-box">
-                    <strong>⚠️ 文字化けしたら:</strong> 日本語が「譁�蟄怜喧縺�」のように壊れて見えたら、ほぼ `&lt;meta charset="UTF-8"&gt;` の書き忘れです。ファイル自体の保存形式がUTF-8になっているかも確認してください（VS Codeなら右下に表示されます）。
+                    <strong>⚠️ 文字化けしたら:</strong> 日本語が「譁�蟄怜喧縺�」のように壊れて見えたら、ほぼ <code>&lt;meta charset="UTF-8"&gt;</code> の書き忘れです。ファイル自体の保存形式がUTF-8になっているかも確認してください（VS Codeなら右下に表示されます）。
                   </div>
                   <h3>要素とタグ — HTMLの基本単位</h3>
                   <p>HTMLは<strong>要素</strong>の積み重ねでできています。要素は「開始タグ」「中身」「終了タグ」の3つで1組です。</p>
@@ -348,10 +347,7 @@ function Page() {
 </ul>`}</div>
                   <div className="warn-box">
                     <strong>⚠️ 閉じる順番は「後に開けたものを先に閉じる」:</strong> 箱を入れ子にするのと同じで、順番を守らないと壊れます。
-
-⭕ 正しい: &lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;
-❌ 誤り:   &lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;
-
+                    <p className="mt-2">⭕ 正しい: &lt;p&gt;これは&lt;strong&gt;大事&lt;/strong&gt;です&lt;/p&gt;<br />❌ 誤り:   &lt;p&gt;これは&lt;strong&gt;大事&lt;/p&gt;&lt;/strong&gt;</p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 インデントを付ける:</strong> 入れ子になったら、中の要素は半角スペース2つ分ずらして書きます。<strong>ブラウザの動作には影響しませんが、人間が読むときに構造が一目で分かります</strong>。これは実務でも必ず守られている習慣です。
@@ -441,12 +437,12 @@ function Page() {
   <h3>無料プラン</h3>
   <p>月0円</p>
 </section>`}</div>
-                  <p>上は `t1` `b1` `x` が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
+                  <p>上は <code>t1</code> <code>b1</code> <code>x</code> が何なのか、<strong>CSSを開いて照らし合わせないと分かりません</strong>。下は読むだけで「料金プランの見出しがあって、その下に無料プランの説明がある」と分かります。半年後の自分は他人です。そのとき助かるのは下の書き方です。</p>
                   <div className="tip-box">
                     <strong>💡 判断に迷ったときの問い:</strong> 「<strong>CSSを全部外したとき、この文書は読めるか</strong>」を考えてみてください。見出し・段落・リストが適切なら、装飾ゼロでも意味が通ります。通らないなら、タグの選び方を見直す合図です。
                   </div>
                   <h3>なぜ「構造」と「見た目」を分けるのか</h3>
-                  <p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（`&lt;font&gt;` など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
+                  <p>実はHTMLにも文字を大きくしたり色を変えたりするタグ（<code>&lt;font&gt;</code> など）が存在します。ですが<strong>もう使われません</strong>。構造と見た目を混ぜると、後から変更するのが地獄になるからです。</p>
                   <p>例えば100ページのサイトで「見出しの色を変えたい」となったとき——構造と見た目が分かれていればCSSの1行を直すだけで全ページに反映されます。混ざっていると、100ページ分の全見出しを手作業で直すことになります。この差は決定的です。</p>
                   <h3>開発者ツールを開いてみる</h3>
                   <p>ブラウザには、表示中のページのHTMLを見る機能が標準で付いています。<strong>世の中の全Webページが教材になる</strong>ので、必ず使えるようになってください。</p>
@@ -464,9 +460,9 @@ function Page() {
                     <table className="tbl">
                       <thead><tr><th className="tbl-th">症状</th><th className="tbl-th">原因</th><th className="tbl-th">直し方</th></tr></thead>
                       <tbody>
-                        <tr><td className="tbl-td">日本語が文字化けする</td><td className="tbl-td">charset の指定漏れ</td><td className="tbl-td">`&lt;meta charset="UTF-8"&gt;` を head に入れる</td></tr>
+                        <tr><td className="tbl-td">日本語が文字化けする</td><td className="tbl-td">charset の指定漏れ</td><td className="tbl-td"><code>&lt;meta charset="UTF-8"&gt;</code> を head に入れる</td></tr>
                         <tr><td className="tbl-td">途中から表示が崩れる</td><td className="tbl-td">終了タグの書き忘れ</td><td className="tbl-td">開発者ツールで入れ子を確認する</td></tr>
-                        <tr><td className="tbl-td">リンクが飛ばない</td><td className="tbl-td">href のスペルミス・クォート忘れ</td><td className="tbl-td">`href="..."` の形になっているか</td></tr>
+                        <tr><td className="tbl-td">リンクが飛ばない</td><td className="tbl-td">href のスペルミス・クォート忘れ</td><td className="tbl-td"><code>href="..."</code> の形になっているか</td></tr>
                         <tr><td className="tbl-td">画像が出ない</td><td className="tbl-td">ファイルの場所が違う</td><td className="tbl-td">HTMLファイルから見た相対パスを確認</td></tr>
                         <tr><td className="tbl-td">変更が反映されない</td><td className="tbl-td">保存していない / キャッシュ</td><td className="tbl-td">保存して Ctrl+Shift+R で再読み込み</td></tr>
                       </tbody>
@@ -480,7 +476,7 @@ function Page() {
                     <p className="assign-goal">自分のプロフィールカードをHTMLだけで作ります。この課題は第2章・第3章で育てていくので、消さずに取っておいてください。見た目は次章で整えるので、<strong>いまは構造だけに集中</strong>します。</p>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
-                      <li>`profile.html` を作り、DOCTYPE から body までの骨組みを書く</li>
+                      <li><code>profile.html</code> を作り、DOCTYPE から body までの骨組みを書く</li>
                       <li>タブに表示される title を自分の名前にする</li>
                       <li>名前を h1、肩書き（学習中のことなど）を p で書く</li>
                       <li>「できること」を ul のリストで3つ以上書く</li>
@@ -491,7 +487,7 @@ function Page() {
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
                     <CheckList items={["ブラウザで開くと内容が表示される","開発者ツールで見たとき、意図した入れ子になっている","なぜその要素を選んだか説明できる（なぜ div ではなく h1 か）","文字化けしていない","h1 が1つだけになっている"]} />
-                    <p className="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、`a` タグの属性を調べてみてください。</p>
+                    <p className="assign-hint">💡 見た目が地味でも気にしないこと。今は「構造が正しいか」だけを見ます。飾りつけは次章の仕事です。リンクを新しいタブで開く方法は、<code>a</code> タグの属性を調べてみてください。</p>
                   </div>
                   <div className="ex-box">
                     <p className="ex-title">✏️ 発展課題（余裕があれば）</p>

@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -136,7 +138,7 @@ const QUIZ = [
     "options": [
       "<style src=\"style.css\"></style>",
       "<css href=\"style.css\">",
-      "<script src=\"style.css\"></script>",
+      "<script src=\"style.css\"><\/script>",
       "<link rel=\"stylesheet\" href=\"style.css\">"
     ],
     "answer": 3,
@@ -268,11 +270,11 @@ h1 {
                     <li><strong>セレクタ</strong> … どの要素に当てるか（h1、.card など）</li>
                     <li><strong>プロパティ</strong> … 何を変えるか（color、font-size など）</li>
                     <li><strong>値</strong> … どうするか（#1e3a8a、2rem など）</li>
-                    <li>行の終わりには必ず<strong>セミコロン `;`</strong> を付ける</li>
-                    <li>`/* */` で囲むとコメント（メモ書き）になる</li>
+                    <li>行の終わりには必ず<strong>セミコロン <code>;</code></strong> を付ける</li>
+                    <li><code>/* */</code> で囲むとコメント（メモ書き）になる</li>
                   </ul>
                   <h3>CSSファイルを分けて読み込む</h3>
-                  <p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにするのが基本</strong>です。まず `style.css` を作り、HTMLの `&lt;head&gt;` の中で読み込みます。</p>
+                  <p>CSSはHTMLの中に直接書くこともできますが、<strong>別ファイルにするのが基本</strong>です。まず <code>style.css</code> を作り、HTMLの <code>&lt;head&gt;</code> の中で読み込みます。</p>
                   <div className="code-block">{`<!-- profile.html の <head> の中に書く -->
 <link rel="stylesheet" href="style.css">`}</div>
                   <div className="kv-box">
@@ -325,12 +327,8 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                     <li>同じ強さなら<strong>後に書いたほうが勝つ</strong></li>
                   </ul>
                   <div className="warn-box">
-                    <strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）
-② 詳細度で別の指定に負けている
-③ そもそもCSSファイルが読み込まれていない
-
-<strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。
-
+                    <strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）<br />② 詳細度で別の指定に負けている<br />③ そもそもCSSファイルが読み込まれていない
+                    <p className="mt-2"><strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。</p>
                   </div>
                   <h3>ボックスモデル — すべての要素は箱</h3>
                   <p>レイアウトを理解する上で最重要の概念です。<strong>すべての要素は4層構造の箱</strong>として描画されます。</p>
@@ -370,9 +368,7 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
 }`}</div>
                   <div className="tip-box">
                     <strong>💡 box-sizing は最初に書く:</strong> 既定では width に padding と border が<strong>含まれません</strong>。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。
-
-`* &#123; box-sizing: border-box; &#125;`
-
+                    <p className="mt-2"><code>* &#123; box-sizing: border-box; &#125;</code></p>
                   </div>
                   <h3>Flexbox — 一列に並べる</h3>
                   <p>要素を横や縦に並べたいときはFlexboxを使います。<strong>並べたい要素の「親」に指定する</strong>のがポイントです。</p>
@@ -413,7 +409,7 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
   background: #2d7a4f;     /* マスの緑 */
   aspect-ratio: 1;         /* 正方形にする */
 }`}</div>
-                  <p>これだけで8×8の盤面ができます。`repeat(8, 50px)` は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
+                  <p>これだけで8×8の盤面ができます。<code>repeat(8, 50px)</code> は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
                   <h3>色の指定方法</h3>
                   <div className="tbl-wrap">
                     <table className="tbl">
@@ -465,8 +461,8 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                     <p className="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。<strong>HTMLファイルは1文字も変えずに</strong>、見た目だけを変えるのが狙いです（class名の追加は可）。</p>
                     <p className="assign-h">作るもの</p>
                     <ol className="assign-steps">
-                      <li>`style.css` を作り、profile.html から link で読み込む</li>
-                      <li>`* &#123; box-sizing: border-box; &#125;` を最初に書いておく</li>
+                      <li><code>style.css</code> を作り、profile.html から link で読み込む</li>
+                      <li><code>* &#123; box-sizing: border-box; &#125;</code> を最初に書いておく</li>
                       <li>カード風の見た目にする（背景色・padding・border-radius・box-shadow）</li>
                       <li>名前と肩書きで文字サイズや色に差をつけ、情報の優先順位を表現する</li>
                       <li>Flexbox を使って「できること」のリストを横並びのタグ風にする</li>

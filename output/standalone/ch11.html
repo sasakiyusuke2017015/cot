@@ -35,6 +35,8 @@ body { font-family: 'Yu Gothic UI', 'Yu Gothic', 'YuGothic', sans-serif; }
 .tag-core { background:#dbeafe; color:#1d4ed8; }
 .tag-user { background:#d1fae5; color:#065f46; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas, Monaco, monospace; font-size:0.8rem; line-height:1.7; border-radius:0.5rem; padding:1rem 1.25rem; overflow-x:auto; margin:1.25rem 0; white-space:pre; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas, Monaco, monospace; font-size:0.86em; border-radius:0.25rem; padding:0.1em 0.35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:0.75rem; padding:1.25rem 1.5rem; margin:2rem 0; }
 .assign-title { font-weight:700; font-size:1.05rem; color:#92400e; margin-bottom:0.5rem; }
 .assign-goal { color:#78350f; margin-bottom:0.9rem; line-height:1.8; }
@@ -280,7 +282,7 @@ function updateView() {
 }`}</div>
                   <p>この方式の問題は、<strong>「データを変えたら、画面を変える処理も自分で書かないといけない」</strong>ことです。石数の更新を書き忘れれば、盤面だけ変わって数字が古いまま残ります。機能が増えるほど、この「更新し忘れ」が増えていきます。</p>
                   <div className="kv-box">
-                    <strong>📌 Reactが解決するのはここ:</strong> Reactでは、<strong>データ（state）を変えるだけで画面が自動で作り直されます</strong>。「画面を更新する処理」を人間が書く必要がなくなる——これがReactを使う最大の理由です。上のような `updateView()` は、Reactでは1行も書きません。
+                    <strong>📌 Reactが解決するのはここ:</strong> Reactでは、<strong>データ（state）を変えるだけで画面が自動で作り直されます</strong>。「画面を更新する処理」を人間が書く必要がなくなる——これがReactを使う最大の理由です。上のような <code>updateView()</code> は、Reactでは1行も書きません。
                   </div>
                   <h3>「どう変えるか」から「どう見えるか」へ</h3>
                   <p>考え方が根本的に変わります。素のJSは「<strong>この操作が来たら、画面のここをこう書き換える</strong>」という手順の記述でした。Reactは「<strong>この状態のとき、画面はこう見える</strong>」という結果の記述です。</p>
@@ -303,7 +305,7 @@ cd othello-react
 npm install
 npm run dev        # → http://localhost:5173 が開く`}</div>
                   <div className="tip-box">
-                    <strong>💡 保存すると即座に画面が変わる:</strong> `npm run dev` を動かしたままコードを保存すると、<strong>ブラウザが自動で更新されます</strong>。第1章のLive Serverと同じ体験ですが、こちらは画面の状態を保ったまま更新されるので、さらに快適です。開発中はこれを起動しっぱなしにします。
+                    <strong>💡 保存すると即座に画面が変わる:</strong> <code>npm run dev</code> を動かしたままコードを保存すると、<strong>ブラウザが自動で更新されます</strong>。第1章のLive Serverと同じ体験ですが、こちらは画面の状態を保ったまま更新されるので、さらに快適です。開発中はこれを起動しっぱなしにします。
                   </div>
                   <h3>コンポーネントとJSX</h3>
                   <div className="code-block">{`function Hello(props) {
@@ -321,13 +323,7 @@ function App() {
                   <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。関数名は<strong>必ず大文字で始めます</strong>（小文字だと通常のHTMLタグとして扱われます）。</p>
                   <div className="warn-box">
                     <strong>⚠️ JSXはHTMLではありません:</strong> 見た目は似ていますが、いくつか違いがあります。最初に必ず引っかかる箇所です。
-
-class → className     （classはJSの予約語のため）
-for   → htmlFor
-style="color: red"  →  style=&#123;&#123; color: 'red' &#125;&#125;
-returnするタグは必ず1つ（複数並べるなら &lt;&gt; &lt;/&gt; で包む）
-閉じタグの無いタグも &lt;br /&gt; のように閉じる
-
+                    <p className="mt-2">class → className     （classはJSの予約語のため）<br />for   → htmlFor<br />style="color: red"  →  style=&#123;&#123; color: 'red' &#125;&#125;<br />returnするタグは必ず1つ（複数並べるなら &lt;&gt; &lt;/&gt; で包む）<br />閉じタグの無いタグも &lt;br /&gt; のように閉じる</p>
                   </div>
                   <h3>state — 画面が変わる仕組み</h3>
                   <div className="code-block">{`import { useState } from 'react';
@@ -340,9 +336,9 @@ function Counter() {
     </button>
   );
 }`}</div>
-                  <p>`useState(0)` は「初期値0の状態を作る」という意味で、<strong>現在の値</strong>と<strong>それを変える関数</strong>の2つを返します。`setCount` を呼ぶと、Reactがこの部品を作り直し、新しい `count` で画面を描き直します。</p>
+                  <p><code>useState(0)</code> は「初期値0の状態を作る」という意味で、<strong>現在の値</strong>と<strong>それを変える関数</strong>の2つを返します。<code>setCount</code> を呼ぶと、Reactがこの部品を作り直し、新しい <code>count</code> で画面を描き直します。</p>
                   <div className="kv-box">
-                    <strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。`document.querySelector` を書きたくなったら、それはたいてい設計を見直す合図です。
+                    <strong>📌 Reactの考え方:</strong> DOMを直接書き換えるのではなく、<strong>stateを変えると画面が自動で再描画される</strong>。「画面 = stateの反映結果」と考えるのがReactの核心です。<code>document.querySelector</code> を書きたくなったら、それはたいてい設計を見直す合図です。
                   </div>
                   <h3>全員がここで詰まる — stateは直接書き換えない</h3>
                   <p>オセロの盤面をstateにすると、必ずこれを踏みます。<strong>「値を変えたのに画面が変わらない」</strong>という現象です。</p>
@@ -358,10 +354,10 @@ next[3][4] = 1;
 setBoard(next);`}</div>
                   <p>なぜかというと、Reactは「<strong>前の値と違うか</strong>」を見て再描画を判断するからです。同じ配列の中身だけ変えても、Reactから見れば「同じもの」なので何も起きません。<strong>新しい配列・新しいオブジェクトを作って渡す</strong>——これがReactの鉄則です。</p>
                   <div className="warn-box">
-                    <strong>⚠️ 2次元配列のコピーは1段では足りない:</strong> `[...board]` だと外側だけの浅いコピーになり、中の各行は元と同じものを指したままです。8×8の盤面では `board.map(row =&gt; [...row])` のように、<strong>行ごとにコピー</strong>してください。ここは第5章のPythonで踏んだ `[[0] * 8] * 8` の罠と、実は同じ話です。
+                    <strong>⚠️ 2次元配列のコピーは1段では足りない:</strong> <code>[...board]</code> だと外側だけの浅いコピーになり、中の各行は元と同じものを指したままです。8×8の盤面では <code>board.map(row =&gt; [...row])</code> のように、<strong>行ごとにコピー</strong>してください。ここは第5章のPythonで踏んだ <code>[[0] * 8] * 8</code> の罠と、実は同じ話です。
                   </div>
                   <h3>リストを描く</h3>
-                  <p>盤面の64マスや戦績一覧は、配列から作ります。`map` で並べるのがReactの定型です。</p>
+                  <p>盤面の64マスや戦績一覧は、配列から作ります。<code>map</code> で並べるのがReactの定型です。</p>
                   <div className="code-block">{`function Board({ board, onCellClick }) {
   return (
     <div className="board">
@@ -377,7 +373,7 @@ setBoard(next);`}</div>
     </div>
   );
 }`}</div>
-                  <p>`key` は、Reactが「どの要素がどれか」を見分けるための目印です。<strong>付け忘れると警告が出て、並び替えたときに表示がおかしくなります</strong>。配列の添字ではなく、その要素固有の値（戦績なら `id`）を使うのが望ましい書き方です。</p>
+                  <p><code>key</code> は、Reactが「どの要素がどれか」を見分けるための目印です。<strong>付け忘れると警告が出て、並び替えたときに表示がおかしくなります</strong>。配列の添字ではなく、その要素固有の値（戦績なら <code>id</code>）を使うのが望ましい書き方です。</p>
                   <h3>状態をどこに持つか</h3>
                   <p>Reactでいちばん設計が要るのがここです。<strong>盤面のstateは、マスの部品ではなく親（盤面全体）が持ちます</strong>。</p>
                   <div className="code-block">{`function Game() {
@@ -403,7 +399,7 @@ setBoard(next);`}</div>
                     <strong>📌 これが「状態の持ち上げ」:</strong> 石数（Score）も手番（Turn）も、盤面と同じデータを見ています。<strong>複数の部品が同じ情報を必要とするなら、共通の親が持って、propsで配る</strong>。これがReactの基本的な設計です。「石数表示の更新を忘れる」ことが起きなくなるのは、石数を別で持たず<strong>盤面から毎回計算している</strong>からです。
                   </div>
                   <h3>APIからデータを取る — useEffect</h3>
-                  <p>第7章で作った戦績一覧を表示します。「画面が表示されたときに1回だけ取ってくる」という処理には `useEffect` を使います。</p>
+                  <p>第7章で作った戦績一覧を表示します。「画面が表示されたときに1回だけ取ってくる」という処理には <code>useEffect</code> を使います。</p>
                   <div className="code-block">{`import { useState, useEffect } from 'react';
 
 function History() {
@@ -426,7 +422,7 @@ function History() {
   );
 }`}</div>
                   <div className="warn-box">
-                    <strong>⚠️ 末尾の `[]` を忘れると無限ループします:</strong> 第2引数の配列は「<strong>いつ実行するか</strong>」の指定です。`[]` なら最初の1回だけ。<strong>書き忘れると毎回の再描画で実行され、その中でstateを変えるのでまた再描画され…</strong>と無限に繰り返します。ブラウザが固まり、サーバに大量のリクエストが飛びます。Networkタブが同じリクエストで埋まっていたら、これを疑ってください。
+                    <strong>⚠️ 末尾の <code>[]</code> を忘れると無限ループします:</strong> 第2引数の配列は「<strong>いつ実行するか</strong>」の指定です。<code>[]</code> なら最初の1回だけ。<strong>書き忘れると毎回の再描画で実行され、その中でstateを変えるのでまた再描画され…</strong>と無限に繰り返します。ブラウザが固まり、サーバに大量のリクエストが飛びます。Networkタブが同じリクエストで埋まっていたら、これを疑ってください。
                   </div>
                   <h3>よくあるエラーと対処</h3>
                   <div className="tbl-wrap">
@@ -435,9 +431,9 @@ function History() {
                       <tbody>
                         <tr><td className="tbl-td">stateを変えたのに画面が変わらない</td><td className="tbl-td">配列・オブジェクトを直接書き換えた</td><td className="tbl-td">新しいものを作って set する</td></tr>
                         <tr><td className="tbl-td">Each child should have a unique key</td><td className="tbl-td">keyの付け忘れ</td><td className="tbl-td">map の中の要素に key を付ける</td></tr>
-                        <tr><td className="tbl-td">Objects are not valid as a React child</td><td className="tbl-td">オブジェクトをそのまま表示しようとした</td><td className="tbl-td">`&#123;obj.name&#125;` のように中の値を指定する</td></tr>
-                        <tr><td className="tbl-td">リクエストが無限に飛ぶ</td><td className="tbl-td">useEffect の第2引数忘れ</td><td className="tbl-td">`, [])` を付ける</td></tr>
-                        <tr><td className="tbl-td">Too many re-renders</td><td className="tbl-td">描画中に set を呼んでいる</td><td className="tbl-td">`onClick=&#123;fn()&#125;` ではなく `onClick=&#123;() =&gt; fn()&#125;`</td></tr>
+                        <tr><td className="tbl-td">Objects are not valid as a React child</td><td className="tbl-td">オブジェクトをそのまま表示しようとした</td><td className="tbl-td"><code>&#123;obj.name&#125;</code> のように中の値を指定する</td></tr>
+                        <tr><td className="tbl-td">リクエストが無限に飛ぶ</td><td className="tbl-td">useEffect の第2引数忘れ</td><td className="tbl-td"><code>, [])</code> を付ける</td></tr>
+                        <tr><td className="tbl-td">Too many re-renders</td><td className="tbl-td">描画中に set を呼んでいる</td><td className="tbl-td"><code>onClick=&#123;fn()&#125;</code> ではなく <code>onClick=&#123;() =&gt; fn()&#125;</code></td></tr>
                         <tr><td className="tbl-td">class が効かない</td><td className="tbl-td">class と書いている</td><td className="tbl-td">className に直す</td></tr>
                         <tr><td className="tbl-td">Cannot read properties of undefined</td><td className="tbl-td">データ取得前に中身を触っている</td><td className="tbl-td">読み込み中の表示を先に返す</td></tr>
                       </tbody>
@@ -458,7 +454,7 @@ function History() {
                       <li>戦績一覧をAPIから取得して表示する</li>
                     </ol>
                     <p className="assign-h">できたと言える条件</p>
-                    <CheckList items={["React版のオセロが動く","`document.querySelector` を1度も使っていない","「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる","画面を部品に分けた理由を説明できる","stateを直接書き換えると何が起きるか説明できる"]} />
+                    <CheckList items={["React版のオセロが動く","document.querySelector を1度も使っていない","「素のJSのときは自分でやっていたが、Reactでは不要になったこと」を挙げられる","画面を部品に分けた理由を説明できる","stateを直接書き換えると何が起きるか説明できる"]} />
                     <p className="assign-hint">💡 最初に盤面を1つのstateとして持つか、マスごとに持つかで悩むはずです。「画面 = stateの反映結果」という原則に立ち返って考えてみてください。判定ロジック（裏返し・置ける場所）は素のJSから<strong>そのまま持ってこられます</strong>。Reactが変えるのは画面の作り方だけで、ロジックは変わりません。</p>
                   </div>
                   <div className="ex-box">

@@ -169,6 +169,20 @@ function validateHtml(file) {
   const scriptStart = html.indexOf('<script type="text/babel">')
   const jsx = scriptStart >= 0 ? html.slice(scriptStart) : ''
 
+  // 本文やクイズが素の "</script>" を含むと、そこで script ブロックが終わりページが白紙になる。
+  // 教材は <script> タグ自体を解説するので、中身の閉じタグは "<\/script>" でなければならない。
+  if (scriptStart >= 0) {
+    const inner = html.slice(scriptStart + '<script type="text/babel">'.length)
+    // 本物の閉じタグは末尾側の 1 つ。それより手前に出てくる </script> は本文由来で、
+    // ブラウザはそこで script を打ち切ってしまう（= ページが白紙）。
+    const end = inner.lastIndexOf('</script>')
+    if (end < 0) {
+      err(rel, 'babel script ブロックが閉じられていません')
+    } else if (inner.slice(0, end).includes('</script>')) {
+      err(rel, '本文中の </script> が未エスケープです（script ブロックが途中で終わりページが白紙になります）')
+    }
+  }
+
   // JSX 規約
   // code-block のコード例（テンプレートリテラル）は JSX ではないので検査から外す。
   // 教材が HTML/CSS/JS を扱う都合上、コード例に <!-- --> や class= が出るのは正しい。

@@ -112,7 +112,7 @@ export function renderWebChapter(chapter, quiz, { prev = null, next = null, tota
             ${nextNav}
           </div>`
 
-  return `${head}<script type="text/babel">
+  const script = `<script type="text/babel">
 const { useState } = React;
 
 ${jsConst('KEYWORDS', chapter.keywords ?? [])}
@@ -243,4 +243,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
 </body>
 </html>
 `
+
+  // 本文やクイズが "</script>" を含むと、そこで script ブロックが終わってページが途切れる
+  // （教材の性質上 <script> タグの解説は普通に出てくる）。中身の閉じタグだけ無害化する。
+  // 末尾の本物の </script> は残すため、最後の 1 つを除いてスラッシュを分割する。
+  const close = script.lastIndexOf('</script>')
+  return head + script.slice(0, close).replaceAll('</script>', '<\\/script>') + script.slice(close)
 }

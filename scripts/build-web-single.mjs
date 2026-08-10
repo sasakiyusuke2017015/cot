@@ -37,9 +37,36 @@ function esc(text) {
     .replaceAll('>', '&gt;')
 }
 
-/** `**強調**` を <strong> に。 */
+/** `**強調**` を <strong>、`` `コード` `` を <code> に。 */
 function inline(text) {
-  return esc(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  // 段落内の改行は著者が意図した折り返し（対比・箇条）なので <br> にする。
+  return code(esc(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')).replace(/\n/g, '<br>')
+}
+
+// 二重形 ``…`` の退避印。本文に絶対現れない制御文字を使う。
+const HOLD = String.fromCharCode(0)
+const HOLD_RE = new RegExp(HOLD + '(\\d+)' + HOLD, 'g')
+
+/**
+ * `コード` を <code> に。
+ * 二重形 ``…`` は中身にバッククォートを含むコードを表すので、先に取り出して退避し、
+ * 単一形の処理が中のバッククォートを食わないようにする（Markdown と同じ挙動）。
+ */
+function code(text) {
+  const held = []
+  return text
+    .replace(/``(.+?)``/g, (_, s) => HOLD + (held.push(s.trim()) - 1) + HOLD)
+    .replace(/`([^`]+?)`/g, '<code>$1</code>')
+    .replace(HOLD_RE, (_, i) => '<code>' + held[Number(i)] + '</code>')
+}
+
+/** ボックス本文の 2 段落目以降を <p> で続ける（改行が空白に潰れるのを防ぐ）。 */
+function boxBody(text) {
+  const [first, ...rest] = String(text ?? '')
+    .split(/\n\s*\n/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return inline(first ?? '') + rest.map((s) => `<p class="mt-2">${inline(s)}</p>`).join('')
 }
 
 function loadChapters() {
@@ -72,9 +99,9 @@ const BLOCK = {
   paragraph: (b) => `<p>${inline(b.text)}</p>`,
   ul: (b) => `<ul>${(b.items ?? []).map((i) => `<li>${inline(i)}</li>`).join('')}</ul>`,
   ol: (b) => `<ol>${(b.items ?? []).map((i) => `<li>${inline(i)}</li>`).join('')}</ol>`,
-  'kv-box': (b) => `<div class="kv-box"><strong>${inline(b.title)}</strong> ${inline(b.text)}</div>`,
-  'warn-box': (b) => `<div class="warn-box"><strong>${inline(b.title)}</strong> ${inline(b.text)}</div>`,
-  'tip-box': (b) => `<div class="tip-box"><strong>${inline(b.title)}</strong> ${inline(b.text)}</div>`,
+  'kv-box': (b) => `<div class="kv-box"><strong>${inline(b.title)}</strong> ${boxBody(b.text)}</div>`,
+  'warn-box': (b) => `<div class="warn-box"><strong>${inline(b.title)}</strong> ${boxBody(b.text)}</div>`,
+  'tip-box': (b) => `<div class="tip-box"><strong>${inline(b.title)}</strong> ${boxBody(b.text)}</div>`,
   'ex-box': (b) =>
     `<div class="ex-box"><p class="ex-title">✏️ ${inline(b.title ?? '演習')}</p><p>${inline(b.text)}</p></div>`,
   checklist: (b) =>
@@ -219,6 +246,9 @@ header.top p { margin:0; opacity:.95; font-size:.9rem; }
 .chk-item::before { content:"☐"; color:#f97316; flex:none; }
 .code-block { background:#111827; color:#f3f4f6; font-family:Consolas,Monaco,monospace; font-size:.8rem;
   line-height:1.65; border-radius:8px; padding:12px 14px; overflow-x:auto; margin:1.1rem 0; }
+code { background:#f1f5f9; color:#be185d; font-family:Consolas,Monaco,monospace; font-size:.86em;
+  border-radius:4px; padding:.1em .35em; word-break:break-word; }
+.code-block code { background:none; color:inherit; padding:0; font-size:inherit; }
 .assign-box { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #f59e0b; border-radius:10px; padding:14px 16px; margin:1.6rem 0; }
 .assign-title { font-weight:700; font-size:1rem; color:#92400e; margin:0 0 .4rem; }
 .assign-goal { color:#78350f; margin:0 0 .7rem; }
