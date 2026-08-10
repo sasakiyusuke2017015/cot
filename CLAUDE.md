@@ -78,7 +78,7 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 生成物は GitHub Pages で公開しており、スマホのブラウザからそのまま閲覧できる。
 
 - 公開 URL: `https://sasakiyusuke2017015.github.io/cot/`（ルートの `index.html` が講師用ハブへ転送）
-- リモート: `origin` = GitHub（`sasakiyusuke2017015/cot`）、`gitea` = 旧・社内 Gitea
+- リモートは `origin` = GitHub（`sasakiyusuke2017015/cot`）のみ。**push 先は GitHub だけ**
 - push すると数分で反映される。**PDF は作らない**（Pages で HTML がそのまま読めるため、
   固定幅の PDF はレスポンシブもクイズも失う下位互換になる）
 - `.nojekyll` と `index.html` は Pages 用。消さないこと
