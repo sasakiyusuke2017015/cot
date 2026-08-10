@@ -309,7 +309,7 @@ npm run dev        # → http://localhost:5173 が開く`}</div>
                   </div>
                   <h3>コンポーネントとJSX</h3>
                   <div className="code-block">{`function Hello(props) {
-  return <h1>こんにちは、{props.name}さん</h1>;
+  return <h1>こんにちは、{props.name}さん<\/h1>;
 }
 
 function App() {
@@ -317,7 +317,7 @@ function App() {
     <div>
       <Hello name="田中" />
       <Hello name="佐藤" />
-    </div>
+    <\/div>
   );
 }`}</div>
                   <p>HTMLに似た書き方（JSX）でコンポーネントの見た目を書きます。<strong>props</strong>は部品に渡すデータです。同じ部品でも渡すpropsを変えれば表示が変わります。関数名は<strong>必ず大文字で始めます</strong>（小文字だと通常のHTMLタグとして扱われます）。</p>
@@ -333,7 +333,7 @@ function Counter() {
   return (
     <button onClick={() => setCount(count + 1)}>
       {count} 回押しました
-    </button>
+    <\/button>
   );
 }`}</div>
                   <p><code>useState(0)</code> は「初期値0の状態を作る」という意味で、<strong>現在の値</strong>と<strong>それを変える関数</strong>の2つを返します。<code>setCount</code> を呼ぶと、Reactがこの部品を作り直し、新しい <code>count</code> で画面を描き直します。</p>
@@ -370,7 +370,7 @@ setBoard(next);`}</div>
           />
         ))
       )}
-    </div>
+    <\/div>
   );
 }`}</div>
                   <p><code>key</code> は、Reactが「どの要素がどれか」を見分けるための目印です。<strong>付け忘れると警告が出て、並び替えたときに表示がおかしくなります</strong>。配列の添字ではなく、その要素固有の値（戦績なら <code>id</code>）を使うのが望ましい書き方です。</p>
@@ -392,7 +392,7 @@ setBoard(next);`}</div>
       <Board board={board} onCellClick={handleClick} />
       <Score board={board} />
       <Turn turn={turn} />
-    </div>
+    <\/div>
   );
 }`}</div>
                   <div className="kv-box">
@@ -412,13 +412,13 @@ function History() {
       .then(data => { setGames(data); setLoading(false); });
   }, []);        // ← 空の配列 = 最初の1回だけ実行
 
-  if (loading) return <p>読み込み中…</p>;
+  if (loading) return <p>読み込み中…<\/p>;
   return (
     <ul>
       {games.map(g => (
-        <li key={g.id}>{g.winner}の勝ち（{g.black_count} - {g.white_count}）</li>
+        <li key={g.id}>{g.winner}の勝ち（{g.black_count} - {g.white_count}）<\/li>
       ))}
-    </ul>
+    <\/ul>
   );
 }`}</div>
                   <div className="warn-box">

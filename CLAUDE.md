@@ -118,6 +118,13 @@ ai_edu/                                ← 出力先（DBパイプラインを�
 - 本文ロジックは `<div id="root"></div>` + `ReactDOM.createRoot(...).render(...)`
 - 既存 CSS クラスを維持: `prose / kv-box / warn-box / tip-box / ex-box / chk-item / quiz-option / sidebar-item / tag-core / tag-user`
 - **画像アセットを使わない**（絵文字アイコンは可）
+- 教材本文・コード例・クイズの選択肢に `</script>` を書いてよい。ただし
+  **インライン `<script>` へ埋め込む際のエスケープを外さないこと**。HTML パーサは
+  JS 文字列の内側かどうかに関係なく `</script>` でスクリプトを閉じるため、
+  エスケープが無いとその章が白紙になる（実際に第2章・第3章が壊れた）。
+  - JSON は `render-web-chapter.mjs` の `jsConst` が `<` を `<` に逃がす
+  - コード例は `render-blocks-web.mjs` の `escapeTemplateLiteral` が `</` を `<\/` に逃がす
+  - `validate-web` の「インラインスクリプトが途中で切れています」検査がこれを守る
 - ファイル名: 章は `chNN.html`、概要は `index.html`（`provision` の表示順は index=先頭, chNN=NN順）
 
 ### 問題（CSV）

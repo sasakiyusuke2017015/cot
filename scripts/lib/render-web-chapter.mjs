@@ -44,8 +44,16 @@ function pad2(n) {
   return String(n).padStart(2, '0')
 }
 
+/**
+ * JSON を <script> の中に埋め込める形の JS 定数にする。
+ *
+ * `<` を < に逃がすのは必須。HTML パーサは JS 文字列の内側かどうかを見ずに
+ * `</script>` でスクリプトを閉じるため、クイズの選択肢に `</script>` が入っていると
+ * その章が丸ごと動かなくなる（実際に第2章が壊れた）。< は JS が解釈した時点で
+ * `<` に戻るので、画面上の表示は変わらない。
+ */
 function jsConst(name, value) {
-  return `const ${name} = ${JSON.stringify(value, null, 2)};`
+  return `const ${name} = ${JSON.stringify(value, null, 2).replaceAll('<', '\\u003C')};`
 }
 
 /** 解説の ${正答1} / ${誤答N} プレースホルダを実テキストへ（HTML 表示用。CSV には残す）。 */
@@ -112,7 +120,7 @@ export function renderWebChapter(chapter, quiz, { prev = null, next = null, tota
             ${nextNav}
           </div>`
 
-  const script = `<script type="text/babel">
+  return `${head}<script type="text/babel">
 const { useState } = React;
 
 ${jsConst('KEYWORDS', chapter.keywords ?? [])}
@@ -243,10 +251,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<Page />);
 </body>
 </html>
 `
-
-  // 本文やクイズが "</script>" を含むと、そこで script ブロックが終わってページが途切れる
-  // （教材の性質上 <script> タグの解説は普通に出てくる）。中身の閉じタグだけ無害化する。
-  // 末尾の本物の </script> は残すため、最後の 1 つを除いてスラッシュを分割する。
-  const close = script.lastIndexOf('</script>')
-  return head + script.slice(0, close).replaceAll('</script>', '<\\/script>') + script.slice(close)
 }

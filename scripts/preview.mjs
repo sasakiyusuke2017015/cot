@@ -264,10 +264,29 @@ function listing() {
     return '<p>output/ がありません。先に <code>npm run build:web</code> を実行してください。</p>'
   }
   const items = []
-  const hub = path.join(ROOT_DIR, INDEX)
-  if (fs.existsSync(hub)) {
-    items.push(`<li><a href="/${INDEX}"><strong>🐯 講師用ガイド（虎の巻トップ）</strong></a></li>`)
+
+  // 入口になるページ（受講者用・講師用・全章1ファイル版）
+  const entries = [
+    ['index.html', '👥 受講者用トップ'],
+    ['teacher.html', '🐯 講師用ガイド（カンペ付き）'],
+    ['all-learner.html', '📘 全章1ファイル版（受講者用）'],
+    ['all-teacher.html', '📕 全章1ファイル版（講師用）'],
+  ]
+  for (const [file, label] of entries) {
+    if (fs.existsSync(path.join(ROOT_DIR, file))) {
+      items.push(`<li><a href="/${file}"><strong>${label}</strong></a></li>`)
+    }
   }
+
+  // 単体配布版（1ファイルだけ渡して成立するもの）
+  const standalone = path.join(ROOT_DIR, 'standalone')
+  if (fs.existsSync(standalone)) {
+    const files = fs.readdirSync(standalone).filter((f) => f.endsWith('.html')).sort()
+    items.push('<li><strong>standalone</strong>（単体配布版・リンク無し）<ul>')
+    for (const f of files) items.push(`<li><a href="/standalone/${f}">${f}</a></li>`)
+    items.push('</ul></li>')
+  }
+
   const materials = path.join(ROOT_DIR, 'materials')
   if (fs.existsSync(materials)) {
     for (const course of fs.readdirSync(materials)) {

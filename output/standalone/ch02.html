@@ -136,10 +136,10 @@ const QUIZ = [
   {
     "q": "HTMLからCSSファイルを読み込む正しい書き方はどれか。",
     "options": [
-      "<style src=\"style.css\"></style>",
-      "<css href=\"style.css\">",
-      "<script src=\"style.css\"><\/script>",
-      "<link rel=\"stylesheet\" href=\"style.css\">"
+      "\u003Cstyle src=\"style.css\">\u003C/style>",
+      "\u003Ccss href=\"style.css\">",
+      "\u003Cscript src=\"style.css\">\u003C/script>",
+      "\u003Clink rel=\"stylesheet\" href=\"style.css\">"
     ],
     "answer": 3,
     "explain": "外部CSSはlinkタグでhead内に書く。scriptタグはJavaScriptの読み込みに使うものである。"
@@ -318,7 +318,7 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
 .intro { color: blue; }    /* こちらが勝つ */
 #main { color: red; }      /* さらに強い */
 
-<p class="intro" id="main">この文字は赤になる</p>`}</div>
+<p class="intro" id="main">この文字は赤になる<\/p>`}</div>
                   <ul>
                     <li><strong>id</strong>（#）… いちばん強い</li>
                     <li><strong>class</strong>（.）… 中くらい</li>
@@ -373,10 +373,10 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                   <p>要素を横や縦に並べたいときはFlexboxを使います。<strong>並べたい要素の「親」に指定する</strong>のがポイントです。</p>
                   <div className="code-block">{`<!-- HTML -->
 <div class="row">
-  <div>A</div>
-  <div>B</div>
-  <div>C</div>
-</div>`}</div>
+  <div>A<\/div>
+  <div>B<\/div>
+  <div>C<\/div>
+<\/div>`}</div>
                   <div className="code-block">{`/* CSS：親に指定する */
 .row {
   display: flex;              /* 子要素を横に並べる */
