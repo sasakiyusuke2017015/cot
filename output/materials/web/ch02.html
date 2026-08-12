@@ -303,6 +303,10 @@ p { line-height: 1.8; }
                   <div className="tip-box">
                     <strong>💡 迷ったら class を使う:</strong> idは1ページに1つしか使えず、あとで「他にも同じ見た目にしたい」となったとき困ります。<strong>基本はclass、本当に唯一のものだけid</strong>と考えておけば失敗しません。
                   </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習① セレクタを撃ち分ける（10分）</p>
+                    <p>次のHTMLに対して、<strong>HTMLを変えずにCSSだけ</strong>で以下を実現してください。<br /><code>&lt;h2 class="name"&gt;田中&lt;/h2&gt;</code> / <code>&lt;p class="role"&gt;エンジニア&lt;/p&gt;</code> / <code>&lt;p class="role" id="main"&gt;リーダー&lt;/p&gt;</code><br /><br />① すべての <code>p</code> の行間を 1.8 にする<br />② <code>.role</code> の文字色をグレーにする<br />③ <code>#main</code> だけ文字を太字にする<br /><br /><strong>確かめ方</strong>: 開発者ツールで「リーダー」を選び、3つの指定が全部当たっていることを見る。<code>.role</code> の指定が <code>#main</code> に負けていないのはなぜか、言葉にしてみてください。<br /></p>
+                  </div>
                   <h3>組み合わせて絞り込む</h3>
                   <p>セレクタは組み合わせられます。これを知っていると「同じclass名でも場所によって見た目を変える」ことができます。</p>
                   <div className="code-block">{`/* .card の中にある h2 だけ */
@@ -329,6 +333,35 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                   <div className="warn-box">
                     <strong>⚠️ CSSが効かないときの3大原因:</strong> ① セレクタが間違っている（class名のタイプミス、ドットの付け忘れ）<br />② 詳細度で別の指定に負けている<br />③ そもそもCSSファイルが読み込まれていない
                     <p className="mt-2"><strong>開発者ツールで要素を選ぶと、当たっているCSSと打ち消されたCSS（取り消し線が付く）が見えます。</strong> 想像で直さず、まずここを見てください。</p>
+                  </div>
+                  <h3>デバッグ演習 — 効かないCSSを直す</h3>
+                  <p>実際に壊れたコードを直してみます。<strong>答えを見る前に、まず自分でどこが悪いか予想してください。</strong> 予想してから確かめると、記憶に残り方がまるで違います。</p>
+                  <div className="code-block">{`<!-- index.html -->
+<link rel="stylesheet" href="styles.css">
+
+<div class="card" id="profile">
+  <h2 class=name>田中<\/h2>
+  <p class="Role">エンジニア<\/p>
+<\/div>`}</div>
+                  <div className="code-block">{`/* style.css */
+card {
+  background: white;
+  padding: 16px
+  border-radius: 8px;
+}
+
+.name { color: navy; }
+.role { color: gray; }
+
+#profile { background: pink; }
+.card    { background: white; }`}</div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習② バグ探し（15分）</p>
+                    <p>上のコードには<strong>5つの不具合</strong>が仕込まれています。CSSがまったく効かない・一部だけ効かない・意図と違う色になる、の3種類です。<br /><br />① なぜCSSが1つも効かないのか（ファイル名に注目）<br />② <code>card &#123;</code> が何を選んでいるか<br />③ <code>padding: 16px</code> の行の問題<br />④ <code>class="Role"</code> と <code>.role</code> の関係<br />⑤ 背景がピンクになる理由（順番のせいではありません）<br /><br /><strong>進め方</strong>: 手元に同じファイルを作って再現し、開発者ツールで1つずつ潰してください。直したら「なぜそうなったか」を一言で説明できる状態にすること。<br /></p>
+                  </div>
+                  <div className="tip-box">
+                    <strong>💡 答え合わせ:</strong> ① HTMLは <code>styles.css</code> を読み込んでいるがファイル名は <code>style.css</code>。読み込まれていない<br />② <code>card</code> はドットが無いのでタグセレクタ。<code>&lt;card&gt;</code> というタグを探していて何にも当たらない<br />③ <code>padding: 16px</code> にセミコロンが無く、次の <code>border-radius</code> ごと無効になる<br />④ CSSのclass名は<strong>大文字小文字を区別する</strong>。<code>Role</code> と <code>role</code> は別物<br />⑤ <code>#profile</code>（id）が <code>.card</code>（class）より詳細度が高いので、後に書いた <code>.card</code> が負ける
+                    <p className="mt-2">⑤が「後に書いたほうが勝つ」の例外に見えるのがポイントです。<strong>同じ強さのときだけ</strong>後勝ちで、強さが違えば書いた順番は関係ありません。</p>
                   </div>
                   <h3>ボックスモデル — すべての要素は箱</h3>
                   <p>レイアウトを理解する上で最重要の概念です。<strong>すべての要素は4層構造の箱</strong>として描画されます。</p>
@@ -370,6 +403,10 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                     <strong>💡 box-sizing は最初に書く:</strong> 既定では width に padding と border が<strong>含まれません</strong>。width:100px に padding:16px を足すと実際は132pxになり、計算が狂います。次の1行を最初に書いておくと、widthが見た目の幅そのものになって直感的です。
                     <p className="mt-2"><code>* &#123; box-sizing: border-box; &#125;</code></p>
                   </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習③ 余白を当てる（10分）</p>
+                    <p>2枚のカードを縦に並べ、次の見た目を作ってください。<strong>開発者ツールのボックスモデル図（Computedタブの色付きの箱）を見ながら</strong>進めるのがコツです。<br /><br />① カードの中の文字が枠から16px離れている<br />② カード同士が24px離れている<br />③ カードの背景色を付けたとき、①の余白には色が付き、②の余白には付かない<br /><br /><strong>確かめ方</strong>: ①と②のどちらに padding を使い、どちらに margin を使ったか。③がその答え合わせになります。逆にすると③が成立しません。<br /><br /><strong>追加で試す</strong>: <code>box-sizing: border-box;</code> の行を消すと、幅を指定したカードがどう変わりますか。消した状態で開発者ツールの幅の数字を見てください。<br /></p>
+                  </div>
                   <h3>Flexbox — 一列に並べる</h3>
                   <p>要素を横や縦に並べたいときはFlexboxを使います。<strong>並べたい要素の「親」に指定する</strong>のがポイントです。</p>
                   <div className="code-block">{`<!-- HTML -->
@@ -397,6 +434,10 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                       </tbody>
                     </table>
                   </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習④ よくある3つの並びを作る（15分）</p>
+                    <p><code>&lt;div class="row"&gt;</code> の中にボタンを3つ入れ、<strong>CSSだけを書き換えて</strong>次の3パターンを順に作ってください。毎回HTMLは同じままです。<br /><br />① 3つが左端に寄って、間隔が8px空いている<br />② 3つが画面の中央にまとまっている<br />③ 1つ目が左端、3つ目が右端に張り付き、2つ目が中央にある（ヘッダーでよく使う形）<br /><br /><strong>ヒント</strong>: 変えるのは <code>justify-content</code> の値だけです。<code>flex-start</code> / <code>center</code> / <code>space-between</code> を入れ替えて、それぞれ何が起きるか見てください。<br /><br /><strong>できたら</strong>: <code>flex-direction: column;</code> を足すと ①〜③ の意味がどう変わりますか。<code>justify-content</code> が「並べている方向」の揃えだと分かれば正解です。<br /></p>
+                  </div>
                   <h3>Grid — 格子状に並べる</h3>
                   <p>Flexboxは一列に並べるのが得意ですが、<strong>縦横の格子</strong>を作るならGridが適しています。オセロの盤面（8×8）にはこちらが最適です。</p>
                   <div className="code-block">{`.board {
@@ -410,6 +451,10 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
   aspect-ratio: 1;         /* 正方形にする */
 }`}</div>
                   <p>これだけで8×8の盤面ができます。<code>repeat(8, 50px)</code> は「50pxの列を8個」という意味です。前章の発展課題で盤面を作った人は、ここで見た目が付きます。</p>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習⑤ オセロ盤を作る（20分・第4章で使います）</p>
+                    <p>上のCSSを写して、実際に盤面を表示してください。HTMLは <code>&lt;div class="board"&gt;</code> の中に <code>&lt;div class="cell"&gt;</code> を64個並べます（コピペで構いません。第3章でJavaScriptから自動生成できるようになります）。<br /><br />① 8×8の緑のマスが表示され、隙間が線に見える<br />② <code>repeat(8, 50px)</code> の 8 を 3 に変えると何が起きるか確かめる<br />③ 石を表現する <code>.stone</code> クラスを作る。<code>border-radius: 50%</code> で正円になります<br />④ 黒石 <code>.black</code> と白石 <code>.white</code> を作り、中央4マスに手で置いてみる<br /><br /><strong>これは捨て課題ではありません。</strong> ここで作った盤面のCSSを、第4章のオセロでそのまま使います。時間をかける価値があります。<br /></p>
+                  </div>
                   <h3>色の指定方法</h3>
                   <div className="tbl-wrap">
                     <table className="tbl">
@@ -456,6 +501,10 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                   <div className="tip-box">
                     <strong>💡 確認方法:</strong> 開発者ツールを開き、左上のスマホアイコン（Toggle device toolbar）を押すと、スマホ表示を再現できます。実機がなくても確認できます。
                   </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習⑥ 幅で崩れないようにする（10分）</p>
+                    <p>ミニ演習④で作った横並びを、<strong>画面が狭いときだけ縦積み</strong>に変えてください。<br /><br />① 開発者ツールをスマホ表示にして、まず崩れることを確認する（崩れないと直す意味が分かりません）<br />② <code>@media (max-width: 600px)</code> の中で <code>flex-direction: column;</code> にする<br />③ 幅を少しずつ狭めて、600pxを跨いだ瞬間に切り替わることを見る<br /><br /><strong>よくある失敗</strong>: <code>@media</code> の閉じ括弧 <code>&#125;</code> を忘れて、以降のCSSが全部効かなくなる。効かなくなったらまず括弧の対応を数えてください。<br /></p>
+                  </div>
                   <div className="assign-box">
                     <p className="assign-title">🛠 課題: プロフィールカード（第2段階 — 見た目を整える）</p>
                     <p className="assign-goal">第1章で作った profile.html に、外部CSSファイルでスタイルを当てます。<strong>HTMLファイルは1文字も変えずに</strong>、見た目だけを変えるのが狙いです（class名の追加は可）。</p>
@@ -481,7 +530,7 @@ h1, h2, h3 { font-family: sans-serif; }`}</div>
                     <strong>💡 次章への橋渡し:</strong> 構造と見た目がそろいました。ただし<strong>まだ何も動きません</strong>。ボタンを押しても何も起きず、石も置けません。次章のJavaScriptで、ようやく「動くもの」になります。
                   </div>
                   <h3>チェックリスト</h3>
-                  <CheckList items={["セレクタとプロパティの書き方が分かる","class と id の使い分けができる","詳細度で指定が上書きされる仕組みを理解した","ボックスモデルの4層を言える","padding と margin を使い分けられる","display:flex で要素を横に並べられる","display:grid で格子状に並べられる","CSSを別ファイルに分ける理由を説明できる"]} />
+                  <CheckList items={["セレクタとプロパティの書き方が分かる","class と id の使い分けができる","詳細度で指定が上書きされる仕組みを理解した","ボックスモデルの4層を言える","padding と margin を使い分けられる","display:flex で要素を横に並べられる","display:grid で格子状に並べられる","CSSを別ファイルに分ける理由を説明できる","効かないCSSの原因を開発者ツールで特定できる","8×8の盤面をGridで作った（第4章で使う）"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>
