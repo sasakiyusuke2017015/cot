@@ -360,6 +360,13 @@ scores[1] = 99;             // 1番目を書き換え
 const doubled = scores.map(n => n * 2);       // 全部2倍にした新しい配列
 const big = scores.filter(n => n > 20);       // 20より大きいものだけ
 const total = scores.reduce((a, b) => a + b); // 合計`}</div>
+                  <div className="kv-box">
+                    <strong>📌 map と filter の違い:</strong> どちらも<strong>元の配列は変えず、新しい配列を返す</strong>のが共通点です。違うのは個数です。<br /><strong>map は個数が変わらず、中身が変わる</strong>（3個入れたら3個出る）。<strong>filter は中身が変わらず、個数が減る</strong>（条件に合うものだけ残る）。<br />「全部に同じ処理をしたい」なら map、「選び出したい」なら filter と考えれば迷いません。
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習④ 配列を加工する（20分）</p>
+                    <p><code>const users = [&#123; name: "田中", score: 80 &#125;, &#123; name: "佐藤", score: 45 &#125;, &#123; name: "鈴木", score: 92 &#125;];</code> を使います。オブジェクトの中身は <code>user.name</code> のように取り出せます。<br /><br />① <code>map</code> で名前だけの配列 <code>["田中", "佐藤", "鈴木"]</code> を作る<br />② <code>filter</code> で60点以上の人だけの配列を作る<br />③ ②の結果に <code>map</code> をつなげて、合格者の名前だけを取り出す（<code>.filter(...).map(...)</code> と続けて書けます）<br />④ <code>reduce</code> で全員の合計点を出し、<code>length</code> で割って平均を出す<br />⑤ <strong>元の <code>users</code> が変わっていないこと</strong>を最後に <code>console.log(users)</code> で確かめる<br /><br /><strong>⑤が一番大事です。</strong> map も filter も元の配列を壊しません。だから③のように安心してつなげられます。一方 <code>push</code> や <code>sort</code> は元を書き換えます——この違いが分かると、後々のバグが減ります。<br /><br /><strong>つまずいたら</strong>: <code>map</code> の中身が思ったものと違うときは、<code>users.map(u =&gt; &#123; console.log(u); return u.name; &#125;)</code> のように<strong>中に console.log を挟んで</strong>ください。1件ずつ何が渡ってきているか見えます。<br /></p>
+                  </div>
                   <h3>2次元配列 — 盤面の表現</h3>
                   <p>オセロの盤面のような格子は、<strong>配列の中に配列を入れる</strong>ことで表現します。ここは最初混乱するところなので、丁寧に見ます。</p>
                   <div className="code-block">{`// 3×3の盤面
@@ -391,7 +398,7 @@ for (let row = 0; row < 8; row++) {
   }
 }`}</div>
                   <div className="ex-box">
-                    <p className="ex-title">✏️ ミニ演習④ 盤面を配列で扱う（20分・紙を用意）</p>
+                    <p className="ex-title">✏️ ミニ演習⑤ 盤面を配列で扱う（20分・紙を用意）</p>
                     <p><strong>まず紙に3×3のマス目を書いて、行番号と列番号を振ってください。</strong> 画面だけで考えると必ず混乱します。<br /><br />① 上の3×3の <code>board</code> を写し、<code>board[0][2]</code> と <code>board[2][0]</code> が何かを<strong>紙で予想してから</strong> <code>console.log</code> で確かめる<br />② 8×8の空の盤面を作り、<code>board.length</code> と <code>board[0].length</code> を表示する（どちらも8になります）<br />③ 二重ループで全64マスを回り、<code>row</code> と <code>col</code> を並べて表示する。最初と最後に何が出るか確認する<br />④ オセロの初期配置を置く。中央4マス <code>board[3][3]</code> <code>board[3][4]</code> <code>board[4][3]</code> <code>board[4][4]</code> に白黒を交互に入れる<br />⑤ 盤面の「黒の数」を二重ループで数えて表示する<br /><br /><strong>④の配置が合っているか</strong>: 白が左上と右下、黒が右上と左下（またはその逆）になります。紙のマス目に書き込んで確かめてください。<br /><br /><strong>⑤は第4章の得点表示そのものです。</strong> ここで書けていれば、オセロのスコア機能はもうできています。<br /></p>
                   </div>
                   <h3>DOM操作 — HTMLをJavaScriptから触る</h3>
@@ -438,7 +445,7 @@ cell.addEventListener("click", () => {
   console.log(row + "行" + col + "列がクリックされた");
 });`}</div>
                   <div className="ex-box">
-                    <p className="ex-title">✏️ ミニ演習⑤ 盤面を生成してクリックを拾う（25分）</p>
+                    <p className="ex-title">✏️ ミニ演習⑥ 盤面を生成してクリックを拾う（25分）</p>
                     <p>第2章のミニ演習⑤で作った盤面のCSSを使います。<strong>HTMLに書いた64個の <code>&lt;div class="cell"&gt;</code> は消してください。</strong> JavaScriptで作ります。<br /><br />① 空の <code>&lt;div id="board"&gt;&lt;/div&gt;</code> だけをHTMLに置く<br />② 二重ループで64個の <code>.cell</code> を生成して追加する<br />③ 各マスに <code>dataset.row</code> と <code>dataset.col</code> を持たせる<br />④ マスをクリックしたら、何行何列かをコンソールに出す<br />⑤ クリックしたマスに <code>.black</code> クラスを付けて、黒石が出るようにする<br /><br /><strong>確かめ方</strong>: 右下の角をクリックして <code>7行7列</code> と出れば正解です。<code>8行8列</code> と出たらループの条件が、行と列が入れ替わっていたら <code>dataset</code> の付け方が間違っています。<br /><br /><strong>ここまでできれば、第4章のオセロは「ルールを書くだけ」になります。</strong> 盤面の表示・クリックの検知という土台部分は、この演習で完成しています。<br /></p>
                   </div>
                   <h3>エラーとの付き合い方</h3>
@@ -497,12 +504,27 @@ btn.addEventListener("click", () => {
 
 console.log(conut);`}</div>
                   <div className="ex-box">
-                    <p className="ex-title">✏️ ミニ演習⑥ エラーを読んで直す（20分）</p>
+                    <p className="ex-title">✏️ ミニ演習⑦ エラーを読んで直す（20分）</p>
                     <p>上のコードには<strong>5つのバグ</strong>があります。<strong>答えを見る前に、まず動かしてエラー文を読んでください。</strong> この演習の価値は、エラー文と原因を自分の中で結びつけるところにあります。<br /><br />① まず動かす。コンソールに何と出るか、そのまま書き写す<br />② エラー文の右端のファイル名と行番号を見て、どの行が原因か特定する<br />③ 1つ直したらまた動かす。<strong>次のエラーが出る</strong>ので、また読む<br />④ 5つ全部潰して、ボタンで数が増え、10回で メッセージが出る状態にする<br /><br /><strong>1つずつ直してください。</strong> まとめて直そうとすると、どの修正が何を解決したか分からなくなります。「直す→動かす→次のエラーを読む」の繰り返しが、この章で身につけたい動き方そのものです。<br /></p>
                   </div>
                   <div className="tip-box">
                     <strong>💡 答え合わせ（自分で試してから）:</strong> ① <code>&lt;script&gt;</code> が <code>&lt;head&gt;</code> にある。HTMLが読み込まれる前に動くので要素が見つからない → <code>&lt;/body&gt;</code> の直前へ移す<br />② <code>querySelector("count")</code> はドットもシャープも無いので <code>&lt;count&gt;</code> タグを探している → <code>"#count"</code> にする<br />③ ①②のせいで <code>countEl</code> が <code>null</code> になり、<code>Cannot read properties of null</code> が出る<br />④ <code>if (count = 10)</code> は比較ではなく<strong>代入</strong>。毎回 count が10になり、常に真になる → <code>===</code> にする<br />⑤ <code>conut</code> はタイプミス。<code>is not defined</code> が出る
                     <p className="mt-2"><strong>③に注目してください。</strong> エラーが出た行（<code>countEl.textContent</code>）と、本当の原因の行（<code>querySelector</code>）は違います。<strong>「null が入っているなら、それを入れた場所を見る」</strong>——これがエラーを追うときの基本の動きです。</p>
+                  </div>
+                  <h3>総合演習 — 小さいゲームを作る</h3>
+                  <p>ここまでの部品（変数・条件分岐・配列・関数・DOM・イベント）を<strong>全部つないで</strong>、動くものを1つ作ります。第4章のオセロは規模が大きいので、その前に一度、小さいもので「最初から最後まで自分で作る」経験をしておきます。</p>
+                  <div className="kv-box">
+                    <strong>📌 作る前に手順を書く:</strong> いきなりコードを書き始めると、必ず途中で何をしていたか分からなくなります。<strong>まず日本語で手順を書いてください。</strong>
+                    <p className="mt-2">「① 1〜100の乱数を用意する → ② 入力された数を受け取る → ③ 数値に変換する → ④ 大小を比べる → ⑤ 結果を表示する → ⑥ 回数を1増やす」</p>
+                    <p className="mt-2">この日本語の1行が、そのまま関数1つ・処理1ブロックになります。<strong>手順が書けていれば、あとは翻訳するだけ</strong>です。詰まったときも「何行目の手順で詰まったか」で切り分けられます。</p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ ミニ演習⑧ 数当てゲーム（40分・2コマ想定）</p>
+                    <p>コンピュータが決めた1〜100の数を当てるゲームを作ります。<strong>まず上の手順書きを紙にやってから</strong>始めてください。<br /><br />① 乱数を用意する。<code>Math.floor(Math.random() * 100) + 1</code> で1〜100が出ます<br />② 入力欄 <code>&lt;input type="number"&gt;</code> とボタンをHTMLに置く<br />③ ボタンを押したら入力値を取る（<code>input.value</code>。<strong>必ず文字列で返ってきます</strong>）<br />④ <code>Number()</code> で数値に変換してから比べる（ミニ演習①でやった落とし穴です）<br />⑤ 「もっと大きい」「もっと小さい」「正解！」を出し分けて画面に表示する<br />⑥ 挑戦回数を数えて表示する<br />⑦ 正解したら入力欄とボタンを無効化する（<code>btn.disabled = true;</code>）<br /><br /><strong>確かめ方</strong>: 正解の数を一時的に <code>console.log</code> で表示させ、①わざと大きい数 ②わざと小さい数 ③正解 の3通りを必ず通してください。<strong>分岐は全部通して初めて確かめたと言えます。</strong><br /><br /><strong>よくある詰まり</strong>: 「50より大きいはずなのに『もっと小さい』と出る」なら④を疑ってください。文字列のまま比べると <code>"9" &gt; "50"</code> が true になります（辞書順で比較されるため）。<br /></p>
+                  </div>
+                  <div className="ex-box">
+                    <p className="ex-title">✏️ 発展 — 余裕がある人だけ（30分）</p>
+                    <p>⑧が早く終わったら、次を足してみてください。<strong>どれも第4章で使う考え方</strong>です。<br /><br />① 過去の入力を配列に貯めて、履歴として一覧表示する（<code>push</code> と <code>map</code>）<br />② 残り回数を10回に制限し、0になったらゲームオーバーにする<br />③ 「もう一度」ボタンを付けて、状態を初期値に戻す<br />④ 入力が空・数字でない・範囲外のときにメッセージを出す<br /><br /><strong>③が意外と難しく、そして重要です。</strong> 「リセットする」には<strong>何が状態なのかを自分で把握している</strong>必要があります。正解の数・回数・履歴・ボタンの有効無効——戻し忘れが1つでもあると、2回目が正しく動きません。オセロの「対局をやり直す」も同じ構造です。<br /></p>
                   </div>
                   <div className="assign-box">
                     <p className="assign-title">🛠 課題: プロフィールカード（第3段階 — 動かす）</p>
@@ -528,7 +550,7 @@ console.log(conut);`}</div>
                     <strong>💡 次章への橋渡し:</strong> ここまでで <strong>HTML・CSS・JavaScript がそろい、「動くWebページ」を自力で作れる状態</strong>になりました。次章ではGitを覚えて、いよいよ2人でオセロを作ります。<strong>オセロはここまでの知識だけで作れます</strong>——新しい技術は必要ありません。
                   </div>
                   <h3>チェックリスト</h3>
-                  <CheckList items={["const と let の使い分けが分かる","if / for / 関数 / 配列を組み合わせて書ける","2次元配列で board[行][列] と書ける","querySelector で要素を取得できる","classList でクラスを付け外しできる","createElement で要素を生成して追加できる","addEventListener でクリックに反応できる","エラーが出たらコンソールを読む習慣がある","console.log で変数の中身を確認する癖がついた","エラーが出た行と本当の原因の行は違うことがあると知っている","JavaScriptで8×8の盤面を生成しクリックを拾えた（第4章で使う）"]} />
+                  <CheckList items={["const と let の使い分けが分かる","if / for / 関数 / 配列を組み合わせて書ける","2次元配列で board[行][列] と書ける","querySelector で要素を取得できる","classList でクラスを付け外しできる","createElement で要素を生成して追加できる","addEventListener でクリックに反応できる","エラーが出たらコンソールを読む習慣がある","console.log で変数の中身を確認する癖がついた","エラーが出た行と本当の原因の行は違うことがあると知っている","JavaScriptで8×8の盤面を生成しクリックを拾えた（第4章で使う）","map と filter の違いを説明できる","作る前に手順を日本語で書けた","小さいゲームを最初から最後まで自力で作った"]} />
                 </div>
                 <Quiz items={QUIZ} />
               </div>
